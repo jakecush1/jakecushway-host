@@ -352,43 +352,15 @@
   .bar-fill { height: 100%; border-radius: 2px; }
   .bar-power { background: var(--cyan); }
   .bar-drift { background: var(--amber); }
-
-  .optional-tag {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    border: 1px solid var(--border2);
-    border-radius: 3px;
-    padding: 1px 6px;
-    margin-left: 6px;
-    letter-spacing: 0.08em;
-    vertical-align: middle;
-  }
-  .mode-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 7px 14px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border2);
-    color: var(--text-dim);
-  }
-  .mode-badge.dual { border-color: var(--green); color: var(--green); background: rgba(0,201,122,0.06); }
-  .mode-badge.single { border-color: var(--amber); color: var(--amber); background: rgba(240,165,0,0.06); }
-  .mode-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="header-tag">// USV Analysis Tool v1.1</div>
+    <div class="header-tag">// USV Analysis Tool v1.0</div>
     <h1>Dual-Sensor <span>Route Analyzer</span></h1>
-    <p class="header-sub">Ingest NAV + GPS logs — spike-filtered, reconciled, merged report. One file also accepted for single-sensor analysis.</p>
+    <p class="header-sub">Ingest NAV + GPS logs — spike-filtered, reconciled, merged report</p>
   </header>
 
   <!-- Config -->
@@ -398,7 +370,7 @@
     <span class="config-label" style="margin-left:8px">Max Speed</span>
     <input class="config-input" type="number" id="maxSpeedInput" value="10" min="1" max="50" style="width:90px">
     <span class="config-label">knots</span>
-    <span class="config-label" style="margin-left:8px" id="agreementRow">Agreement Threshold</span>
+    <span class="config-label" style="margin-left:8px">Agreement Threshold</span>
     <input class="config-input" type="number" id="agreementInput" value="12" min="1" max="50" style="width:90px">
     <span class="config-label">%</span>
   </div>
@@ -414,17 +386,12 @@
     <div class="drop-zone" id="gpsDrop">
       <input type="file" accept=".csv" id="gpsFile" onchange="handleFile('gps', this)">
       <div class="drop-icon" id="gpsIcon">[ GPS ]</div>
-      <div class="drop-title">GPS Sensor CSV <span class="optional-tag">optional</span></div>
+      <div class="drop-title">GPS Sensor CSV</div>
       <div class="drop-hint" id="gpsHint">Drop file here or click to browse</div>
     </div>
   </div>
 
   <div class="error-box" id="errorBox"></div>
-
-  <div id="modeBadge" class="mode-badge" style="display:none">
-    <span class="mode-dot"></span>
-    <span id="modeBadgeText"></span>
-  </div>
 
   <button class="run-btn" id="runBtn" onclick="runAnalysis()" disabled>
     ▶ &nbsp;RUN ANALYSIS
@@ -512,27 +479,7 @@ function handleFile(sensor, input) {
 });
 
 function checkReady() {
-  const hasNav = !!files.nav, hasGps = !!files.gps;
-  const ready = hasNav || hasGps;
-  document.getElementById('runBtn').disabled = !ready;
-  const badge = document.getElementById('modeBadge');
-  const badgeText = document.getElementById('modeBadgeText');
-  const agreementRow = document.getElementById('agreementRow');
-  if (ready) {
-    badge.style.display = 'inline-flex';
-    if (hasNav && hasGps) {
-      badge.className = 'mode-badge dual';
-      badgeText.textContent = 'Dual-sensor mode — NAV + GPS loaded, reconciliation enabled';
-      if (agreementRow) agreementRow.style.display = '';
-    } else {
-      badge.className = 'mode-badge single';
-      const which = hasNav ? 'NAV' : 'GPS';
-      badgeText.textContent = `Single-sensor mode — ${which} only, no reconciliation`;
-      if (agreementRow) agreementRow.style.display = 'none';
-    }
-  } else {
-    badge.style.display = 'none';
-  }
+  document.getElementById('runBtn').disabled = !(files.nav && files.gps);
 }
 
 function showError(msg) {
@@ -742,38 +689,8 @@ function reconcile(navDays, gpsDays, threshold) {
   return merged;
 }
 
-// ── Single-sensor passthrough (no reconciliation) ─────────────────────────────
-function singleSensorReconcile(days, sensor) {
-  const allDays = Object.keys(days).sort();
-  const merged = [];
-  let cumKm=0, cumPower=0, cumDrift=0;
-  const decision = sensor === 'nav' ? 'nav_only' : 'gps_only';
-
-  for (const day of allDays) {
-    const d = days[day];
-    cumKm    += d.totalKm;
-    cumPower += d.powerKm;
-    cumDrift += d.driftKm;
-    merged.push({
-      day,
-      navKm:    sensor==='nav' ? d.totalKm : null,
-      gpsKm:    sensor==='gps' ? d.totalKm : null,
-      accepted: d.totalKm,
-      acceptedPower: d.powerKm,
-      acceptedDrift: d.driftKm,
-      decision,
-      reason: `Single-sensor analysis — ${sensor.toUpperCase()} only, spike filter applied`,
-      navSpikes: sensor==='nav' ? d.spikes : 0,
-      gpsSpikes: sensor==='gps' ? d.spikes : 0,
-      cumKm, cumPower, cumDrift,
-      divPct: null,
-      powerPct: d.totalKm>0 ? d.powerKm/d.totalKm*100 : 0,
-      driftPct: d.totalKm>0 ? d.driftKm/d.totalKm*100 : 0,
-    });
-  }
-  return merged;
-}
-function generateMarkdown(navName, gpsName, navPts, gpsPts, merged, anchor, maxSpeed, agreementPct, isSingle) {
+// ── Markdown report ───────────────────────────────────────────────────────────
+function generateMarkdown(navName, gpsName, navPts, gpsPts, merged, anchor, maxSpeed, agreementPct) {
   const now = new Date().toISOString().replace('T',' ').slice(0,19);
   const anchorStr = `${String(anchor.h).padStart(2,'0')}:${String(anchor.m).padStart(2,'0')}:${String(anchor.s).padStart(2,'0')}`;
   const last = merged[merged.length-1];
@@ -792,82 +709,66 @@ function generateMarkdown(navName, gpsName, navPts, gpsPts, merged, anchor, maxS
   const nm = v => v/KM_PER_NM;
 
   const DECISION_LABEL = { averaged:'Averaged', nav_lower:'NAV chosen', gps_lower:'GPS chosen', nav_only:'ℹ NAV only', gps_only:'ℹ GPS only' };
-  const reportTitle = isSingle ? '# USV Single-Sensor Route Analysis Report' : '# USV Dual-Sensor Route Analysis Report';
 
-  let lines = [reportTitle,'', `*Generated: ${now}*  `];
-  if (isSingle) {
-    lines.push(`*Sensor source: \`${navName||gpsName}\`*`);
-  } else {
-    lines.push(`*NAV source: \`${navName}\`*  `);
-    lines.push(`*GPS source: \`${gpsName}\`*`);
-  }
-  lines = lines.concat(['','---','','## Analysis Configuration','',
+  let lines = [
+    '# USV Dual-Sensor Route Analysis Report','',
+    `*Generated: ${now}*  `,
+    `*NAV source: \`${navName}\`*  `,
+    `*GPS source: \`${gpsName}\`*`,'',
+    '---','',
+    '## Analysis Configuration','',
     '| Setting | Value |','|---------|-------|',
     `| 24h Cycle Anchor | \`${anchorStr}\` |`,
     `| Speed Spike Threshold | \`${maxSpeed} knots\` |`,
-    `| Mode | ${isSingle ? `Single sensor (${navName?'NAV':'GPS'})` : 'Dual sensor (NAV + GPS)'} |`,
-  ]);
-  if (!isSingle) lines.push(`| Sensor Agreement Threshold | \`±${agreementPct}%\` |`);
-  if (navName) lines.push(`| NAV data points | ${navPts} |`);
-  if (gpsName) lines.push(`| GPS data points | ${gpsPts} |`);
-
-  lines = lines.concat(['','---','','## Spike Filter Summary','',
+    `| Sensor Agreement Threshold | \`±${agreementPct}%\` |`,
+    `| NAV data points | ${navPts} |`,
+    `| GPS data points | ${gpsPts} |`,'',
+    '---','',
+    '## Spike Filter Summary','',
     'Segments where implied speed exceeded the threshold were excluded from distance totals.','',
     '| Sensor | Segments Filtered |','|--------|-------------------|',
-  ]);
-  if (!isSingle || navName) lines.push(`| NAV | ${totalNavSpikes} |`);
-  if (!isSingle || gpsName) lines.push(`| GPS | ${totalGpsSpikes} |`);
-
-  const summaryTitle = isSingle ? '## Distance Summary' : '## Merged Distance Summary';
-  lines = lines.concat(['','---','', summaryTitle,'',
+    `| NAV | ${totalNavSpikes} |`,
+    `| GPS | ${totalGpsSpikes} |`,'',
+    '---','',
+    '## Merged Distance Summary','',
     '| Metric | km | nm | % of Total |','|--------|----|----|------------|',
-    `| **Accepted Total** | ${totalKm.toFixed(3)} | ${nm(totalKm).toFixed(3)} | 100% |`,
+    `| **Accepted Total (merged)** | ${totalKm.toFixed(3)} | ${nm(totalKm).toFixed(3)} | 100% |`,
     `| **Under Power** | ${totalPowerKm.toFixed(3)} | ${nm(totalPowerKm).toFixed(3)} | ${powerPct.toFixed(1)}% |`,
     `| **Drift** | ${totalDriftKm.toFixed(3)} | ${nm(totalDriftKm).toFixed(3)} | ${driftPct.toFixed(1)}% |`,
-  ]);
-  if (!isSingle) {
-    lines.push(`| NAV cleaned total | ${totalNavKm.toFixed(3)} | ${nm(totalNavKm).toFixed(3)} | — |`);
-    lines.push(`| GPS cleaned total | ${totalGpsKm.toFixed(3)} | ${nm(totalGpsKm).toFixed(3)} | — |`);
-    lines = lines.concat(['','| Days Processed | Days Averaged | Days Diverged (lower chosen) |',
-      '|----------------|---------------|------------------------------|',
-      `| ${merged.length} | ${daysAvg} | ${daysDiv} |`,
-    ]);
-  } else {
-    lines.push(`\n**Days processed:** ${merged.length}`);
-  }
-  lines = lines.concat(['',
-    `**Average daily distance:** ${avgDailyKm.toFixed(3)} km (${nm(avgDailyKm).toFixed(3)} nm)`,
+    `| NAV cleaned total | ${totalNavKm.toFixed(3)} | ${nm(totalNavKm).toFixed(3)} | — |`,
+    `| GPS cleaned total | ${totalGpsKm.toFixed(3)} | ${nm(totalGpsKm).toFixed(3)} | — |`,'',
+    '| Days Processed | Days Averaged | Days Diverged (lower chosen) |',
+    '|----------------|---------------|------------------------------|',
+    `| ${merged.length} | ${daysAvg} | ${daysDiv} |`,'',
+    `**Average daily distance (accepted):** ${avgDailyKm.toFixed(3)} km (${nm(avgDailyKm).toFixed(3)} nm)`,
     `**Motor power threshold:** >${POWER_THRESHOLD_W} W — readings at or below this are classified as drift`,'',
-    '---','','## Daily Breakdown','',
+    '---','',
+    '## Daily Reconciliation Breakdown','',
     `Each log day runs from \`${anchorStr}\` to \`${anchorStr}\` (next day).`,'',
-  ]);
-  if (isSingle) {
-    lines.push('| Log Day | Total (km) | Power (km) | Drift (km) | Power% | Cumulative (km) |');
-    lines.push('|---------|------------|------------|------------|--------|-----------------|');
-    for (const d of merged) {
-      lines.push(`| ${d.day} | ${d.accepted.toFixed(3)} | ${d.acceptedPower.toFixed(3)} | ${d.acceptedDrift.toFixed(3)} | ${d.powerPct.toFixed(1)}% | ${d.cumKm.toFixed(3)} |`);
-    }
-  } else {
-    lines.push('| Log Day | NAV (km) | GPS (km) | Divergence | Decision | Total (km) | Power (km) | Drift (km) | Power% | Cumulative (km) |');
-    lines.push('|---------|----------|----------|------------|----------|------------|------------|------------|--------|-----------------|');
-    for (const d of merged) {
-      const navStr = d.navKm!==null ? d.navKm.toFixed(3) : '—';
-      const gpsStr = d.gpsKm!==null ? d.gpsKm.toFixed(3) : '—';
-      const divStr = d.divPct!==null ? d.divPct.toFixed(1)+'%' : '—';
-      lines.push(`| ${d.day} | ${navStr} | ${gpsStr} | ${divStr} | ${DECISION_LABEL[d.decision]} | ${d.accepted.toFixed(3)} | ${d.acceptedPower.toFixed(3)} | ${d.acceptedDrift.toFixed(3)} | ${d.powerPct.toFixed(1)}% | ${d.cumKm.toFixed(3)} |`);
-    }
-  }
-  lines = lines.concat(['','### Notes','']);
+    '| Log Day | NAV (km) | GPS (km) | Divergence | Decision | Total (km) | Power (km) | Drift (km) | Power% | Cumulative (km) |',
+    '|---------|----------|----------|------------|----------|------------|------------|------------|--------|-----------------|',
+  ];
+
   for (const d of merged) {
-    const spike = (d.navSpikes||d.gpsSpikes) ? ` *(NAV: ${d.navSpikes} spike(s) filtered, GPS: ${d.gpsSpikes} spike(s) filtered)*` : '';
+    const navStr = d.navKm!==null ? d.navKm.toFixed(3) : '—';
+    const gpsStr = d.gpsKm!==null ? d.gpsKm.toFixed(3) : '—';
+    const divStr = d.divPct!==null ? d.divPct.toFixed(1)+'%' : '—';
+    lines.push(`| ${d.day} | ${navStr} | ${gpsStr} | ${divStr} | ${DECISION_LABEL[d.decision]} | ${d.accepted.toFixed(3)} | ${d.acceptedPower.toFixed(3)} | ${d.acceptedDrift.toFixed(3)} | ${d.powerPct.toFixed(1)}% | ${d.cumKm.toFixed(3)} |`);
+  }
+
+  lines = lines.concat(['','### Decision Notes','']);
+  for (const d of merged) {
+    let spike = '';
+    if (d.navSpikes || d.gpsSpikes) spike = ` *(NAV: ${d.navSpikes} spike(s) filtered, GPS: ${d.gpsSpikes} spike(s) filtered)*`;
     lines.push(`- **${d.day}:** ${d.reason}${spike}`);
   }
+
   lines = lines.concat(['','---','','*End of Report*']);
   return lines.join('\n');
 }
 
 // ── Render results ─────────────────────────────────────────────────────────────
-function renderResults(merged, navName, gpsName, navPts, gpsPts, maxSpeed, agreementPct, anchor, isSingle) {
+function renderResults(merged, navName, gpsName, navPts, gpsPts, maxSpeed, agreementPct, anchor) {
   const last = merged[merged.length-1] || {};
   const totalKm = last.cumKm || 0;
   const totalPowerKm = last.cumPower || 0;
@@ -877,29 +778,15 @@ function renderResults(merged, navName, gpsName, navPts, gpsPts, maxSpeed, agree
   const driftPct = totalKm>0 ? totalDriftKm/totalKm*100 : 0;
   const totalNavSpikes = merged.reduce((s,d)=>s+d.navSpikes,0);
   const totalGpsSpikes = merged.reduce((s,d)=>s+d.gpsSpikes,0);
-  const totalSpikes = totalNavSpikes + totalGpsSpikes;
-  const sensorLabel = isSingle ? (navName ? 'NAV' : 'GPS') : '';
-
-  // Results header title
-  document.querySelector('.results-title').textContent = isSingle
-    ? `// Single-Sensor Report (${sensorLabel})`
-    : '// Analysis Report';
-
-  // Section title
-  document.querySelector('#summaryTable').closest('.section').querySelector('.section-title').textContent =
-    isSingle ? 'Distance Summary' : 'Merged Distance Summary';
-  document.querySelector('#dailyTable').closest('.section').querySelector('.section-title').textContent =
-    isSingle ? 'Daily Breakdown' : 'Daily Reconciliation Breakdown';
 
   // Stat cards
-  const spikeUnit = isSingle ? `${sensorLabel} ${totalSpikes}` : `nav ${totalNavSpikes} · gps ${totalGpsSpikes}`;
   document.getElementById('statGrid').innerHTML = [
     { label:'Total Distance', val: totalKm.toFixed(2), unit:'km', cls:'amber' },
     { label:'Total Distance', val: nm(totalKm).toFixed(2), unit:'nautical miles', cls:'cyan' },
     { label:'Under Power', val: totalPowerKm.toFixed(2), unit:`km · ${powerPct.toFixed(1)}%`, cls:'green' },
     { label:'Drift', val: totalDriftKm.toFixed(2), unit:`km · ${driftPct.toFixed(1)}%`, cls:'' },
     { label:'Days Processed', val: merged.length, unit:'log days', cls:'' },
-    { label:'Spikes Filtered', val: totalSpikes, unit: spikeUnit, cls:'warn' },
+    { label:'Spikes Filtered', val: totalNavSpikes+totalGpsSpikes, unit:`nav ${totalNavSpikes} · gps ${totalGpsSpikes}`, cls:'warn' },
   ].map(c=>`
     <div class="stat-card">
       <div class="stat-label">${c.label}</div>
@@ -908,12 +795,10 @@ function renderResults(merged, navName, gpsName, navPts, gpsPts, maxSpeed, agree
     </div>`).join('');
 
   // Summary table
-  const summaryExtra = isSingle ? '' : `
-    <tr><td style="color:var(--text-dim)">NAV cleaned total</td><td class="num" style="color:var(--text-dim)">${merged.reduce((s,d)=>s+(d.navKm||0),0).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">${nm(merged.reduce((s,d)=>s+(d.navKm||0),0)).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">—</td></tr>
-    <tr><td style="color:var(--text-dim)">GPS cleaned total</td><td class="num" style="color:var(--text-dim)">${merged.reduce((s,d)=>s+(d.gpsKm||0),0).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">${nm(merged.reduce((s,d)=>s+(d.gpsKm||0),0)).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">—</td></tr>`;
-
   document.getElementById('summaryTable').innerHTML = `
-    <thead><tr><th>Metric</th><th>km</th><th>nm</th><th>% of Total</th></tr></thead>
+    <thead><tr>
+      <th>Metric</th><th>km</th><th>nm</th><th>% of Total</th>
+    </tr></thead>
     <tbody>
       <tr><td><strong style="color:var(--text-bright)">Accepted Total</strong></td><td class="num">${totalKm.toFixed(3)}</td><td class="num">${nm(totalKm).toFixed(3)}</td><td class="num">100%</td></tr>
       <tr><td>Under Power</td><td class="num cyan">${totalPowerKm.toFixed(3)}</td><td class="num cyan">${nm(totalPowerKm).toFixed(3)}</td><td class="num">${powerPct.toFixed(1)}%
@@ -922,47 +807,40 @@ function renderResults(merged, navName, gpsName, navPts, gpsPts, maxSpeed, agree
       <tr><td>Drift</td><td class="num warn">${totalDriftKm.toFixed(3)}</td><td class="num warn">${nm(totalDriftKm).toFixed(3)}</td><td class="num">${driftPct.toFixed(1)}%
         <div class="bar-wrap"><div class="bar-fill bar-drift" style="width:${driftPct}%"></div></div>
       </td></tr>
-      ${summaryExtra}
+      <tr><td style="color:var(--text-dim)">NAV cleaned total</td><td class="num" style="color:var(--text-dim)">${merged.reduce((s,d)=>s+(d.navKm||0),0).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">${nm(merged.reduce((s,d)=>s+(d.navKm||0),0)).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">—</td></tr>
+      <tr><td style="color:var(--text-dim)">GPS cleaned total</td><td class="num" style="color:var(--text-dim)">${merged.reduce((s,d)=>s+(d.gpsKm||0),0).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">${nm(merged.reduce((s,d)=>s+(d.gpsKm||0),0)).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">—</td></tr>
     </tbody>`;
 
-  // Daily table — single mode has fewer columns
-  let rows, thead;
-  if (isSingle) {
-    thead = `<thead><tr><th>Log Day</th><th>Total km</th><th>Power km</th><th>Drift km</th><th>Power%</th><th>Cumulative km</th></tr></thead>`;
-    rows = merged.map(d => `<tr>
+  // Daily table
+  const BADGE = {
+    averaged: '<span class="badge badge-avg">Averaged</span>',
+    nav_lower: '<span class="badge badge-nav">NAV chosen</span>',
+    gps_lower: '<span class="badge badge-gps">GPS chosen</span>',
+    nav_only: '<span class="badge badge-only">NAV only</span>',
+    gps_only: '<span class="badge badge-only">GPS only</span>',
+  };
+  let rows = merged.map(d => {
+    const divClass = d.divPct===null ? '' : d.divPct>12 ? 'bad' : 'good';
+    return `<tr>
       <td style="color:var(--text-bright);font-family:var(--mono)">${d.day}</td>
+      <td class="num">${d.navKm!==null?d.navKm.toFixed(3):'—'}</td>
+      <td class="num">${d.gpsKm!==null?d.gpsKm.toFixed(3):'—'}</td>
+      <td class="num ${divClass}">${d.divPct!==null?d.divPct.toFixed(1)+'%':'—'}</td>
+      <td>${BADGE[d.decision]||d.decision}</td>
       <td class="num amber">${d.accepted.toFixed(3)}</td>
       <td class="num cyan">${d.acceptedPower.toFixed(3)}</td>
       <td class="num warn">${d.acceptedDrift.toFixed(3)}</td>
       <td class="num">${d.powerPct.toFixed(1)}%</td>
       <td class="num" style="color:var(--text-dim)">${d.cumKm.toFixed(3)}</td>
-    </tr>`).join('');
-  } else {
-    const BADGE = {
-      averaged: '<span class="badge badge-avg">Averaged</span>',
-      nav_lower: '<span class="badge badge-nav">NAV chosen</span>',
-      gps_lower: '<span class="badge badge-gps">GPS chosen</span>',
-      nav_only: '<span class="badge badge-only">NAV only</span>',
-      gps_only: '<span class="badge badge-only">GPS only</span>',
-    };
-    thead = `<thead><tr><th>Log Day</th><th>NAV km</th><th>GPS km</th><th>Divergence</th><th>Decision</th><th>Total km</th><th>Power km</th><th>Drift km</th><th>Power%</th><th>Cumulative km</th></tr></thead>`;
-    rows = merged.map(d => {
-      const divClass = d.divPct===null ? '' : d.divPct>12 ? 'bad' : 'good';
-      return `<tr>
-        <td style="color:var(--text-bright);font-family:var(--mono)">${d.day}</td>
-        <td class="num">${d.navKm!==null?d.navKm.toFixed(3):'—'}</td>
-        <td class="num">${d.gpsKm!==null?d.gpsKm.toFixed(3):'—'}</td>
-        <td class="num ${divClass}">${d.divPct!==null?d.divPct.toFixed(1)+'%':'—'}</td>
-        <td>${BADGE[d.decision]||d.decision}</td>
-        <td class="num amber">${d.accepted.toFixed(3)}</td>
-        <td class="num cyan">${d.acceptedPower.toFixed(3)}</td>
-        <td class="num warn">${d.acceptedDrift.toFixed(3)}</td>
-        <td class="num">${d.powerPct.toFixed(1)}%</td>
-        <td class="num" style="color:var(--text-dim)">${d.cumKm.toFixed(3)}</td>
-      </tr>`;
-    }).join('');
-  }
-  document.getElementById('dailyTable').innerHTML = thead + `<tbody>${rows}</tbody>`;
+    </tr>`;
+  }).join('');
+
+  document.getElementById('dailyTable').innerHTML = `
+    <thead><tr>
+      <th>Log Day</th><th>NAV km</th><th>GPS km</th><th>Divergence</th>
+      <th>Decision</th><th>Total km</th><th>Power km</th><th>Drift km</th>
+      <th>Power%</th><th>Cumulative km</th>
+    </tr></thead><tbody>${rows}</tbody>`;
 
   // Notes
   document.getElementById('notesList').innerHTML = merged.map(d => {
@@ -972,14 +850,15 @@ function renderResults(merged, navName, gpsName, navPts, gpsPts, maxSpeed, agree
   }).join('');
 
   // Spike table
-  let spikeRows = '';
-  if (!isSingle || navName) spikeRows += `<tr><td>NAV</td><td class="num ${totalNavSpikes>0?'warn':''}">${totalNavSpikes}</td></tr>`;
-  if (!isSingle || gpsName) spikeRows += `<tr><td>GPS</td><td class="num ${totalGpsSpikes>0?'warn':''}">${totalGpsSpikes}</td></tr>`;
   document.getElementById('spikeTable').innerHTML = `
     <thead><tr><th>Sensor</th><th>Segments Filtered</th></tr></thead>
-    <tbody>${spikeRows}</tbody>`;
+    <tbody>
+      <tr><td>NAV</td><td class="num ${totalNavSpikes>0?'warn':''}">${totalNavSpikes}</td></tr>
+      <tr><td>GPS</td><td class="num ${totalGpsSpikes>0?'warn':''}">${totalGpsSpikes}</td></tr>
+    </tbody>`;
 
-  lastReport = generateMarkdown(navName, gpsName, navPts, gpsPts, merged, anchor, maxSpeed, agreementPct, isSingle);
+  // Generate markdown for download
+  lastReport = generateMarkdown(navName, gpsName, navPts, gpsPts, merged, anchor, maxSpeed, agreementPct);
 
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
@@ -1022,39 +901,25 @@ async function runAnalysis() {
       r.readAsText(f);
     });
 
-    const dualMode = !!(files.nav && files.gps);
-    const isSingle = !dualMode;
+    const [navText, gpsText] = await Promise.all([readFile(files.nav), readFile(files.gps)]);
 
-    let merged, navName, gpsName, navPtsCount, gpsPtsCount;
+    const navPts = parseCSV(navText);
+    const gpsPts = parseCSV(gpsText);
 
-    if (dualMode) {
-      const [navText, gpsText] = await Promise.all([readFile(files.nav), readFile(files.gps)]);
-      const navPts = parseCSV(navText);
-      const gpsPts = parseCSV(gpsText);
-      if (navPts.length < 2) throw new Error(`NAV file "${files.nav.name}" has fewer than 2 valid points.`);
-      if (gpsPts.length < 2) throw new Error(`GPS file "${files.gps.name}" has fewer than 2 valid points.`);
-      const navDays = computeDailyStats(navPts, anchorSec, maxSpeed);
-      const gpsDays = computeDailyStats(gpsPts, anchorSec, maxSpeed);
-      merged = reconcile(navDays, gpsDays, threshold);
-      navName = files.nav.name; gpsName = files.gps.name;
-      navPtsCount = navPts.length; gpsPtsCount = gpsPts.length;
-    } else {
-      const sensor = files.nav ? 'nav' : 'gps';
-      const file = files.nav || files.gps;
-      const text = await readFile(file);
-      const pts = parseCSV(text);
-      if (pts.length < 2) throw new Error(`File "${file.name}" has fewer than 2 valid points.`);
-      const days = computeDailyStats(pts, anchorSec, maxSpeed);
-      merged = singleSensorReconcile(days, sensor);
-      navName = sensor === 'nav' ? file.name : null;
-      gpsName = sensor === 'gps' ? file.name : null;
-      navPtsCount = sensor === 'nav' ? pts.length : 0;
-      gpsPtsCount = sensor === 'gps' ? pts.length : 0;
-    }
+    if (navPts.length < 2 && gpsPts.length < 2)
+      throw new Error('Both files have fewer than 2 valid data points. Check your CSV format.');
+    if (navPts.length < 2)
+      throw new Error(`NAV file "${files.nav.name}" has fewer than 2 valid points.`);
+    if (gpsPts.length < 2)
+      throw new Error(`GPS file "${files.gps.name}" has fewer than 2 valid points.`);
 
-    if (!merged.length) throw new Error('No days could be processed from the data.');
+    const navDays = computeDailyStats(navPts, anchorSec, maxSpeed);
+    const gpsDays = computeDailyStats(gpsPts, anchorSec, maxSpeed);
+    const merged  = reconcile(navDays, gpsDays, threshold);
 
-    renderResults(merged, navName, gpsName, navPtsCount, gpsPtsCount, maxSpeed, agreementPct, anchor, isSingle);
+    if (!merged.length) throw new Error('No days could be reconciled from the data.');
+
+    renderResults(merged, files.nav.name, files.gps.name, navPts.length, gpsPts.length, maxSpeed, agreementPct, anchor);
 
   } catch(e) {
     showError('Error: ' + e.message);
