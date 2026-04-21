@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USV Battery Forecast</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080c12; --surf:#0e1520; --surf2:#141e2e;
+  --bord:#1e2d42; --bord2:#2a3f5a;
+  --amber:#f0a500; --amber-dim:#7a5200;
+  --cyan:#00c8d4; --green:#00c97a;
+  --red:#e8453c; --orange:#f07030;
+  --text:#c8d8e8; --text-dim:#5a7a9a; --text-bright:#eaf4ff;
+  --mono:'Space Mono',monospace; --sans:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,200,212,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,212,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+
+header{margin-bottom:40px}
+.tag{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+h1{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--text-bright);letter-spacing:-.02em}
+h1 span{color:var(--amber)}
+.sub{margin-top:6px;font-size:13px;color:var(--text-dim);font-weight:300}
+
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr}}
+
+.field{background:var(--surf);border:1px solid var(--bord2);border-radius:8px;padding:16px}
+.field-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+
+.batt-row{display:flex;align-items:center;gap:12px}
+.batt-input{background:transparent;border:none;color:var(--amber);font-family:var(--mono);font-size:32px;font-weight:700;width:100px;outline:none}
+.batt-unit{font-family:var(--mono);font-size:14px;color:var(--text-dim)}
+.batt-slider{width:100%;margin-top:8px;accent-color:var(--amber)}
+.batt-bar-wrap{background:var(--surf2);border-radius:3px;height:8px;margin-top:10px;overflow:hidden}
+.batt-bar{height:100%;border-radius:3px;transition:width .2s,background .2s}
+
+.capacity-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.cap-input{background:var(--surf2);border:1px solid var(--bord2);color:var(--amber);font-family:var(--mono);font-size:14px;padding:6px 10px;border-radius:4px;width:80px;outline:none}
+.cap-input:focus{border-color:var(--amber)}
+
+textarea{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6;resize:vertical;min-height:130px;outline:none}
+textarea::placeholder{color:var(--text-dim)}
+
+.run-btn{display:inline-flex;align-items:center;gap:10px;background:var(--amber);color:#000;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;padding:14px 32px;border-radius:4px;cursor:pointer;transition:all .15s;margin-bottom:36px}
+.run-btn:hover{background:#ffc040;transform:translateY(-1px)}
+.run-btn:disabled{background:var(--amber-dim);color:#333;cursor:not-allowed;transform:none}
+
+.error-box{background:rgba(232,69,60,.1);border:1px solid var(--red);border-radius:6px;padding:12px 16px;font-family:var(--mono);font-size:12px;color:var(--red);margin-bottom:20px;display:none}
+
+#results{display:none}
+
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px}
+.scard{background:var(--surf);border:1px solid var(--bord);border-radius:6px;padding:14px}
+.scard-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.scard-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text-bright)}
+.scard-val.amber{color:var(--amber)}
+.scard-val.cyan{color:var(--cyan)}
+.scard-val.green{color:var(--green)}
+.scard-val.red{color:var(--red)}
+.scard-unit{font-size:11px;color:var(--text-dim);margin-top:3px}
+
+.chart-wrap{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:20px;margin-bottom:28px;position:relative}
+.chart-title{font-family:var(--mono);font-size:10px;color:var(--amber);text-transform:uppercase;letter-spacing:.15em;margin-bottom:16px}
+#battChart{width:100%;height:260px}
+
+.section-title{font-family:var(--mono);font-size:10px;color:var(--amber);text-transform:uppercase;letter-spacing:.15em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bord)}
+
+.period-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.period-card{background:var(--surf);border:1px solid var(--bord);border-radius:6px;padding:14px 16px;display:grid;grid-template-columns:120px 1fr auto;align-items:center;gap:12px}
+.period-card.warn{border-color:var(--orange)}
+.period-card.crit{border-color:var(--red);background:rgba(232,69,60,.05)}
+.period-label{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+.period-body{}
+.period-wind{font-size:13px;color:var(--text);margin-bottom:4px}
+.period-wind strong{color:var(--text-bright)}
+.period-consume{font-size:12px;color:var(--text-dim)}
+.period-batt{text-align:right}
+.period-pct{font-family:var(--mono);font-size:18px;font-weight:700}
+.period-pct.ok{color:var(--green)}
+.period-pct.warn{color:var(--orange)}
+.period-pct.crit{color:var(--red)}
+.period-kwh{font-size:11px;color:var(--text-dim);margin-top:2px}
+
+.band-legend{display:flex;gap:20px;margin-bottom:8px;flex-wrap:wrap}
+.band-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim)}
+.band-dot{width:10px;height:10px;border-radius:2px}
+
+.alert-box{border-radius:6px;padding:12px 16px;font-size:13px;margin-bottom:20px;display:none}
+.alert-box.warn{background:rgba(240,112,48,.1);border:1px solid var(--orange);color:var(--orange)}
+.alert-box.crit{background:rgba(232,69,60,.1);border:1px solid var(--red);color:var(--red)}
+.alert-box strong{font-family:var(--mono);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="tag">// USV Operations</div>
+  <h1>Battery <span>Forecast</span></h1>
+  <p class="sub">Paste NOAA forecast text · enter current battery · get depletion prediction</p>
+</header>
+
+<div class="input-grid">
+  <div class="field">
+    <div class="field-label">Current Battery</div>
+    <div class="batt-row">
+      <input class="batt-input" type="number" id="battPct" min="0" max="100" step="1" value="100">
+      <span class="batt-unit">%</span>
+    </div>
+    <input class="batt-slider" type="range" id="battSlider" min="0" max="100" step="1" value="100">
+    <div class="batt-bar-wrap"><div class="batt-bar" id="battBar"></div></div>
+    <div class="capacity-row">
+      <span style="font-size:12px;color:var(--text-dim)">Capacity</span>
+      <input class="cap-input" type="number" id="capacity" value="17.56" step="0.1" min="1">
+      <span style="font-size:12px;color:var(--text-dim)">kWh</span>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="field-label">NOAA Forecast Text</div>
+    <textarea id="forecastText" placeholder="TODAY S to SW winds 10 to 20 kt...&#10;&#10;Paste the full NOAA forecast here"></textarea>
+  </div>
+</div>
+
+<div class="error-box" id="errorBox"></div>
+
+<button class="run-btn" id="runBtn" onclick="runForecast()">▶ &nbsp;RUN FORECAST</button>
+
+<div id="results">
+  <div class="alert-box" id="alertBox"></div>
+
+  <div class="summary-grid" id="summaryGrid"></div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">// Battery level over forecast period</div>
+    <div class="band-legend">
+      <div class="band-item"><div class="band-dot" style="background:#00c97a"></div>Mean prediction</div>
+      <div class="band-item"><div class="band-dot" style="background:rgba(0,201,122,.2)"></div>Optimistic–Pessimistic range</div>
+      <div class="band-item"><div class="band-dot" style="background:rgba(232,69,60,.3)"></div>Critical zone (&lt;20%)</div>
+    </div>
+    <canvas id="battChart"></canvas>
+  </div>
+
+  <div class="section-title">Period breakdown</div>
+  <div class="period-list" id="periodList"></div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── Model coefficients (quadratic fit to bin means across 1627 data points) ──
+const C_MEAN = [0.428709,  6.208462, 57.431401];
+const C_OPT  = [0.648558, -4.631703,  2.770288];  // 25th percentile
+const C_PESS = [0.949038, -2.062967, 109.582500];  // 75th percentile
+
+function polyval(c, x) {
+  return Math.max(0, c[0]*x*x + c[1]*x + c[2]);
+}
+
+// ── Battery bar ──
+function battColor(pct) {
+  if (pct > 50) return 'var(--green)';
+  if (pct > 20) return 'var(--amber)';
+  return 'var(--red)';
+}
+function updateBattBar() {
+  const pct = parseFloat(document.getElementById('battPct').value) || 0;
+  document.getElementById('battBar').style.width = pct + '%';
+  document.getElementById('battBar').style.background = battColor(pct);
+  document.getElementById('battSlider').value = pct;
+}
+document.getElementById('battPct').oninput = updateBattBar;
+document.getElementById('battSlider').oninput = e => {
+  document.getElementById('battPct').value = e.target.value;
+  updateBattBar();
+};
+updateBattBar();
+
+// ── NOAA parser ──
+function parseNOAA(text) {
+  const periodRx = /((?:TODAY|TONIGHT|MON(?:DAY)?|TUE(?:SDAY)?|WED(?:NESDAY)?|THU(?:RSDAY)?|FRI(?:DAY)?|SAT(?:URDAY)?|SUN(?:DAY)?)(?:\s+NIGHT)?(?:\s+(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s+\d+)?)/gi;
+  const windRx = /winds?\s+(?:[\w\s]+?\s+)?(\d+)\s+to\s+(\d+)\s+k[tn]/i;
+  const lessThanRx = /winds?\s+(?:[\w\s]+?\s+)?less\s+than\s+(\d+)\s+k[tn]/i;
+
+  // Split by period labels
+  const parts = text.replace(/\n/g,' ').split(periodRx);
+  const results = [];
+
+  for (let i = 1; i < parts.length - 1; i += 2) {
+    const label = parts[i].trim().toUpperCase();
+    const desc  = (parts[i+1] || '').trim();
+
+    let windLo, windHi, windAvg;
+
+    // Handle "becoming X to Y" — use the first range as primary
+    const windMatch = windRx.exec(desc);
+    const ltMatch   = lessThanRx.exec(desc);
+
+    if (windMatch) {
+      windLo  = parseInt(windMatch[1]);
+      windHi  = parseInt(windMatch[2]);
+      windAvg = (windLo + windHi) / 2;
+    } else if (ltMatch) {
+      windHi  = parseInt(ltMatch[1]);
+      windLo  = 0;
+      windAvg = windHi / 2;
+    } else {
+      continue;
+    }
+
+    results.push({ label, windLo, windHi, windAvg, hours: 12, desc: desc.slice(0, 120) });
+  }
+  return results;
+}
+
+// ── Forecast run ──
+let chartInst = null;
+
+function runForecast() {
+  document.getElementById('errorBox').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+
+  const startPct  = parseFloat(document.getElementById('battPct').value);
+  const capacityKwh = parseFloat(document.getElementById('capacity').value) || 17.56;
+  const text = document.getElementById('forecastText').value.trim();
+
+  if (!text) { showError('Please paste a NOAA forecast.'); return; }
+  if (isNaN(startPct) || startPct < 0 || startPct > 100) { showError('Battery % must be 0–100.'); return; }
+
+  const periods = parseNOAA(text);
+  if (!periods.length) { showError('Could not parse any forecast periods. Check the format matches NOAA text (e.g. TODAY ... winds 10 to 20 kt).'); return; }
+
+  const startKwh = startPct / 100 * capacityKwh;
+  let batt_m = startKwh, batt_o = startKwh, batt_p = startKwh;
+
+  const chartLabels = ['Start'];
+  const chartMean   = [startPct];
+  const chartOpt    = [startPct];
+  const chartPess   = [startPct];
+
+  let critPeriod = null;
+  let warnPeriod = null;
+  let totalConsumed = 0;
+
+  const periodRows = [];
+
+  for (const p of periods) {
+    const wh_m = polyval(C_MEAN, p.windAvg);
+    const wh_o = polyval(C_OPT,  p.windAvg);
+    const wh_p = polyval(C_PESS, p.windAvg);
+
+    const kwh_m = wh_m * p.hours / 1000;
+    const kwh_o = wh_o * p.hours / 1000;
+    const kwh_p = wh_p * p.hours / 1000;
+
+    batt_m = Math.max(0, batt_m - kwh_m);
+    batt_o = Math.max(0, batt_o - kwh_o);
+    batt_p = Math.max(0, batt_p - kwh_p);
+
+    const pct_m = batt_m / capacityKwh * 100;
+    const pct_o = batt_o / capacityKwh * 100;
+    const pct_p = batt_p / capacityKwh * 100;
+
+    totalConsumed += kwh_m;
+    chartLabels.push(p.label.replace(' NIGHT', '\nNight').replace('TONIGHT', 'Tonight').replace('TODAY', 'Today'));
+    chartMean.push(Math.round(pct_m * 10) / 10);
+    chartOpt.push(Math.round(pct_o * 10) / 10);
+    chartPess.push(Math.round(pct_p * 10) / 10);
+
+    if (!critPeriod && pct_m <= 0) critPeriod = p.label;
+    if (!warnPeriod && pct_m <= 20) warnPeriod = p.label;
+
+    periodRows.push({ p, wh_m, kwh_m, kwh_o, kwh_p, pct_m, pct_o, pct_p, batt_m });
+  }
+
+  // ── Render summary ──
+  const remainingPct = chartMean[chartMean.length - 1];
+  const daysTotal = periods.length * 12 / 24;
+  document.getElementById('summaryGrid').innerHTML = [
+    { label:'Starting battery', val: startPct.toFixed(0)+'%', unit: (startKwh).toFixed(2)+' kWh', cls:'amber' },
+    { label:'Periods forecast', val: periods.length, unit: (daysTotal).toFixed(1)+' days total', cls:'' },
+    { label:'Total consumed (mean)', val: totalConsumed.toFixed(2), unit: 'kWh', cls:'cyan' },
+    { label:'Remaining (mean)', val: remainingPct.toFixed(0)+'%', unit: (remainingPct/100*capacityKwh).toFixed(2)+' kWh',
+      cls: remainingPct > 20 ? 'green' : remainingPct > 0 ? 'amber' : 'red' },
+  ].map(c => `<div class="scard">
+    <div class="scard-label">${c.label}</div>
+    <div class="scard-val ${c.cls}">${c.val}</div>
+    <div class="scard-unit">${c.unit}</div>
+  </div>`).join('');
+
+  // ── Alert ──
+  const alertBox = document.getElementById('alertBox');
+  if (critPeriod) {
+    alertBox.className = 'alert-box crit';
+    alertBox.innerHTML = `<strong>🔴 CRITICAL:</strong> Battery depleted during <strong>${critPeriod}</strong> under mean consumption. Pessimistic scenario may deplete earlier.`;
+    alertBox.style.display = 'block';
+  } else if (warnPeriod) {
+    alertBox.className = 'alert-box warn';
+    alertBox.innerHTML = `<strong>⚠ WARNING:</strong> Battery reaches &lt;20% during <strong>${warnPeriod}</strong> under mean consumption.`;
+    alertBox.style.display = 'block';
+  } else {
+    alertBox.style.display = 'none';
+  }
+
+  // ── Chart ──
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
+
+  const isDark = true;
+  const gridCol = 'rgba(255,255,255,0.06)';
+  const textCol = '#5a7a9a';
+
+  chartInst = new Chart(document.getElementById('battChart'), {
+    type: 'line',
+    data: {
+      labels: chartLabels,
+      datasets: [
+        {
+          label: 'Pessimistic',
+          data: chartPess,
+          borderColor: 'transparent',
+          backgroundColor: 'rgba(0,201,122,0.12)',
+          fill: '+1',
+          pointRadius: 0,
+          tension: 0.3,
+        },
+        {
+          label: 'Optimistic',
+          data: chartOpt,
+          borderColor: 'transparent',
+          backgroundColor: 'rgba(0,201,122,0.12)',
+          fill: false,
+          pointRadius: 0,
+          tension: 0.3,
+        },
+        {
+          label: 'Mean',
+          data: chartMean,
+          borderColor: '#00c97a',
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointBackgroundColor: chartMean.map(v => v <= 20 ? '#e8453c' : v <= 40 ? '#f0a500' : '#00c97a'),
+          pointBorderColor: '#080c12',
+          pointBorderWidth: 2,
+          tension: 0.3,
+          fill: false,
+        },
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0e1520',
+          borderColor: '#2a3f5a',
+          borderWidth: 1,
+          titleColor: '#00c8d4',
+          bodyColor: '#c8d8e8',
+          titleFont: { family: 'Space Mono', size: 11 },
+          bodyFont: { family: 'DM Sans', size: 12 },
+          callbacks: {
+            label: ctx => {
+              if (ctx.datasetIndex === 2) return ` Mean: ${ctx.parsed.y.toFixed(1)}%`;
+              if (ctx.datasetIndex === 1) return ` Optimistic: ${chartOpt[ctx.dataIndex]?.toFixed(1)}%`;
+              if (ctx.datasetIndex === 0) return ` Pessimistic: ${chartPess[ctx.dataIndex]?.toFixed(1)}%`;
+            }
+          }
+        },
+        annotation: undefined,
+      },
+      scales: {
+        x: {
+          grid: { color: gridCol },
+          ticks: { color: textCol, font: { family: 'Space Mono', size: 10 } }
+        },
+        y: {
+          min: 0, max: 100,
+          grid: { color: gridCol },
+          ticks: {
+            color: textCol,
+            font: { family: 'Space Mono', size: 10 },
+            callback: v => v + '%'
+          }
+        }
+      }
+    },
+    plugins: [{
+      id: 'critZone',
+      beforeDraw(chart) {
+        const { ctx, chartArea: { left, right, bottom }, scales: { y } } = chart;
+        const y20 = y.getPixelForValue(20);
+        ctx.save();
+        ctx.fillStyle = 'rgba(232,69,60,0.1)';
+        ctx.fillRect(left, y20, right - left, bottom - y20);
+        ctx.restore();
+      }
+    }]
+  });
+
+  // ── Period cards ──
+  const pClassFn = pct => pct <= 0 ? 'crit' : pct <= 20 ? 'warn' : '';
+  const pctClass = pct => pct <= 0 ? 'crit' : pct <= 20 ? 'warn' : 'ok';
+  document.getElementById('periodList').innerHTML = periodRows.map(r => `
+    <div class="period-card ${pClassFn(r.pct_m)}">
+      <div class="period-label">${r.p.label}</div>
+      <div class="period-body">
+        <div class="period-wind"><strong>${r.p.windLo}–${r.p.windHi} kt</strong> avg ${r.p.windAvg.toFixed(0)} kt &nbsp;·&nbsp; ${r.wh_m.toFixed(0)} Wh/hr</div>
+        <div class="period-consume">Consumed: ${r.kwh_m.toFixed(2)} kWh (mean) &nbsp;·&nbsp; ${r.kwh_o.toFixed(2)}–${r.kwh_p.toFixed(2)} kWh (range)</div>
+      </div>
+      <div class="period-batt">
+        <div class="period-pct ${pctClass(r.pct_m)}">${Math.max(0,r.pct_m).toFixed(0)}%</div>
+        <div class="period-kwh">${Math.max(0,r.batt_m).toFixed(2)} kWh left</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showError(msg) {
+  const b = document.getElementById('errorBox');
+  b.textContent = msg;
+  b.style.display = 'block';
+}
+</script>
+</body>
+</html>
