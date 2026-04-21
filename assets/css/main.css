@@ -36,6 +36,7 @@ ol, ul {
 	list-style: none;
 }
 
+
 blockquote, q {
 	quotes: none;
 }
@@ -2571,6 +2572,86 @@ input, select, textarea {
 				.wrapper.style3-alt .icon.major:before {
 					color: #953d75;
 				}
+
+/* Container */
+  .slideshow-container {
+    position: relative;
+    max-width: 666px;
+    height:60vh;
+    margin: auto;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: none; /* ← no shadow */
+  }
+
+  .image-overlay-container {
+  position: relative;
+  display: inline-block; /* ensures it sizes to the image */
+  }
+
+  .image-overlay-container img {
+  display: block;        /* avoids bottom whitespace */
+  width: auto;
+  height: 35vh;
+  border-radius: 12px;
+  margin: 0 auto;        /* works with display:block to keep it centered if needed */
+  }
+
+  .overlay-text {
+  position: absolute;
+  bottom: 5px;             /* keep it a little above the bottom */
+  left: 50%;                /* move to the horizontal center */
+  transform: translateX(-50%); /* shift back by half its width */
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;      /* keep text on one line */
+  }
+
+/* Slides */
+  .slide {
+    display: none;
+  }
+
+  .slide img {
+    width: auto;        
+    height: 35vh;
+    border-radius: 12px;
+  }
+
+/* Navigation buttons */
+  .prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 12px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    border-radius: 50%;
+    background-color: rgba(0,0,0,0.5);
+    user-select: none;
+    transition: background 0.3s;
+  }
+
+  .prev:hover, .next:hover {
+    background-color: rgba(0,0,0,0.8);
+  }
+
+/* Positioning */
+  .prev {
+    left: 10px;
+  }
+
+  .next {
+    right: 10px;
+  }
 
 /* Image */
 
