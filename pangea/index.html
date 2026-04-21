@@ -31,6 +31,10 @@
             <button id="playButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300">
                 Lets a go
             </button>
+
+            <button id="hahaButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-md transition duration-300">
+                <a href="youtube/html">Lets a go</a>
+            </button>
         </div>
     </main>
     <p class="mt-4 text-center">This video was produced by Pangea Productions Inc.</p>
@@ -40,9 +44,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('myVideo');
             const playButton = document.getElementById('playButton');
+            const hahaButton = document.getElementById('hahaButton');
             
             // Create a new Audio object for the click sound
             const clickSound = new Audio('letsgo.wav');
+            const hahaSound = new Audio('haha.wav');
+
+
+            hahaButton.addEventListener('click', () => {
+                // Play the sound on button click
+                hahaSound.play();
+            })
 
             playButton.addEventListener('click', () => {
                 // Play the sound on button click
