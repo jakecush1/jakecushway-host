@@ -43,6 +43,18 @@ h1 span{color:var(--amber)}
 .cap-input{background:var(--surf2);border:1px solid var(--bord2);color:var(--amber);font-family:var(--mono);font-size:14px;padding:6px 10px;border-radius:4px;width:80px;outline:none}
 .cap-input:focus{border-color:var(--amber)}
 
+.fetch-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.fetch-btn{display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--mono);font-size:11px;padding:7px 14px;border-radius:4px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.fetch-btn:hover{background:rgba(0,200,212,.08)}
+.fetch-btn:disabled{border-color:var(--bord2);color:var(--text-dim);cursor:not-allowed}
+.zone-select{background:var(--surf2);border:1px solid var(--bord2);color:var(--text);font-family:var(--mono);font-size:11px;padding:7px 10px;border-radius:4px;outline:none;cursor:pointer}
+.zone-select:focus{border-color:var(--cyan)}
+.fetch-status{font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+.fetch-status.ok{color:var(--green)}
+.fetch-status.err{color:var(--red)}
+.spin{display:inline-block;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 textarea{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.6;resize:vertical;min-height:130px;outline:none}
 textarea::placeholder{color:var(--text-dim)}
 
@@ -51,7 +63,6 @@ textarea::placeholder{color:var(--text-dim)}
 .run-btn:disabled{background:var(--amber-dim);color:#333;cursor:not-allowed;transform:none}
 
 .error-box{background:rgba(232,69,60,.1);border:1px solid var(--red);border-radius:6px;padding:12px 16px;font-family:var(--mono);font-size:12px;color:var(--red);margin-bottom:20px;display:none}
-.debug-box{background:rgba(0,200,212,.05);border:1px solid var(--bord2);border-radius:6px;padding:12px 16px;font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:20px;display:none;max-height:200px;overflow-y:auto;white-space:pre-wrap}
 
 #results{display:none}
 
@@ -67,7 +78,6 @@ textarea::placeholder{color:var(--text-dim)}
 
 .chart-wrap{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:20px;margin-bottom:28px;position:relative}
 .chart-title{font-family:var(--mono);font-size:10px;color:var(--amber);text-transform:uppercase;letter-spacing:.15em;margin-bottom:16px}
-/* FIX: explicit container for Chart.js — prevents resize loop */
 .chart-container{position:relative;width:100%;height:260px}
 
 .section-title{font-family:var(--mono);font-size:10px;color:var(--amber);text-transform:uppercase;letter-spacing:.15em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bord)}
@@ -96,6 +106,16 @@ textarea::placeholder{color:var(--text-dim)}
 .alert-box.warn{background:rgba(240,112,48,.1);border:1px solid var(--orange);color:var(--orange)}
 .alert-box.crit{background:rgba(232,69,60,.1);border:1px solid var(--red);color:var(--red)}
 .alert-box strong{font-family:var(--mono);font-weight:700}
+
+.solar-row{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.solar-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text-dim);user-select:none}
+.solar-toggle input[type=checkbox]{accent-color:var(--cyan);width:15px;height:15px;cursor:pointer}
+.solar-toggle.active{color:var(--cyan)}
+.solar-btns{display:flex;gap:6px;margin-left:4px}
+.solar-btn{font-family:var(--mono);font-size:11px;padding:4px 12px;border-radius:3px;border:1px solid var(--bord2);background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s}
+.solar-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.solar-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,200,212,.1)}
+.solar-btn:disabled{opacity:0.3;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -113,6 +133,7 @@ textarea::placeholder{color:var(--text-dim)}
     <div class="batt-row">
       <input class="batt-input" type="number" id="battPct" min="0" max="100" step="1" value="100">
       <span class="batt-unit">%</span>
+      <span style="font-family:var(--mono);font-size:16px;color:var(--cyan);margin-left:8px" id="battVoltDisplay"></span>
     </div>
     <input class="batt-slider" type="range" id="battSlider" min="0" max="100" step="1" value="100">
     <div class="batt-bar-wrap"><div class="batt-bar" id="battBar"></div></div>
@@ -121,16 +142,44 @@ textarea::placeholder{color:var(--text-dim)}
       <input class="cap-input" type="number" id="capacity" value="17.56" step="0.1" min="1">
       <span style="font-size:12px;color:var(--text-dim)">kWh</span>
     </div>
+    <div class="capacity-row">
+      <span style="font-size:12px;color:var(--text-dim)">Hotel load</span>
+      <span style="font-family:var(--mono);font-size:14px;color:var(--text-dim);padding:6px 10px">~41 Wh/hr</span>
+      <span style="font-size:11px;color:var(--text-dim)">(embedded in model)</span>
+    </div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:6px">Model trained on actual battery voltage drops — motor + hotel + solar all included</div>
+    <div class="solar-row">
+      <label class="solar-toggle" id="solarToggleLabel">
+        <input type="checkbox" id="solarEnabled" onchange="updateSolarUI()" checked>
+        Day/night solar adjustment
+      </label>
+      <div class="solar-btns" id="solarBtns">
+        <button class="solar-btn" id="btnDX13" onclick="selectSolar('DX13')">DX13</button>
+        <button class="solar-btn active" id="btnDX16" onclick="selectSolar('DX16')">DX16</button>
+      </div>
+    </div>
+    <div id="solarInfo" style="font-size:11px;color:var(--text-dim);margin-top:4px;display:none"></div>
   </div>
 
   <div class="field">
-    <a target="_blank" href="https://www.ndbc.noaa.gov/data/Forecasts/FZPN26.KWBC.html"><div class="field-label">NOAA Forecast Text</div></a>
-    <textarea id="forecastText" placeholder="Paste NOAA forecast here, e.g.:&#10;&#10;.TODAY...S TO SW WINDS 10 TO 20 KT.&#10;.TONIGHT...W WINDS 15 TO 25 KT.&#10;.MONDAY...NW WINDS 5 TO 10 KT."></textarea>
+    <div class="field-label">NOAA Forecast</div>
+    <div class="fetch-row">
+      <select class="zone-select" id="zoneSelect">
+        <option value="PZZ825">PZZ825 — Pt Arena to Pigeon Pt, 60–150nm</option>
+        <option value="PZZ820">PZZ820 — Pt St George to Pt Arena, 60–150nm</option>
+        <option value="PZZ810">PZZ810 — Pt St George to Pt Arena, 10–60nm</option>
+        <option value="PZZ830">PZZ830 — Pt Arena to Pigeon Pt, Coastal</option>
+        <option value="PZZ800">PZZ800 — Pt St George to Pt Arena, Coastal</option>
+      </select>
+      <button class="fetch-btn" id="fetchBtn" onclick="fetchForecast()">⬇ Auto-fetch</button>
+      <span class="fetch-status" id="fetchStatus"></span>
+    </div>
+    <textarea id="forecastText" placeholder="Forecast will appear here after auto-fetch, or paste manually:&#10;&#10;TODAY S to SW winds 10 to 20 kt..."></textarea>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:6px">Source: NWS Offshore Waters Forecast (FZPN26·KWBC) · updates 4× daily</div>
   </div>
 </div>
 
 <div class="error-box" id="errorBox"></div>
-<div class="debug-box" id="debugBox"></div>
 
 <button class="run-btn" id="runBtn" onclick="runForecast()">▶ &nbsp;RUN FORECAST</button>
 
@@ -146,7 +195,6 @@ textarea::placeholder{color:var(--text-dim)}
       <div class="band-item"><div class="band-dot" style="background:rgba(0,201,122,.2)"></div>Optimistic–Pessimistic range</div>
       <div class="band-item"><div class="band-dot" style="background:rgba(232,69,60,.3)"></div>Critical zone (&lt;20%)</div>
     </div>
-    <!-- FIX: proper container with position:relative and explicit height -->
     <div class="chart-container">
       <canvas id="battChart"></canvas>
     </div>
@@ -159,14 +207,24 @@ textarea::placeholder{color:var(--text-dim)}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── Model coefficients (quadratic fit to bin means) ──
-const C_MEAN = [0.428709,  6.208462, 57.431401];   // mean
-const C_OPT  = [0.648558, -4.631703,  2.770288];   // 25th pctl (low consumption)
-const C_PESS = [0.949038, -2.062967, 109.582500];   // 75th pctl (high consumption)
+// ── Model: net kWh consumed per 12h period (motor + hotel − solar, all embedded)
+// Built from 358 actual 24h battery voltage drops matched to avg wind speed.
+// Outlier-filtered (removes transit/recharge events). Linear fit on bin medians.
+// DX16 solar embedded as baseline. DX13 adds +0.113 kWh per 12h (less solar).
+const C_MEAN = [0.026998, 0.064774];   // median  — 12h net kWh = a·wind + b
+const C_OPT  = [0.014463, 0.009782];   // 25th pct (optimistic)
+const C_PESS = [0.047486, 0.033864];   // 75th pct (pessimistic)
+const DX13_PENALTY_KWH_12H = 0.113;    // extra depletion per 12h when using DX13
 
 function polyval(c, x) {
-  return Math.max(0, c[0]*x*x + c[1]*x + c[2]);
+  if (c.length === 4) return Math.max(0, c[0]*x*x*x + c[1]*x*x + c[2]*x + c[3]);
+  if (c.length === 3) return Math.max(0, c[0]*x*x + c[1]*x + c[2]);
+  return Math.max(0, c[0]*x + c[1]);
 }
+
+// ── Voltage lookup (pct → V, from original discharge data) ──
+const PCT_TO_V = [19.72,20.36,20.84,21.23,21.54,21.83,22.09,22.34,22.60,22.85,23.08,23.29,23.48,23.65,23.85,23.97,24.04,24.10,24.15,24.21,24.28,24.38,24.47,24.56,24.65,24.74,24.82,24.89,24.95,25.02,25.09,25.16,25.23,25.29,25.35,25.40,25.45,25.50,25.56,25.61,25.67,25.73,25.79,25.85,25.92,25.98,26.05,26.11,26.18,26.24,26.31,26.37,26.43,26.50,26.56,26.62,26.69,26.76,26.83,26.92,27.00,27.08,27.15,27.21,27.26,27.32,27.37,27.43,27.48,27.55,27.61,27.68,27.76,27.83,27.91,27.99,28.07,28.14,28.21,28.28,28.34,28.38,28.42,28.44,28.46,28.48,28.50,28.52,28.54,28.56,28.58,28.61,28.65,28.69,28.75,28.81,28.90,29.01,29.15,29.32,29.57];
+function pctToVoltage(pct) { return PCT_TO_V[Math.round(Math.min(100, Math.max(0, pct)))].toFixed(2); }
 
 // ── Battery bar ──
 function battColor(pct) {
@@ -176,9 +234,10 @@ function battColor(pct) {
 }
 function updateBattBar() {
   const pct = parseFloat(document.getElementById('battPct').value) || 0;
-  document.getElementById('battBar').style.width = Math.min(100, Math.max(0, pct)) + '%';
+  document.getElementById('battBar').style.width = pct + '%';
   document.getElementById('battBar').style.background = battColor(pct);
   document.getElementById('battSlider').value = pct;
+  document.getElementById('battVoltDisplay').textContent = pctToVoltage(pct) + ' V';
 }
 document.getElementById('battPct').oninput = updateBattBar;
 document.getElementById('battSlider').oninput = e => {
@@ -187,147 +246,216 @@ document.getElementById('battSlider').oninput = e => {
 };
 updateBattBar();
 
+// ── NOAA parser ──
+function parseNOAA(text) {
+  const periodRx = /((?:TODAY|TONIGHT|MON(?:DAY)?|TUE(?:SDAY)?|WED(?:NESDAY)?|THU(?:RSDAY)?|FRI(?:DAY)?|SAT(?:URDAY)?|SUN(?:DAY)?)(?:\s+NIGHT)?(?:\s+(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s+\d+)?)/gi;
+  const windRx = /winds?\s+(?:[\w\s]+?\s+)?(\d+)\s+to\s+(\d+)\s+k[tn]/i;
+  const lessThanRx = /winds?\s+(?:[\w\s]+?\s+)?less\s+than\s+(\d+)\s+k[tn]/i;
 
-// ── Improved NOAA parser ──
-function parseNOAA(raw) {
+  // Split by period labels
+  const parts = text.replace(/\n/g,' ').split(periodRx);
   const results = [];
-  const debugLines = [];
 
-  // Normalize: collapse whitespace, uppercase
-  let text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  for (let i = 1; i < parts.length - 1; i += 2) {
+    const label = parts[i].trim().toUpperCase();
+    const desc  = (parts[i+1] || '').trim();
 
-  // NOAA uses .LABEL... format — split on that pattern
-  // Match period headers like: .TODAY..., .TONIGHT..., .MONDAY..., .MONDAY NIGHT..., .TUE NIGHT...
-  const periodPattern = /\.([A-Z][A-Z ]*?)\.\.\./g;
-  const splits = [];
-  let match;
-
-  while ((match = periodPattern.exec(text)) !== null) {
-    splits.push({
-      label: match[1].trim(),
-      index: match.index,
-      afterIndex: match.index + match[0].length
-    });
-  }
-
-  // If dot-format didn't work, try line-based format (some NOAA pages)
-  // e.g. "TODAY\n  S winds 10 to 20 kt..." or "TODAY...S winds 10 to 20 kt"
-  if (splits.length === 0) {
-    const dayNames = /^(TODAY|TONIGHT|(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:DAY|ESDAY|NESDAY|RSDAY|URDAY)?(?:\s+NIGHT)?)/gmi;
-    const flatText = text.replace(/\n/g, ' __NL__ ');
-
-    while ((match = dayNames.exec(text)) !== null) {
-      splits.push({
-        label: match[1].trim().toUpperCase(),
-        index: match.index,
-        afterIndex: match.index + match[0].length
-      });
-    }
-  }
-
-  debugLines.push(`Found ${splits.length} period header(s)`);
-
-  // Extract body text for each period
-  for (let i = 0; i < splits.length; i++) {
-    const start = splits[i].afterIndex;
-    const end = (i + 1 < splits.length) ? splits[i + 1].index : text.length;
-    const body = text.slice(start, end).replace(/\n/g, ' ').trim();
-    const label = splits[i].label;
-
-    // Parse wind from body — handle multiple patterns
     let windLo, windHi, windAvg;
-    let parsed = false;
 
-    // Pattern 1: "WINDS 10 TO 20 KT" or "winds 10 to 20 kt"
-    const rangeMatch = body.match(/winds?\s+(\d+)\s+to\s+(\d+)\s*k[tn]/i);
-    // Pattern 2: "LESS THAN 10 KT"
-    const lessMatch = body.match(/winds?\s+less\s+than\s+(\d+)\s*k[tn]/i);
-    // Pattern 3: "10 TO 20 KT" without "winds" prefix (sometimes in NOAA)
-    const bareRange = body.match(/(\d+)\s+to\s+(\d+)\s*k[tn]/i);
-    // Pattern 4: "AROUND 10 KT"
-    const aroundMatch = body.match(/(?:winds?\s+)?around\s+(\d+)\s*k[tn]/i);
+    // Handle "becoming X to Y" — use the first range as primary
+    const windMatch = windRx.exec(desc);
+    const ltMatch   = lessThanRx.exec(desc);
 
-    // Also check for "becoming" — secondary wind range
-    const becomingMatch = body.match(/becoming\s+.*?(\d+)\s+to\s+(\d+)\s*k[tn]/i);
-
-    if (rangeMatch) {
-      windLo = parseInt(rangeMatch[1]);
-      windHi = parseInt(rangeMatch[2]);
-      parsed = true;
-    } else if (lessMatch) {
-      windHi = parseInt(lessMatch[1]);
-      windLo = 0;
-      parsed = true;
-    } else if (aroundMatch) {
-      const v = parseInt(aroundMatch[1]);
-      windLo = Math.max(0, v - 3);
-      windHi = v + 3;
-      parsed = true;
-    } else if (bareRange) {
-      windLo = parseInt(bareRange[1]);
-      windHi = parseInt(bareRange[2]);
-      parsed = true;
-    }
-
-    if (parsed) {
-      // If there's a "becoming" clause, weight it (30% initial, 70% later)
-      if (becomingMatch && rangeMatch) {
-        const bLo = parseInt(becomingMatch[1]);
-        const bHi = parseInt(becomingMatch[2]);
-        windAvg = 0.3 * ((windLo + windHi) / 2) + 0.7 * ((bLo + bHi) / 2);
-      } else {
-        windAvg = (windLo + windHi) / 2;
-      }
-
-      debugLines.push(`${label}: ${windLo}-${windHi} kt, avg=${windAvg.toFixed(1)}`);
-      results.push({
-        label,
-        windLo,
-        windHi,
-        windAvg,
-        hours: 12,
-        desc: body.slice(0, 120)
-      });
+    if (windMatch) {
+      windLo  = parseInt(windMatch[1]);
+      windHi  = parseInt(windMatch[2]);
+      windAvg = (windLo + windHi) / 2;
+    } else if (ltMatch) {
+      windHi  = parseInt(ltMatch[1]);
+      windLo  = 0;
+      windAvg = windHi / 2;
     } else {
-      debugLines.push(`${label}: ⚠ no wind found in "${body.slice(0, 80)}..."`);
+      continue;
     }
+
+    results.push({ label, windLo, windHi, windAvg, hours: 12, desc: desc.slice(0, 120) });
+  }
+  return results;
+}
+
+// ── NOAA auto-fetch ──
+async function fetchForecast() {
+  const btn    = document.getElementById('fetchBtn');
+  const status = document.getElementById('fetchStatus');
+  const zone   = document.getElementById('zoneSelect').value;
+  const ta     = document.getElementById('forecastText');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">↻</span> Fetching...';
+  status.className = 'fetch-status';
+  status.textContent = '';
+
+  try {
+    // Step 1: get latest product listing for Offshore Waters Forecast from MTR office
+    const listUrl = 'https://api.weather.gov/products?type=OFF&location=MTR&limit=1';
+    const listRes = await fetch(listUrl, { headers: { 'Accept': 'application/geo+json' } });
+    if (!listRes.ok) throw new Error(`NWS list: ${listRes.status}`);
+    const listData = await listRes.json();
+
+    const products = listData['@graph'] || [];
+    if (!products.length) throw new Error('No products returned from NWS');
+
+    // Step 2: fetch the actual product text
+    const productUrl = products[0]['@id'];
+    const prodRes = await fetch(productUrl, { headers: { 'Accept': 'application/geo+json' } });
+    if (!prodRes.ok) throw new Error(`NWS product: ${prodRes.status}`);
+    const prodData = await prodRes.json();
+
+    const fullText = prodData.productText || '';
+    if (!fullText) throw new Error('Empty product text');
+
+    // Step 3: extract the selected zone section
+    const extracted = extractZone(fullText, zone);
+    if (!extracted) throw new Error(`Zone ${zone} not found in forecast`);
+
+    ta.value = extracted;
+    const issued = prodData.issuanceTime ? new Date(prodData.issuanceTime).toLocaleString() : 'unknown';
+    status.className = 'fetch-status ok';
+    status.textContent = `✓ Loaded ${zone} · issued ${issued}`;
+
+  } catch (err) {
+    // Fallback: try corsproxy.io for the raw text file
+    try {
+      const rawUrl = 'https://corsproxy.io/?https://tgftp.weather.gov/data/forecasts/fzpn26.txt';
+      const res = await fetch(rawUrl);
+      if (!res.ok) throw new Error(`proxy: ${res.status}`);
+      const text = await res.text();
+      const extracted = extractZone(text, zone);
+      if (!extracted) throw new Error(`Zone ${zone} not found`);
+      ta.value = extracted;
+      status.className = 'fetch-status ok';
+      status.textContent = `✓ Loaded via fallback · ${zone}`;
+    } catch (err2) {
+      status.className = 'fetch-status err';
+      status.textContent = `✗ ${err.message} — paste manually above`;
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '⬇ Auto-fetch';
+  }
+}
+
+function extractZone(text, zone) {
+  // Find zone header like "PZZ825-141100" and extract until next zone or end
+  const zoneRx = new RegExp(zone + '[\\-\\s]', 'i');
+  const start = text.search(zoneRx);
+  if (start === -1) return null;
+
+  // Find the next zone header (any PZZ\d+ pattern) after our zone
+  const after = text.slice(start + zone.length);
+  const nextZoneRx = /\nPZZ\d{3}[-\s]/;
+  const nextMatch = after.search(nextZoneRx);
+  const zoneText = nextMatch !== -1 ? after.slice(0, nextMatch) : after;
+
+  // Clean up: remove the header line, keep just forecast periods
+  const lines = zoneText.split('\n').map(l => l.trim()).filter(Boolean);
+  // Skip header lines (zone code, location name, timestamp)
+  const forecastLines = [];
+  let inForecast = false;
+  for (const line of lines) {
+    if (/^(TODAY|TONIGHT|MON|TUE|WED|THU|FRI|SAT|SUN)/i.test(line)) inForecast = true;
+    if (inForecast) forecastLines.push(line);
   }
 
-  return { periods: results, debug: debugLines.join('\n') };
+  return forecastLines.length ? forecastLines.join(' ') : zoneText.trim();
 }
 
 
-// ── Forecast run ──
+// ── Solar profiles (avg Wh per hour of day, transit-stripped, from historical data) ──
+// DX13: Panel 3 non-functional. Only P1+P2. 579 Wh/day. 8h transit stripped each end.
+// DX16: All 3 panels working. P1 −5.56 Wh offset, P2 −5.84 Wh offset corrected. 805 Wh/day. 8h transit stripped.
+const SOLAR_PROFILES = {
+  DX13: {
+    label: 'DX13',
+    daily_kwh: 0.579,
+    hourly: [0,0,0,0,0,0,0.06,7.48,26.34,43.26,62.26,77.06,81.98,80.21,74.46,58.04,40.19,19.03,7.59,0.73,0,0,0,0]
+  },
+  DX16: {
+    label: 'DX16',
+    daily_kwh: 0.805,
+    // Offset-corrected: P1 −5.56 Wh, P2 −5.84 Wh, P3 functional (no offset)
+    hourly: [0.19,0.18,0.16,0.19,0.18,0.17,0.2,7.2,34.7,68.97,99.92,121.51,119.73,115.47,102.0,72.06,43.39,14.08,3.38,0.26,0.22,0.21,0.2,0.2]
+  }
+};
+
+let activeSolar = 'DX16';
+
+function updateSolarUI() {
+  const enabled = document.getElementById('solarEnabled').checked;
+  const label = document.getElementById('solarToggleLabel');
+  const btns = document.querySelectorAll('.solar-btn');
+  const info = document.getElementById('solarInfo');
+  label.classList.toggle('active', enabled);
+  btns.forEach(b => b.disabled = !enabled);
+  if (enabled) {
+    const profile = SOLAR_PROFILES[activeSolar];
+    info.style.display = 'block';
+    const penalty = activeSolar === 'DX13' ? ' · DX13 adds +0.11 kWh/12h (less solar than DX16)' : ' · DX16 = model baseline';
+    info.textContent = `☀ ${activeSolar}: ${profile.daily_kwh.toFixed(2)} kWh/day avg · night periods add ~0.39 kWh vs day avg${penalty}`;
+  } else {
+    info.style.display = 'block';
+    info.textContent = 'Solar off: model uses flat avg consumption (no day/night split)';
+  }
+}
+// Init on load
+updateSolarUI();
+
+function selectSolar(vessel) {
+  activeSolar = vessel;
+  document.getElementById('btnDX13').classList.toggle('active', vessel === 'DX13');
+  document.getElementById('btnDX16').classList.toggle('active', vessel === 'DX16');
+  updateSolarUI();
+}
+
+// Returns kWh of solar production for a 12-hour forecast period
+// isNight: true for TONIGHT/xxx NIGHT periods
+function solarForPeriod(isNight) {
+  const profile = SOLAR_PROFILES[activeSolar];
+  if (!profile.hourly) return 0;
+  // Day period: hours 6-18 (roughly), Night: hours 18-6
+  let total = 0;
+  if (isNight) {
+    for (let h = 18; h < 24; h++) total += profile.hourly[h];
+    for (let h = 0; h < 6; h++)  total += profile.hourly[h];
+  } else {
+    for (let h = 6; h < 18; h++) total += profile.hourly[h];
+  }
+  return total / 1000; // convert Wh → kWh
+}
+
+
+
 let chartInst = null;
 
 function runForecast() {
   document.getElementById('errorBox').style.display = 'none';
-  document.getElementById('debugBox').style.display = 'none';
   document.getElementById('results').style.display = 'none';
 
-  const startPct = parseFloat(document.getElementById('battPct').value);
+  const startPct  = parseFloat(document.getElementById('battPct').value);
   const capacityKwh = parseFloat(document.getElementById('capacity').value) || 17.56;
+  const hotelWh = 0; // embedded in voltage-derived model — not added separately
   const text = document.getElementById('forecastText').value.trim();
 
   if (!text) { showError('Please paste a NOAA forecast.'); return; }
   if (isNaN(startPct) || startPct < 0 || startPct > 100) { showError('Battery % must be 0–100.'); return; }
 
-  const { periods, debug } = parseNOAA(text);
-
-  // Show debug info
-  const debugBox = document.getElementById('debugBox');
-  debugBox.textContent = 'Parser debug:\n' + debug;
-  debugBox.style.display = 'block';
-
-  if (!periods.length) {
-    showError('Could not parse any forecast periods. Make sure the text contains wind info like "WINDS 10 TO 20 KT". Check the debug output above.');
-    return;
-  }
+  const periods = parseNOAA(text);
+  if (!periods.length) { showError('Could not parse any forecast periods. Check the format matches NOAA text (e.g. TODAY ... winds 10 to 20 kt).'); return; }
 
   const startKwh = startPct / 100 * capacityKwh;
   let batt_m = startKwh, batt_o = startKwh, batt_p = startKwh;
 
-  const chartLabels = ['Now'];
+  const chartLabels = ['Start'];
   const chartMean   = [startPct];
   const chartOpt    = [startPct];
   const chartPess   = [startPct];
@@ -338,32 +466,36 @@ function runForecast() {
 
   const periodRows = [];
 
+  const solarOn = document.getElementById('solarEnabled').checked;
+  const dx13Penalty = (solarOn && activeSolar === 'DX13') ? DX13_PENALTY_KWH_12H : 0;
+
   for (const p of periods) {
-    const wh_m = polyval(C_MEAN, p.windAvg);   // Wh per hour
+    // Net kWh per 12h from voltage-truth model (includes motor, hotel, avg DX16 solar)
+    const wh_m = polyval(C_MEAN, p.windAvg);
     const wh_o = polyval(C_OPT,  p.windAvg);
     const wh_p = polyval(C_PESS, p.windAvg);
 
-    const kwh_m = wh_m * p.hours / 1000;       // kWh for the period
-    const kwh_o = wh_o * p.hours / 1000;
-    const kwh_p = wh_p * p.hours / 1000;
+    const isNight = /NIGHT|TONIGHT/i.test(p.label);
+    // Night periods produce ~8 Wh solar vs day ~805 Wh — adjust relative to embedded avg
+    // Embedded avg solar per 12h = 805/2 ≈ 402 Wh day, ~8 Wh night
+    // Adjustment: night adds back ~0.394 kWh vs the embedded avg, day subtracts
+    const solarAdj = solarOn ? (isNight ? 0.394 : -0.394) : 0;
+    const solarKwh = 0; // kept for display only
+
+    const kwh_m = Math.max(0, wh_m + dx13Penalty + solarAdj);
+    const kwh_o = Math.max(0, wh_o + dx13Penalty + solarAdj);
+    const kwh_p = Math.max(0, wh_p + dx13Penalty + solarAdj);
 
     batt_m = Math.max(0, batt_m - kwh_m);
-    batt_o = Math.max(0, batt_o - kwh_o);      // optimistic = least drain
-    batt_p = Math.max(0, batt_p - kwh_p);      // pessimistic = most drain
+    batt_o = Math.max(0, batt_o - kwh_o);
+    batt_p = Math.max(0, batt_p - kwh_p);
 
     const pct_m = batt_m / capacityKwh * 100;
     const pct_o = batt_o / capacityKwh * 100;
     const pct_p = batt_p / capacityKwh * 100;
 
     totalConsumed += kwh_m;
-
-    // Clean label for chart
-    let shortLabel = p.label
-      .replace(/\bNIGHT\b/, 'Night')
-      .replace(/^TONIGHT$/, 'Tonight')
-      .replace(/^TODAY$/, 'Today');
-
-    chartLabels.push(shortLabel);
+    chartLabels.push(p.label.replace(' NIGHT', '\nNight').replace('TONIGHT', 'Tonight').replace('TODAY', 'Today'));
     chartMean.push(Math.round(pct_m * 10) / 10);
     chartOpt.push(Math.round(pct_o * 10) / 10);
     chartPess.push(Math.round(pct_p * 10) / 10);
@@ -371,15 +503,15 @@ function runForecast() {
     if (!critPeriod && pct_m <= 0) critPeriod = p.label;
     if (!warnPeriod && pct_m <= 20) warnPeriod = p.label;
 
-    periodRows.push({ p, wh_m, kwh_m, kwh_o, kwh_p, pct_m, pct_o, pct_p, batt_m });
+    periodRows.push({ p, wh_m, kwh_m, kwh_o, kwh_p, pct_m, pct_o, pct_p, batt_m, hotelWh: 0, solarKwh: 0 });
   }
 
   // ── Render summary ──
   const remainingPct = chartMean[chartMean.length - 1];
   const daysTotal = periods.length * 12 / 24;
   document.getElementById('summaryGrid').innerHTML = [
-    { label:'Starting battery', val: startPct.toFixed(0)+'%', unit: startKwh.toFixed(2)+' kWh', cls:'amber' },
-    { label:'Periods forecast', val: periods.length, unit: daysTotal.toFixed(1)+' days total', cls:'' },
+    { label:'Starting battery', val: startPct.toFixed(0)+'%', unit: (startKwh).toFixed(2)+' kWh', cls:'amber' },
+    { label:'Periods forecast', val: periods.length, unit: (daysTotal).toFixed(1)+' days total', cls:'' },
     { label:'Total consumed (mean)', val: totalConsumed.toFixed(2), unit: 'kWh', cls:'cyan' },
     { label:'Remaining (mean)', val: remainingPct.toFixed(0)+'%', unit: (remainingPct/100*capacityKwh).toFixed(2)+' kWh',
       cls: remainingPct > 20 ? 'green' : remainingPct > 0 ? 'amber' : 'red' },
@@ -393,7 +525,7 @@ function runForecast() {
   const alertBox = document.getElementById('alertBox');
   if (critPeriod) {
     alertBox.className = 'alert-box crit';
-    alertBox.innerHTML = `<strong>🔴 CRITICAL:</strong> Battery depleted during <strong>${critPeriod}</strong> under mean consumption.`;
+    alertBox.innerHTML = `<strong>🔴 CRITICAL:</strong> Battery depleted during <strong>${critPeriod}</strong> under mean consumption. Pessimistic scenario may deplete earlier.`;
     alertBox.style.display = 'block';
   } else if (warnPeriod) {
     alertBox.className = 'alert-box warn';
@@ -403,11 +535,8 @@ function runForecast() {
     alertBox.style.display = 'none';
   }
 
-  // ── Chart (FIX: destroy previous, limit animation, proper container) ──
-  if (chartInst) {
-    chartInst.destroy();
-    chartInst = null;
-  }
+  // ── Chart ──
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
 
   const ctx = document.getElementById('battChart').getContext('2d');
   const gridCol = 'rgba(255,255,255,0.06)';
@@ -435,7 +564,7 @@ function runForecast() {
           borderColor: 'rgba(0,201,122,0.3)',
           backgroundColor: 'rgba(0,201,122,0.08)',
           borderWidth: 1,
-          fill: '-1',   // fill between this and previous dataset (Optimistic)
+          fill: '-1',
           pointRadius: 0,
           tension: 0.3,
           order: 3
@@ -459,8 +588,8 @@ function runForecast() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 400 },         // FIX: fast animation instead of default ~1s
-      resizeDelay: 100,                       // FIX: debounce resize events
+      animation: { duration: 400 },
+      resizeDelay: 100,
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },
@@ -473,10 +602,7 @@ function runForecast() {
           titleFont: { family: 'Space Mono', size: 11 },
           bodyFont: { family: 'DM Sans', size: 12 },
           callbacks: {
-            label: ctx => {
-              const dsLabel = ctx.dataset.label;
-              return ` ${dsLabel}: ${ctx.parsed.y.toFixed(1)}%`;
-            }
+            label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
           }
         },
       },
@@ -488,11 +614,7 @@ function runForecast() {
         y: {
           min: 0, max: 100,
           grid: { color: gridCol },
-          ticks: {
-            color: textCol,
-            font: { family: 'Space Mono', size: 10 },
-            callback: v => v + '%'
-          }
+          ticks: { color: textCol, font: { family: 'Space Mono', size: 10 }, callback: v => v + '%' }
         }
       }
     },
@@ -500,7 +622,7 @@ function runForecast() {
       id: 'critZone',
       beforeDraw(chart) {
         const { ctx: c, chartArea, scales: { y } } = chart;
-        if (!chartArea) return;  // FIX: guard against undefined chartArea during init
+        if (!chartArea) return;
         const y20 = y.getPixelForValue(20);
         c.save();
         c.fillStyle = 'rgba(232,69,60,0.08)';
@@ -513,17 +635,16 @@ function runForecast() {
   // ── Period cards ──
   const pClassFn = pct => pct <= 0 ? 'crit' : pct <= 20 ? 'warn' : '';
   const pctClass = pct => pct <= 0 ? 'crit' : pct <= 20 ? 'warn' : 'ok';
-
   document.getElementById('periodList').innerHTML = periodRows.map(r => `
     <div class="period-card ${pClassFn(r.pct_m)}">
       <div class="period-label">${r.p.label}</div>
       <div class="period-body">
-        <div class="period-wind"><strong>${r.p.windLo}–${r.p.windHi} kt</strong> avg ${r.p.windAvg.toFixed(0)} kt · ${r.wh_m.toFixed(0)} Wh/hr</div>
-        <div class="period-consume">Consumed: ${r.kwh_m.toFixed(2)} kWh (mean) · ${r.kwh_o.toFixed(2)}–${r.kwh_p.toFixed(2)} kWh (range)</div>
+        <div class="period-wind"><strong>${r.p.windLo}–${r.p.windHi} kt</strong> avg ${r.p.windAvg.toFixed(0)} kt &nbsp;·&nbsp; ${r.wh_m.toFixed(0)} Wh/hr</div>
+        <div class="period-consume">Net: ${r.kwh_m.toFixed(3)} kWh (mean) · Range: ${r.kwh_o.toFixed(3)}–${r.kwh_p.toFixed(3)} kWh · ${r.p.windAvg.toFixed(0)} kt avg</div>
       </div>
       <div class="period-batt">
         <div class="period-pct ${pctClass(r.pct_m)}">${Math.max(0,r.pct_m).toFixed(0)}%</div>
-        <div class="period-kwh">${Math.max(0,r.batt_m).toFixed(2)} kWh left</div>
+        <div class="period-kwh">${Math.max(0,r.batt_m).toFixed(2)} kWh · ${pctToVoltage(Math.max(0,r.pct_m))} V</div>
       </div>
     </div>`).join('');
 
