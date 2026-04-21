@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USV Route Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c12;
+    --surface: #0e1520;
+    --surface2: #141e2e;
+    --border: #1e2d42;
+    --border2: #2a3f5a;
+    --amber: #f0a500;
+    --amber-dim: #7a5200;
+    --cyan: #00c8d4;
+    --cyan-dim: #004a50;
+    --green: #00c97a;
+    --red: #e8453c;
+    --text: #c8d8e8;
+    --text-dim: #5a7a9a;
+    --text-bright: #eaf4ff;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,200,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,212,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Header */
+  header { margin-bottom: 48px; }
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  h1 span { color: var(--amber); }
+  .header-sub {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  /* Config row */
+  .config-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .config-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .config-input {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--amber);
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    width: 130px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .config-input:focus { border-color: var(--amber); }
+
+  /* Drop zones */
+  .drop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  @media(max-width: 600px) { .drop-grid { grid-template-columns: 1fr; } }
+
+  .drop-zone {
+    border: 1.5px dashed var(--border2);
+    border-radius: 8px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    background: var(--surface);
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--cyan);
+    background: rgba(0,200,212,0.04);
+  }
+  .drop-zone.loaded {
+    border-color: var(--green);
+    border-style: solid;
+    background: rgba(0,201,122,0.04);
+  }
+  .drop-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .drop-icon {
+    font-family: var(--mono);
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: var(--text-dim);
+  }
+  .drop-zone.loaded .drop-icon { color: var(--green); }
+  .drop-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .drop-hint {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .drop-zone.loaded .drop-hint { color: var(--green); font-family: var(--mono); font-size: 12px; }
+
+  /* Run button */
+  .run-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--amber);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 40px;
+  }
+  .run-btn:hover { background: #ffc040; transform: translateY(-1px); }
+  .run-btn:active { transform: translateY(0); }
+  .run-btn:disabled { background: var(--amber-dim); color: #333; cursor: not-allowed; transform: none; }
+
+  /* Error */
+  .error-box {
+    background: rgba(232,69,60,0.1);
+    border: 1px solid var(--red);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 24px;
+    display: none;
+  }
+
+  /* Results */
+  #results { display: none; }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .results-title {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .dl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 9px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .dl-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* Stat cards */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+  }
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1;
+  }
+  .stat-val.amber { color: var(--amber); }
+  .stat-val.cyan  { color: var(--cyan); }
+  .stat-val.green { color: var(--green); }
+  .stat-unit {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Section */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Table */
+  .tbl-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td.num { text-align: right; }
+  td.good { color: var(--green); }
+  td.warn { color: var(--amber); }
+  td.bad  { color: var(--red); }
+  td.info { color: var(--cyan); }
+
+  /* Decision badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-avg  { background: rgba(0,201,122,0.15); color: var(--green); }
+  .badge-nav  { background: rgba(0,200,212,0.15); color: var(--cyan); }
+  .badge-gps  { background: rgba(240,165,0,0.15); color: var(--amber); }
+  .badge-only { background: rgba(90,122,154,0.15); color: var(--text-dim); }
+
+  /* Notes list */
+  .notes-list { list-style: none; }
+  .notes-list li {
+    font-size: 13px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .notes-list li:last-child { border-bottom: none; }
+  .notes-list li strong { color: var(--cyan); font-family: var(--mono); font-size: 12px; }
+  .notes-list li .spike-note { color: var(--amber); font-size: 12px; }
+
+  /* Progress bar */
+  .bar-wrap { background: var(--surface2); border-radius: 2px; height: 6px; margin-top: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-power { background: var(--cyan); }
+  .bar-drift { background: var(--amber); }
+
+  .optional-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-left: 6px;
+    letter-spacing: 0.08em;
+    vertical-align: middle;
+  }
+  .mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border2);
+    color: var(--text-dim);
+  }
+  .mode-badge.dual { border-color: var(--green); color: var(--green); background: rgba(0,201,122,0.06); }
+  .mode-badge.single { border-color: var(--amber); color: var(--amber); background: rgba(240,165,0,0.06); }
+  .mode-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="header-tag">// USV Analysis Tool v1.1</div>
+    <h1>Dual-Sensor <span>Route Analyzer</span></h1>
+    <p class="header-sub">Ingest NAV + GPS logs — spike-filtered, reconciled, merged report. One file also accepted for single-sensor analysis.</p>
+  </header>
+
+  <!-- Config -->
+  <div class="config-row">
+    <span class="config-label">24h Cycle Anchor</span>
+    <input class="config-input" type="text" id="anchorInput" value="00:00:00" placeholder="HH:MM:SS">
+    <span class="config-label" style="margin-left:8px">Max Speed</span>
+    <input class="config-input" type="number" id="maxSpeedInput" value="10" min="1" max="50" style="width:90px">
+    <span class="config-label">knots</span>
+    <span class="config-label" style="margin-left:8px" id="agreementRow">Agreement Threshold</span>
+    <input class="config-input" type="number" id="agreementInput" value="12" min="1" max="50" style="width:90px">
+    <span class="config-label">%</span>
+  </div>
+
+  <!-- Drop zones -->
+  <div class="drop-grid">
+    <div class="drop-zone" id="navDrop">
+      <input type="file" accept=".csv" id="navFile" onchange="handleFile('nav', this)">
+      <div class="drop-icon" id="navIcon">[ NAV ]</div>
+      <div class="drop-title">NAV Sensor CSV</div>
+      <div class="drop-hint" id="navHint">Drop file here or click to browse</div>
+    </div>
+    <div class="drop-zone" id="gpsDrop">
+      <input type="file" accept=".csv" id="gpsFile" onchange="handleFile('gps', this)">
+      <div class="drop-icon" id="gpsIcon">[ GPS ]</div>
+      <div class="drop-title">GPS Sensor CSV <span class="optional-tag">optional</span></div>
+      <div class="drop-hint" id="gpsHint">Drop file here or click to browse</div>
+    </div>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div id="modeBadge" class="mode-badge" style="display:none">
+    <span class="mode-dot"></span>
+    <span id="modeBadgeText"></span>
+  </div>
+
+  <button class="run-btn" id="runBtn" onclick="runAnalysis()" disabled>
+    ▶ &nbsp;RUN ANALYSIS
+  </button>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-header">
+      <div class="results-title">// Analysis Report</div>
+      <button class="dl-btn" id="dlBtn" onclick="downloadReport()">⬇ Download Markdown</button>
+    </div>
+
+    <div class="stat-grid" id="statGrid"></div>
+
+    <div class="section">
+      <div class="section-title">Merged Distance Summary</div>
+      <div class="tbl-wrap">
+        <table id="summaryTable"></table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Daily Reconciliation Breakdown</div>
+      <div class="tbl-wrap">
+        <table id="dailyTable"></table>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Decision Notes</div>
+      <ul class="notes-list" id="notesList"></ul>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Spike Filter Summary</div>
+      <div class="tbl-wrap">
+        <table id="spikeTable"></table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const KM_PER_NM = 1.852;
+const EARTH_RADIUS_KM = 6371.0;
+const POWER_THRESHOLD_W = 1.0;
+
+// ── State ────────────────────────────────────────────────────────────────────
+const files = { nav: null, gps: null };
+let lastReport = '';
+
+// ── File handling ─────────────────────────────────────────────────────────────
+function handleFile(sensor, input) {
+  const file = input.files[0];
+  if (!file) return;
+  files[sensor] = file;
+  const drop = document.getElementById(sensor + 'Drop');
+  const hint = document.getElementById(sensor + 'Hint');
+  const icon = document.getElementById(sensor + 'Icon');
+  drop.classList.add('loaded');
+  hint.textContent = file.name;
+  icon.textContent = '✓';
+  checkReady();
+}
+
+['navDrop','gpsDrop'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+  el.addEventListener('drop', e => {
+    e.preventDefault();
+    el.classList.remove('drag-over');
+    const sensor = id === 'navDrop' ? 'nav' : 'gps';
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      files[sensor] = file;
+      document.getElementById(sensor + 'Drop').classList.add('loaded');
+      document.getElementById(sensor + 'Hint').textContent = file.name;
+      document.getElementById(sensor + 'Icon').textContent = '✓';
+      checkReady();
+    }
+  });
+});
+
+function checkReady() {
+  const hasNav = !!files.nav, hasGps = !!files.gps;
+  const ready = hasNav || hasGps;
+  document.getElementById('runBtn').disabled = !ready;
+  const badge = document.getElementById('modeBadge');
+  const badgeText = document.getElementById('modeBadgeText');
+  const agreementRow = document.getElementById('agreementRow');
+  if (ready) {
+    badge.style.display = 'inline-flex';
+    if (hasNav && hasGps) {
+      badge.className = 'mode-badge dual';
+      badgeText.textContent = 'Dual-sensor mode — NAV + GPS loaded, reconciliation enabled';
+      if (agreementRow) agreementRow.style.display = '';
+    } else {
+      badge.className = 'mode-badge single';
+      const which = hasNav ? 'NAV' : 'GPS';
+      badgeText.textContent = `Single-sensor mode — ${which} only, no reconciliation`;
+      if (agreementRow) agreementRow.style.display = 'none';
+    }
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  box.textContent = msg;
+  box.style.display = 'block';
+}
+function clearError() {
+  document.getElementById('errorBox').style.display = 'none';
+}
+
+// ── DateTime parsing ─────────────────────────────────────────────────────────
+const DATETIME_FORMATS = [
+  /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/,
+  /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})$/,
+  /^(\d{4})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2}):(\d{2})$/,
+  /^(\d{4})\/(\d{2})\/(\d{2}) (\d{2}):(\d{2})$/,
+  /^(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/,
+  /^(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})$/,
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})$/,
+];
+
+function parseDateTime(s) {
+  s = s.trim().replace(/^"|"$/g, '');
+  // Try ISO-like first
+  const d = new Date(s);
+  if (!isNaN(d)) return d;
+  // Try manual patterns
+  for (const fmt of DATETIME_FORMATS) {
+    const m = s.match(fmt);
+    if (m) {
+      // Determine if YYYY-MM-DD or DD-MM-YYYY by value
+      const a = parseInt(m[1]), b = parseInt(m[2]), c = parseInt(m[3]);
+      let year, month, day;
+      if (a > 31) { year=a; month=b; day=c; }
+      else if (c > 31) { day=a; month=b; year=c; }
+      else { year=a; month=b; day=c; }
+      const hr = m[4]||'00', mn = m[5]||'00', sc = m[6]||'00';
+      const dt = new Date(`${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}T${hr}:${mn}:${sc}`);
+      if (!isNaN(dt)) return dt;
+    }
+  }
+  return null;
+}
+
+function parseAnchor(s) {
+  const m = s.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if (!m) throw new Error(`Invalid anchor time: "${s}"`);
+  return { h: parseInt(m[1]), m: parseInt(m[2]), s: parseInt(m[3]||'0') };
+}
+
+function anchorSeconds(anchor) {
+  return anchor.h * 3600 + anchor.m * 60 + anchor.s;
+}
+
+// ── Math ─────────────────────────────────────────────────────────────────────
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = EARTH_RADIUS_KM;
+  const phi1 = lat1 * Math.PI/180, phi2 = lat2 * Math.PI/180;
+  const dphi = (lat2-lat1) * Math.PI/180;
+  const dlam = (lon2-lon1) * Math.PI/180;
+  const a = Math.sin(dphi/2)**2 + Math.cos(phi1)*Math.cos(phi2)*Math.sin(dlam/2)**2;
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function impliedSpeedKnots(p1, p2) {
+  const hrs = (p2.ts - p1.ts) / 3600000;
+  if (hrs <= 0) return 0;
+  return haversineKm(p1.lat, p1.lon, p2.lat, p2.lon) / KM_PER_NM / hrs;
+}
+
+// ── CSV loading ───────────────────────────────────────────────────────────────
+function parseCSV(text) {
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim());
+  if (!lines.length) return [];
+  
+  function parseLine(line) {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i=0; i<line.length; i++) {
+      const c = line[i];
+      if (c==='"') { inQ=!inQ; }
+      else if (c===',' && !inQ) { cols.push(cur.trim()); cur=''; }
+      else cur += c;
+    }
+    cols.push(cur.trim());
+    return cols;
+  }
+
+  function isHeader(row) {
+    try { parseFloat(row[1].replace(/"/g,'')); return false; }
+    catch { return true; }
+  }
+
+  let rows = lines.map(parseLine);
+  if (rows.length && isHeader(rows[0])) rows = rows.slice(1);
+
+  const points = [];
+  let skipped = 0;
+  for (const row of rows) {
+    if (row.length < 3) continue;
+    const ts = parseDateTime(row[0]);
+    const lat = parseFloat(row[1].replace(/"/g,''));
+    const lon = parseFloat(row[2].replace(/"/g,''));
+    if (!ts || isNaN(lat) || isNaN(lon)) { skipped++; continue; }
+    let power = 0;
+    if (row.length > 3 && row[3].replace(/"/g,'').trim()) {
+      const p = parseFloat(row[3].replace(/"/g,''));
+      if (!isNaN(p)) power = p;
+    }
+    points.push({ ts: ts.getTime(), lat, lon, power });
+  }
+  points.sort((a,b) => a.ts - b.ts);
+  return points;
+}
+
+// ── Daily stats ───────────────────────────────────────────────────────────────
+function computeDailyStats(points, anchorSec, maxSpeedKnots) {
+  if (!points.length) return {};
+  
+  const anchorMs = anchorSec * 1000;
+  const daily = {};
+  
+  for (const p of points) {
+    // Shift timestamp back by anchor, then get date string
+    const shifted = new Date(p.ts - anchorMs);
+    const key = shifted.toISOString().slice(0,10);
+    if (!daily[key]) daily[key] = [];
+    daily[key].push(p);
+  }
+  
+  const result = {};
+  for (const key of Object.keys(daily).sort()) {
+    const pts = daily[key];
+    let totalKm=0, powerKm=0, driftKm=0, spikes=0;
+    
+    for (let i=1; i<pts.length; i++) {
+      const spd = impliedSpeedKnots(pts[i-1], pts[i]);
+      if (spd > maxSpeedKnots) { spikes++; continue; }
+      const km = haversineKm(pts[i-1].lat, pts[i-1].lon, pts[i].lat, pts[i].lon);
+      totalKm += km;
+      if (pts[i-1].power > POWER_THRESHOLD_W) powerKm += km;
+      else driftKm += km;
+    }
+    
+    const timeStart = new Date(pts[0].ts).toTimeString().slice(0,5);
+    const timeEnd   = new Date(pts[pts.length-1].ts).toTimeString().slice(0,5);
+    
+    result[key] = { key, timeStart, timeEnd, count: pts.length, totalKm, powerKm, driftKm, spikes };
+  }
+  return result;
+}
+
+// ── Reconcile ─────────────────────────────────────────────────────────────────
+function reconcile(navDays, gpsDays, threshold) {
+  const allDays = [...new Set([...Object.keys(navDays), ...Object.keys(gpsDays)])].sort();
+  const merged = [];
+  let cumKm=0, cumPower=0, cumDrift=0;
+  
+  for (const day of allDays) {
+    const nav = navDays[day];
+    const gps = gpsDays[day];
+    
+    const navKm = nav ? nav.totalKm : null;
+    const gpsKm = gps ? gps.totalKm : null;
+    const navSpikes = nav ? nav.spikes : 0;
+    const gpsSpikes = gps ? gps.spikes : 0;
+    
+    let accepted, acceptedPower, acceptedDrift, decision, reason;
+    
+    if (navKm !== null && gpsKm !== null) {
+      const higher = Math.max(navKm, gpsKm);
+      const diffPct = higher > 0 ? Math.abs(navKm-gpsKm)/higher : 0;
+      if (diffPct <= threshold) {
+        accepted = (navKm+gpsKm)/2;
+        acceptedPower = (nav.powerKm+gps.powerKm)/2;
+        acceptedDrift = (nav.driftKm+gps.driftKm)/2;
+        decision = 'averaged';
+        reason = `Sensors agree within ${(diffPct*100).toFixed(1)}% — averaged`;
+      } else if (navKm <= gpsKm) {
+        accepted=navKm; acceptedPower=nav.powerKm; acceptedDrift=nav.driftKm;
+        decision='nav_lower';
+        reason=`Sensors diverge by ${(diffPct*100).toFixed(1)}% — NAV lower, accepted as more conservative`;
+      } else {
+        accepted=gpsKm; acceptedPower=gps.powerKm; acceptedDrift=gps.driftKm;
+        decision='gps_lower';
+        reason=`Sensors diverge by ${(diffPct*100).toFixed(1)}% — GPS lower, accepted as more conservative`;
+      }
+    } else if (navKm !== null) {
+      accepted=navKm; acceptedPower=nav.powerKm; acceptedDrift=nav.driftKm;
+      decision='nav_only'; reason='Only NAV sensor data available for this day';
+    } else {
+      accepted=gpsKm; acceptedPower=gps.powerKm; acceptedDrift=gps.driftKm;
+      decision='gps_only'; reason='Only GPS sensor data available for this day';
+    }
+    
+    cumKm+=accepted; cumPower+=acceptedPower; cumDrift+=acceptedDrift;
+    
+    const divPct = (navKm!==null && gpsKm!==null && Math.max(navKm,gpsKm)>0)
+      ? Math.abs(navKm-gpsKm)/Math.max(navKm,gpsKm)*100 : null;
+    
+    merged.push({ day, navKm, gpsKm, accepted, acceptedPower, acceptedDrift,
+      decision, reason, navSpikes, gpsSpikes, cumKm, cumPower, cumDrift, divPct,
+      powerPct: accepted>0 ? acceptedPower/accepted*100 : 0,
+      driftPct: accepted>0 ? acceptedDrift/accepted*100 : 0 });
+  }
+  return merged;
+}
+
+// ── Single-sensor passthrough (no reconciliation) ─────────────────────────────
+function singleSensorReconcile(days, sensor) {
+  const allDays = Object.keys(days).sort();
+  const merged = [];
+  let cumKm=0, cumPower=0, cumDrift=0;
+  const decision = sensor === 'nav' ? 'nav_only' : 'gps_only';
+
+  for (const day of allDays) {
+    const d = days[day];
+    cumKm    += d.totalKm;
+    cumPower += d.powerKm;
+    cumDrift += d.driftKm;
+    merged.push({
+      day,
+      navKm:    sensor==='nav' ? d.totalKm : null,
+      gpsKm:    sensor==='gps' ? d.totalKm : null,
+      accepted: d.totalKm,
+      acceptedPower: d.powerKm,
+      acceptedDrift: d.driftKm,
+      decision,
+      reason: `Single-sensor analysis — ${sensor.toUpperCase()} only, spike filter applied`,
+      navSpikes: sensor==='nav' ? d.spikes : 0,
+      gpsSpikes: sensor==='gps' ? d.spikes : 0,
+      cumKm, cumPower, cumDrift,
+      divPct: null,
+      powerPct: d.totalKm>0 ? d.powerKm/d.totalKm*100 : 0,
+      driftPct: d.totalKm>0 ? d.driftKm/d.totalKm*100 : 0,
+    });
+  }
+  return merged;
+}
+function generateMarkdown(navName, gpsName, navPts, gpsPts, merged, anchor, maxSpeed, agreementPct, isSingle) {
+  const now = new Date().toISOString().replace('T',' ').slice(0,19);
+  const anchorStr = `${String(anchor.h).padStart(2,'0')}:${String(anchor.m).padStart(2,'0')}:${String(anchor.s).padStart(2,'0')}`;
+  const last = merged[merged.length-1];
+  const totalKm = last ? last.cumKm : 0;
+  const totalPowerKm = last ? last.cumPower : 0;
+  const totalDriftKm = last ? last.cumDrift : 0;
+  const totalNavKm = merged.reduce((s,d)=>s+(d.navKm||0),0);
+  const totalGpsKm = merged.reduce((s,d)=>s+(d.gpsKm||0),0);
+  const totalNavSpikes = merged.reduce((s,d)=>s+d.navSpikes,0);
+  const totalGpsSpikes = merged.reduce((s,d)=>s+d.gpsSpikes,0);
+  const daysAvg = merged.filter(d=>d.decision==='averaged').length;
+  const daysDiv = merged.filter(d=>['nav_lower','gps_lower'].includes(d.decision)).length;
+  const avgDailyKm = merged.length ? totalKm/merged.length : 0;
+  const powerPct = totalKm>0 ? totalPowerKm/totalKm*100 : 0;
+  const driftPct = totalKm>0 ? totalDriftKm/totalKm*100 : 0;
+  const nm = v => v/KM_PER_NM;
+
+  const DECISION_LABEL = { averaged:'Averaged', nav_lower:'NAV chosen', gps_lower:'GPS chosen', nav_only:'ℹ NAV only', gps_only:'ℹ GPS only' };
+  const reportTitle = isSingle ? '# USV Single-Sensor Route Analysis Report' : '# USV Dual-Sensor Route Analysis Report';
+
+  let lines = [reportTitle,'', `*Generated: ${now}*  `];
+  if (isSingle) {
+    lines.push(`*Sensor source: \`${navName||gpsName}\`*`);
+  } else {
+    lines.push(`*NAV source: \`${navName}\`*  `);
+    lines.push(`*GPS source: \`${gpsName}\`*`);
+  }
+  lines = lines.concat(['','---','','## Analysis Configuration','',
+    '| Setting | Value |','|---------|-------|',
+    `| 24h Cycle Anchor | \`${anchorStr}\` |`,
+    `| Speed Spike Threshold | \`${maxSpeed} knots\` |`,
+    `| Mode | ${isSingle ? `Single sensor (${navName?'NAV':'GPS'})` : 'Dual sensor (NAV + GPS)'} |`,
+  ]);
+  if (!isSingle) lines.push(`| Sensor Agreement Threshold | \`±${agreementPct}%\` |`);
+  if (navName) lines.push(`| NAV data points | ${navPts} |`);
+  if (gpsName) lines.push(`| GPS data points | ${gpsPts} |`);
+
+  lines = lines.concat(['','---','','## Spike Filter Summary','',
+    'Segments where implied speed exceeded the threshold were excluded from distance totals.','',
+    '| Sensor | Segments Filtered |','|--------|-------------------|',
+  ]);
+  if (!isSingle || navName) lines.push(`| NAV | ${totalNavSpikes} |`);
+  if (!isSingle || gpsName) lines.push(`| GPS | ${totalGpsSpikes} |`);
+
+  const summaryTitle = isSingle ? '## Distance Summary' : '## Merged Distance Summary';
+  lines = lines.concat(['','---','', summaryTitle,'',
+    '| Metric | km | nm | % of Total |','|--------|----|----|------------|',
+    `| **Accepted Total** | ${totalKm.toFixed(3)} | ${nm(totalKm).toFixed(3)} | 100% |`,
+    `| **Under Power** | ${totalPowerKm.toFixed(3)} | ${nm(totalPowerKm).toFixed(3)} | ${powerPct.toFixed(1)}% |`,
+    `| **Drift** | ${totalDriftKm.toFixed(3)} | ${nm(totalDriftKm).toFixed(3)} | ${driftPct.toFixed(1)}% |`,
+  ]);
+  if (!isSingle) {
+    lines.push(`| NAV cleaned total | ${totalNavKm.toFixed(3)} | ${nm(totalNavKm).toFixed(3)} | — |`);
+    lines.push(`| GPS cleaned total | ${totalGpsKm.toFixed(3)} | ${nm(totalGpsKm).toFixed(3)} | — |`);
+    lines = lines.concat(['','| Days Processed | Days Averaged | Days Diverged (lower chosen) |',
+      '|----------------|---------------|------------------------------|',
+      `| ${merged.length} | ${daysAvg} | ${daysDiv} |`,
+    ]);
+  } else {
+    lines.push(`\n**Days processed:** ${merged.length}`);
+  }
+  lines = lines.concat(['',
+    `**Average daily distance:** ${avgDailyKm.toFixed(3)} km (${nm(avgDailyKm).toFixed(3)} nm)`,
+    `**Motor power threshold:** >${POWER_THRESHOLD_W} W — readings at or below this are classified as drift`,'',
+    '---','','## Daily Breakdown','',
+    `Each log day runs from \`${anchorStr}\` to \`${anchorStr}\` (next day).`,'',
+  ]);
+  if (isSingle) {
+    lines.push('| Log Day | Total (km) | Power (km) | Drift (km) | Power% | Cumulative (km) |');
+    lines.push('|---------|------------|------------|------------|--------|-----------------|');
+    for (const d of merged) {
+      lines.push(`| ${d.day} | ${d.accepted.toFixed(3)} | ${d.acceptedPower.toFixed(3)} | ${d.acceptedDrift.toFixed(3)} | ${d.powerPct.toFixed(1)}% | ${d.cumKm.toFixed(3)} |`);
+    }
+  } else {
+    lines.push('| Log Day | NAV (km) | GPS (km) | Divergence | Decision | Total (km) | Power (km) | Drift (km) | Power% | Cumulative (km) |');
+    lines.push('|---------|----------|----------|------------|----------|------------|------------|------------|--------|-----------------|');
+    for (const d of merged) {
+      const navStr = d.navKm!==null ? d.navKm.toFixed(3) : '—';
+      const gpsStr = d.gpsKm!==null ? d.gpsKm.toFixed(3) : '—';
+      const divStr = d.divPct!==null ? d.divPct.toFixed(1)+'%' : '—';
+      lines.push(`| ${d.day} | ${navStr} | ${gpsStr} | ${divStr} | ${DECISION_LABEL[d.decision]} | ${d.accepted.toFixed(3)} | ${d.acceptedPower.toFixed(3)} | ${d.acceptedDrift.toFixed(3)} | ${d.powerPct.toFixed(1)}% | ${d.cumKm.toFixed(3)} |`);
+    }
+  }
+  lines = lines.concat(['','### Notes','']);
+  for (const d of merged) {
+    const spike = (d.navSpikes||d.gpsSpikes) ? ` *(NAV: ${d.navSpikes} spike(s) filtered, GPS: ${d.gpsSpikes} spike(s) filtered)*` : '';
+    lines.push(`- **${d.day}:** ${d.reason}${spike}`);
+  }
+  lines = lines.concat(['','---','','*End of Report*']);
+  return lines.join('\n');
+}
+
+// ── Render results ─────────────────────────────────────────────────────────────
+function renderResults(merged, navName, gpsName, navPts, gpsPts, maxSpeed, agreementPct, anchor, isSingle) {
+  const last = merged[merged.length-1] || {};
+  const totalKm = last.cumKm || 0;
+  const totalPowerKm = last.cumPower || 0;
+  const totalDriftKm = last.cumDrift || 0;
+  const nm = v => v/KM_PER_NM;
+  const powerPct = totalKm>0 ? totalPowerKm/totalKm*100 : 0;
+  const driftPct = totalKm>0 ? totalDriftKm/totalKm*100 : 0;
+  const totalNavSpikes = merged.reduce((s,d)=>s+d.navSpikes,0);
+  const totalGpsSpikes = merged.reduce((s,d)=>s+d.gpsSpikes,0);
+  const totalSpikes = totalNavSpikes + totalGpsSpikes;
+  const sensorLabel = isSingle ? (navName ? 'NAV' : 'GPS') : '';
+
+  // Results header title
+  document.querySelector('.results-title').textContent = isSingle
+    ? `// Single-Sensor Report (${sensorLabel})`
+    : '// Analysis Report';
+
+  // Section title
+  document.querySelector('#summaryTable').closest('.section').querySelector('.section-title').textContent =
+    isSingle ? 'Distance Summary' : 'Merged Distance Summary';
+  document.querySelector('#dailyTable').closest('.section').querySelector('.section-title').textContent =
+    isSingle ? 'Daily Breakdown' : 'Daily Reconciliation Breakdown';
+
+  // Stat cards
+  const spikeUnit = isSingle ? `${sensorLabel} ${totalSpikes}` : `nav ${totalNavSpikes} · gps ${totalGpsSpikes}`;
+  document.getElementById('statGrid').innerHTML = [
+    { label:'Total Distance', val: totalKm.toFixed(2), unit:'km', cls:'amber' },
+    { label:'Total Distance', val: nm(totalKm).toFixed(2), unit:'nautical miles', cls:'cyan' },
+    { label:'Under Power', val: totalPowerKm.toFixed(2), unit:`km · ${powerPct.toFixed(1)}%`, cls:'green' },
+    { label:'Drift', val: totalDriftKm.toFixed(2), unit:`km · ${driftPct.toFixed(1)}%`, cls:'' },
+    { label:'Days Processed', val: merged.length, unit:'log days', cls:'' },
+    { label:'Spikes Filtered', val: totalSpikes, unit: spikeUnit, cls:'warn' },
+  ].map(c=>`
+    <div class="stat-card">
+      <div class="stat-label">${c.label}</div>
+      <div class="stat-val ${c.cls}">${c.val}</div>
+      <div class="stat-unit">${c.unit}</div>
+    </div>`).join('');
+
+  // Summary table
+  const summaryExtra = isSingle ? '' : `
+    <tr><td style="color:var(--text-dim)">NAV cleaned total</td><td class="num" style="color:var(--text-dim)">${merged.reduce((s,d)=>s+(d.navKm||0),0).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">${nm(merged.reduce((s,d)=>s+(d.navKm||0),0)).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">—</td></tr>
+    <tr><td style="color:var(--text-dim)">GPS cleaned total</td><td class="num" style="color:var(--text-dim)">${merged.reduce((s,d)=>s+(d.gpsKm||0),0).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">${nm(merged.reduce((s,d)=>s+(d.gpsKm||0),0)).toFixed(3)}</td><td class="num" style="color:var(--text-dim)">—</td></tr>`;
+
+  document.getElementById('summaryTable').innerHTML = `
+    <thead><tr><th>Metric</th><th>km</th><th>nm</th><th>% of Total</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--text-bright)">Accepted Total</strong></td><td class="num">${totalKm.toFixed(3)}</td><td class="num">${nm(totalKm).toFixed(3)}</td><td class="num">100%</td></tr>
+      <tr><td>Under Power</td><td class="num cyan">${totalPowerKm.toFixed(3)}</td><td class="num cyan">${nm(totalPowerKm).toFixed(3)}</td><td class="num">${powerPct.toFixed(1)}%
+        <div class="bar-wrap"><div class="bar-fill bar-power" style="width:${powerPct}%"></div></div>
+      </td></tr>
+      <tr><td>Drift</td><td class="num warn">${totalDriftKm.toFixed(3)}</td><td class="num warn">${nm(totalDriftKm).toFixed(3)}</td><td class="num">${driftPct.toFixed(1)}%
+        <div class="bar-wrap"><div class="bar-fill bar-drift" style="width:${driftPct}%"></div></div>
+      </td></tr>
+      ${summaryExtra}
+    </tbody>`;
+
+  // Daily table — single mode has fewer columns
+  let rows, thead;
+  if (isSingle) {
+    thead = `<thead><tr><th>Log Day</th><th>Total km</th><th>Power km</th><th>Drift km</th><th>Power%</th><th>Cumulative km</th></tr></thead>`;
+    rows = merged.map(d => `<tr>
+      <td style="color:var(--text-bright);font-family:var(--mono)">${d.day}</td>
+      <td class="num amber">${d.accepted.toFixed(3)}</td>
+      <td class="num cyan">${d.acceptedPower.toFixed(3)}</td>
+      <td class="num warn">${d.acceptedDrift.toFixed(3)}</td>
+      <td class="num">${d.powerPct.toFixed(1)}%</td>
+      <td class="num" style="color:var(--text-dim)">${d.cumKm.toFixed(3)}</td>
+    </tr>`).join('');
+  } else {
+    const BADGE = {
+      averaged: '<span class="badge badge-avg">Averaged</span>',
+      nav_lower: '<span class="badge badge-nav">NAV chosen</span>',
+      gps_lower: '<span class="badge badge-gps">GPS chosen</span>',
+      nav_only: '<span class="badge badge-only">NAV only</span>',
+      gps_only: '<span class="badge badge-only">GPS only</span>',
+    };
+    thead = `<thead><tr><th>Log Day</th><th>NAV km</th><th>GPS km</th><th>Divergence</th><th>Decision</th><th>Total km</th><th>Power km</th><th>Drift km</th><th>Power%</th><th>Cumulative km</th></tr></thead>`;
+    rows = merged.map(d => {
+      const divClass = d.divPct===null ? '' : d.divPct>12 ? 'bad' : 'good';
+      return `<tr>
+        <td style="color:var(--text-bright);font-family:var(--mono)">${d.day}</td>
+        <td class="num">${d.navKm!==null?d.navKm.toFixed(3):'—'}</td>
+        <td class="num">${d.gpsKm!==null?d.gpsKm.toFixed(3):'—'}</td>
+        <td class="num ${divClass}">${d.divPct!==null?d.divPct.toFixed(1)+'%':'—'}</td>
+        <td>${BADGE[d.decision]||d.decision}</td>
+        <td class="num amber">${d.accepted.toFixed(3)}</td>
+        <td class="num cyan">${d.acceptedPower.toFixed(3)}</td>
+        <td class="num warn">${d.acceptedDrift.toFixed(3)}</td>
+        <td class="num">${d.powerPct.toFixed(1)}%</td>
+        <td class="num" style="color:var(--text-dim)">${d.cumKm.toFixed(3)}</td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('dailyTable').innerHTML = thead + `<tbody>${rows}</tbody>`;
+
+  // Notes
+  document.getElementById('notesList').innerHTML = merged.map(d => {
+    const spike = (d.navSpikes||d.gpsSpikes) ?
+      ` <span class="spike-note">(NAV: ${d.navSpikes} spike(s), GPS: ${d.gpsSpikes} spike(s) filtered)</span>` : '';
+    return `<li><strong>${d.day}:</strong> ${d.reason}${spike}</li>`;
+  }).join('');
+
+  // Spike table
+  let spikeRows = '';
+  if (!isSingle || navName) spikeRows += `<tr><td>NAV</td><td class="num ${totalNavSpikes>0?'warn':''}">${totalNavSpikes}</td></tr>`;
+  if (!isSingle || gpsName) spikeRows += `<tr><td>GPS</td><td class="num ${totalGpsSpikes>0?'warn':''}">${totalGpsSpikes}</td></tr>`;
+  document.getElementById('spikeTable').innerHTML = `
+    <thead><tr><th>Sensor</th><th>Segments Filtered</th></tr></thead>
+    <tbody>${spikeRows}</tbody>`;
+
+  lastReport = generateMarkdown(navName, gpsName, navPts, gpsPts, merged, anchor, maxSpeed, agreementPct, isSingle);
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ── Download ──────────────────────────────────────────────────────────────────
+function downloadReport() {
+  if (!lastReport) return;
+  const blob = new Blob([lastReport], { type:'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `usv_report_${new Date().toISOString().slice(0,10)}.md`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ── Main run ──────────────────────────────────────────────────────────────────
+async function runAnalysis() {
+  clearError();
+  document.getElementById('results').style.display = 'none';
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳  PROCESSING...';
+
+  try {
+    const anchorStr = document.getElementById('anchorInput').value;
+    const maxSpeed = parseFloat(document.getElementById('maxSpeedInput').value) || 10;
+    const agreementPct = parseFloat(document.getElementById('agreementInput').value) || 12;
+    const threshold = agreementPct / 100;
+
+    let anchor;
+    try { anchor = parseAnchor(anchorStr); }
+    catch(e) { showError(e.message); return; }
+    const anchorSec = anchorSeconds(anchor);
+
+    const readFile = f => new Promise((res,rej) => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.onerror = () => rej(new Error('Failed to read file'));
+      r.readAsText(f);
+    });
+
+    const dualMode = !!(files.nav && files.gps);
+    const isSingle = !dualMode;
+
+    let merged, navName, gpsName, navPtsCount, gpsPtsCount;
+
+    if (dualMode) {
+      const [navText, gpsText] = await Promise.all([readFile(files.nav), readFile(files.gps)]);
+      const navPts = parseCSV(navText);
+      const gpsPts = parseCSV(gpsText);
+      if (navPts.length < 2) throw new Error(`NAV file "${files.nav.name}" has fewer than 2 valid points.`);
+      if (gpsPts.length < 2) throw new Error(`GPS file "${files.gps.name}" has fewer than 2 valid points.`);
+      const navDays = computeDailyStats(navPts, anchorSec, maxSpeed);
+      const gpsDays = computeDailyStats(gpsPts, anchorSec, maxSpeed);
+      merged = reconcile(navDays, gpsDays, threshold);
+      navName = files.nav.name; gpsName = files.gps.name;
+      navPtsCount = navPts.length; gpsPtsCount = gpsPts.length;
+    } else {
+      const sensor = files.nav ? 'nav' : 'gps';
+      const file = files.nav || files.gps;
+      const text = await readFile(file);
+      const pts = parseCSV(text);
+      if (pts.length < 2) throw new Error(`File "${file.name}" has fewer than 2 valid points.`);
+      const days = computeDailyStats(pts, anchorSec, maxSpeed);
+      merged = singleSensorReconcile(days, sensor);
+      navName = sensor === 'nav' ? file.name : null;
+      gpsName = sensor === 'gps' ? file.name : null;
+      navPtsCount = sensor === 'nav' ? pts.length : 0;
+      gpsPtsCount = sensor === 'gps' ? pts.length : 0;
+    }
+
+    if (!merged.length) throw new Error('No days could be processed from the data.');
+
+    renderResults(merged, navName, gpsName, navPtsCount, gpsPtsCount, maxSpeed, agreementPct, anchor, isSingle);
+
+  } catch(e) {
+    showError('Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶  RUN ANALYSIS';
+    checkReady();
+  }
+}
+</script>
+</body>
+</html>
