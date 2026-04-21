@@ -51,6 +51,7 @@ textarea::placeholder{color:var(--text-dim)}
 .run-btn:disabled{background:var(--amber-dim);color:#333;cursor:not-allowed;transform:none}
 
 .error-box{background:rgba(232,69,60,.1);border:1px solid var(--red);border-radius:6px;padding:12px 16px;font-family:var(--mono);font-size:12px;color:var(--red);margin-bottom:20px;display:none}
+.debug-box{background:rgba(0,200,212,.05);border:1px solid var(--bord2);border-radius:6px;padding:12px 16px;font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-bottom:20px;display:none;max-height:200px;overflow-y:auto;white-space:pre-wrap}
 
 #results{display:none}
 
@@ -66,7 +67,8 @@ textarea::placeholder{color:var(--text-dim)}
 
 .chart-wrap{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:20px;margin-bottom:28px;position:relative}
 .chart-title{font-family:var(--mono);font-size:10px;color:var(--amber);text-transform:uppercase;letter-spacing:.15em;margin-bottom:16px}
-#battChart{width:100%;height:260px}
+/* FIX: explicit container for Chart.js — prevents resize loop */
+.chart-container{position:relative;width:100%;height:260px}
 
 .section-title{font-family:var(--mono);font-size:10px;color:var(--amber);text-transform:uppercase;letter-spacing:.15em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bord)}
 
@@ -122,12 +124,13 @@ textarea::placeholder{color:var(--text-dim)}
   </div>
 
   <div class="field">
-    <a target ="_blank" href="https://www.ndbc.noaa.gov/data/Forecasts/FZPN26.KWBC.html"><div class="field-label">NOAA Forecast Text</div></a>
-    <textarea id="forecastText" placeholder="TODAY S to SW winds 10 to 20 kt...&#10;&#10;Paste the full NOAA forecast here"></textarea>
+    <a target="_blank" href="https://www.ndbc.noaa.gov/data/Forecasts/FZPN26.KWBC.html"><div class="field-label">NOAA Forecast Text</div></a>
+    <textarea id="forecastText" placeholder="Paste NOAA forecast here, e.g.:&#10;&#10;.TODAY...S TO SW WINDS 10 TO 20 KT.&#10;.TONIGHT...W WINDS 15 TO 25 KT.&#10;.MONDAY...NW WINDS 5 TO 10 KT."></textarea>
   </div>
 </div>
 
 <div class="error-box" id="errorBox"></div>
+<div class="debug-box" id="debugBox"></div>
 
 <button class="run-btn" id="runBtn" onclick="runForecast()">▶ &nbsp;RUN FORECAST</button>
 
@@ -143,7 +146,10 @@ textarea::placeholder{color:var(--text-dim)}
       <div class="band-item"><div class="band-dot" style="background:rgba(0,201,122,.2)"></div>Optimistic–Pessimistic range</div>
       <div class="band-item"><div class="band-dot" style="background:rgba(232,69,60,.3)"></div>Critical zone (&lt;20%)</div>
     </div>
-    <canvas id="battChart"></canvas>
+    <!-- FIX: proper container with position:relative and explicit height -->
+    <div class="chart-container">
+      <canvas id="battChart"></canvas>
+    </div>
   </div>
 
   <div class="section-title">Period breakdown</div>
@@ -153,10 +159,10 @@ textarea::placeholder{color:var(--text-dim)}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── Model coefficients (quadratic fit to bin means across 1627 data points) ──
-const C_MEAN = [0.428709,  6.208462, 57.431401];
-const C_OPT  = [0.648558, -4.631703,  2.770288];  // 25th percentile
-const C_PESS = [0.949038, -2.062967, 109.582500];  // 75th percentile
+// ── Model coefficients (quadratic fit to bin means) ──
+const C_MEAN = [0.428709,  6.208462, 57.431401];   // mean
+const C_OPT  = [0.648558, -4.631703,  2.770288];   // 25th pctl (low consumption)
+const C_PESS = [0.949038, -2.062967, 109.582500];   // 75th pctl (high consumption)
 
 function polyval(c, x) {
   return Math.max(0, c[0]*x*x + c[1]*x + c[2]);
@@ -170,7 +176,7 @@ function battColor(pct) {
 }
 function updateBattBar() {
   const pct = parseFloat(document.getElementById('battPct').value) || 0;
-  document.getElementById('battBar').style.width = pct + '%';
+  document.getElementById('battBar').style.width = Math.min(100, Math.max(0, pct)) + '%';
   document.getElementById('battBar').style.background = battColor(pct);
   document.getElementById('battSlider').value = pct;
 }
@@ -181,64 +187,147 @@ document.getElementById('battSlider').oninput = e => {
 };
 updateBattBar();
 
-// ── NOAA parser ──
-function parseNOAA(text) {
-  const periodRx = /((?:TODAY|TONIGHT|MON(?:DAY)?|TUE(?:SDAY)?|WED(?:NESDAY)?|THU(?:RSDAY)?|FRI(?:DAY)?|SAT(?:URDAY)?|SUN(?:DAY)?)(?:\s+NIGHT)?(?:\s+(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\s+\d+)?)/gi;
-  const windRx = /winds?\s+(?:[\w\s]+?\s+)?(\d+)\s+to\s+(\d+)\s+k[tn]/i;
-  const lessThanRx = /winds?\s+(?:[\w\s]+?\s+)?less\s+than\s+(\d+)\s+k[tn]/i;
 
-  // Split by period labels
-  const parts = text.replace(/\n/g,' ').split(periodRx);
+// ── Improved NOAA parser ──
+function parseNOAA(raw) {
   const results = [];
+  const debugLines = [];
 
-  for (let i = 1; i < parts.length - 1; i += 2) {
-    const label = parts[i].trim().toUpperCase();
-    const desc  = (parts[i+1] || '').trim();
+  // Normalize: collapse whitespace, uppercase
+  let text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
+  // NOAA uses .LABEL... format — split on that pattern
+  // Match period headers like: .TODAY..., .TONIGHT..., .MONDAY..., .MONDAY NIGHT..., .TUE NIGHT...
+  const periodPattern = /\.([A-Z][A-Z ]*?)\.\.\./g;
+  const splits = [];
+  let match;
+
+  while ((match = periodPattern.exec(text)) !== null) {
+    splits.push({
+      label: match[1].trim(),
+      index: match.index,
+      afterIndex: match.index + match[0].length
+    });
+  }
+
+  // If dot-format didn't work, try line-based format (some NOAA pages)
+  // e.g. "TODAY\n  S winds 10 to 20 kt..." or "TODAY...S winds 10 to 20 kt"
+  if (splits.length === 0) {
+    const dayNames = /^(TODAY|TONIGHT|(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:DAY|ESDAY|NESDAY|RSDAY|URDAY)?(?:\s+NIGHT)?)/gmi;
+    const flatText = text.replace(/\n/g, ' __NL__ ');
+
+    while ((match = dayNames.exec(text)) !== null) {
+      splits.push({
+        label: match[1].trim().toUpperCase(),
+        index: match.index,
+        afterIndex: match.index + match[0].length
+      });
+    }
+  }
+
+  debugLines.push(`Found ${splits.length} period header(s)`);
+
+  // Extract body text for each period
+  for (let i = 0; i < splits.length; i++) {
+    const start = splits[i].afterIndex;
+    const end = (i + 1 < splits.length) ? splits[i + 1].index : text.length;
+    const body = text.slice(start, end).replace(/\n/g, ' ').trim();
+    const label = splits[i].label;
+
+    // Parse wind from body — handle multiple patterns
     let windLo, windHi, windAvg;
+    let parsed = false;
 
-    // Handle "becoming X to Y" — use the first range as primary
-    const windMatch = windRx.exec(desc);
-    const ltMatch   = lessThanRx.exec(desc);
+    // Pattern 1: "WINDS 10 TO 20 KT" or "winds 10 to 20 kt"
+    const rangeMatch = body.match(/winds?\s+(\d+)\s+to\s+(\d+)\s*k[tn]/i);
+    // Pattern 2: "LESS THAN 10 KT"
+    const lessMatch = body.match(/winds?\s+less\s+than\s+(\d+)\s*k[tn]/i);
+    // Pattern 3: "10 TO 20 KT" without "winds" prefix (sometimes in NOAA)
+    const bareRange = body.match(/(\d+)\s+to\s+(\d+)\s*k[tn]/i);
+    // Pattern 4: "AROUND 10 KT"
+    const aroundMatch = body.match(/(?:winds?\s+)?around\s+(\d+)\s*k[tn]/i);
 
-    if (windMatch) {
-      windLo  = parseInt(windMatch[1]);
-      windHi  = parseInt(windMatch[2]);
-      windAvg = (windLo + windHi) / 2;
-    } else if (ltMatch) {
-      windHi  = parseInt(ltMatch[1]);
-      windLo  = 0;
-      windAvg = windHi / 2;
-    } else {
-      continue;
+    // Also check for "becoming" — secondary wind range
+    const becomingMatch = body.match(/becoming\s+.*?(\d+)\s+to\s+(\d+)\s*k[tn]/i);
+
+    if (rangeMatch) {
+      windLo = parseInt(rangeMatch[1]);
+      windHi = parseInt(rangeMatch[2]);
+      parsed = true;
+    } else if (lessMatch) {
+      windHi = parseInt(lessMatch[1]);
+      windLo = 0;
+      parsed = true;
+    } else if (aroundMatch) {
+      const v = parseInt(aroundMatch[1]);
+      windLo = Math.max(0, v - 3);
+      windHi = v + 3;
+      parsed = true;
+    } else if (bareRange) {
+      windLo = parseInt(bareRange[1]);
+      windHi = parseInt(bareRange[2]);
+      parsed = true;
     }
 
-    results.push({ label, windLo, windHi, windAvg, hours: 12, desc: desc.slice(0, 120) });
+    if (parsed) {
+      // If there's a "becoming" clause, weight it (30% initial, 70% later)
+      if (becomingMatch && rangeMatch) {
+        const bLo = parseInt(becomingMatch[1]);
+        const bHi = parseInt(becomingMatch[2]);
+        windAvg = 0.3 * ((windLo + windHi) / 2) + 0.7 * ((bLo + bHi) / 2);
+      } else {
+        windAvg = (windLo + windHi) / 2;
+      }
+
+      debugLines.push(`${label}: ${windLo}-${windHi} kt, avg=${windAvg.toFixed(1)}`);
+      results.push({
+        label,
+        windLo,
+        windHi,
+        windAvg,
+        hours: 12,
+        desc: body.slice(0, 120)
+      });
+    } else {
+      debugLines.push(`${label}: ⚠ no wind found in "${body.slice(0, 80)}..."`);
+    }
   }
-  return results;
+
+  return { periods: results, debug: debugLines.join('\n') };
 }
+
 
 // ── Forecast run ──
 let chartInst = null;
 
 function runForecast() {
   document.getElementById('errorBox').style.display = 'none';
+  document.getElementById('debugBox').style.display = 'none';
   document.getElementById('results').style.display = 'none';
 
-  const startPct  = parseFloat(document.getElementById('battPct').value);
+  const startPct = parseFloat(document.getElementById('battPct').value);
   const capacityKwh = parseFloat(document.getElementById('capacity').value) || 17.56;
   const text = document.getElementById('forecastText').value.trim();
 
   if (!text) { showError('Please paste a NOAA forecast.'); return; }
   if (isNaN(startPct) || startPct < 0 || startPct > 100) { showError('Battery % must be 0–100.'); return; }
 
-  const periods = parseNOAA(text);
-  if (!periods.length) { showError('Could not parse any forecast periods. Check the format matches NOAA text (e.g. TODAY ... winds 10 to 20 kt).'); return; }
+  const { periods, debug } = parseNOAA(text);
+
+  // Show debug info
+  const debugBox = document.getElementById('debugBox');
+  debugBox.textContent = 'Parser debug:\n' + debug;
+  debugBox.style.display = 'block';
+
+  if (!periods.length) {
+    showError('Could not parse any forecast periods. Make sure the text contains wind info like "WINDS 10 TO 20 KT". Check the debug output above.');
+    return;
+  }
 
   const startKwh = startPct / 100 * capacityKwh;
   let batt_m = startKwh, batt_o = startKwh, batt_p = startKwh;
 
-  const chartLabels = ['Start'];
+  const chartLabels = ['Now'];
   const chartMean   = [startPct];
   const chartOpt    = [startPct];
   const chartPess   = [startPct];
@@ -250,24 +339,31 @@ function runForecast() {
   const periodRows = [];
 
   for (const p of periods) {
-    const wh_m = polyval(C_MEAN, p.windAvg);
+    const wh_m = polyval(C_MEAN, p.windAvg);   // Wh per hour
     const wh_o = polyval(C_OPT,  p.windAvg);
     const wh_p = polyval(C_PESS, p.windAvg);
 
-    const kwh_m = wh_m * p.hours / 1000;
+    const kwh_m = wh_m * p.hours / 1000;       // kWh for the period
     const kwh_o = wh_o * p.hours / 1000;
     const kwh_p = wh_p * p.hours / 1000;
 
     batt_m = Math.max(0, batt_m - kwh_m);
-    batt_o = Math.max(0, batt_o - kwh_o);
-    batt_p = Math.max(0, batt_p - kwh_p);
+    batt_o = Math.max(0, batt_o - kwh_o);      // optimistic = least drain
+    batt_p = Math.max(0, batt_p - kwh_p);      // pessimistic = most drain
 
     const pct_m = batt_m / capacityKwh * 100;
     const pct_o = batt_o / capacityKwh * 100;
     const pct_p = batt_p / capacityKwh * 100;
 
     totalConsumed += kwh_m;
-    chartLabels.push(p.label.replace(' NIGHT', '\nNight').replace('TONIGHT', 'Tonight').replace('TODAY', 'Today'));
+
+    // Clean label for chart
+    let shortLabel = p.label
+      .replace(/\bNIGHT\b/, 'Night')
+      .replace(/^TONIGHT$/, 'Tonight')
+      .replace(/^TODAY$/, 'Today');
+
+    chartLabels.push(shortLabel);
     chartMean.push(Math.round(pct_m * 10) / 10);
     chartOpt.push(Math.round(pct_o * 10) / 10);
     chartPess.push(Math.round(pct_p * 10) / 10);
@@ -282,8 +378,8 @@ function runForecast() {
   const remainingPct = chartMean[chartMean.length - 1];
   const daysTotal = periods.length * 12 / 24;
   document.getElementById('summaryGrid').innerHTML = [
-    { label:'Starting battery', val: startPct.toFixed(0)+'%', unit: (startKwh).toFixed(2)+' kWh', cls:'amber' },
-    { label:'Periods forecast', val: periods.length, unit: (daysTotal).toFixed(1)+' days total', cls:'' },
+    { label:'Starting battery', val: startPct.toFixed(0)+'%', unit: startKwh.toFixed(2)+' kWh', cls:'amber' },
+    { label:'Periods forecast', val: periods.length, unit: daysTotal.toFixed(1)+' days total', cls:'' },
     { label:'Total consumed (mean)', val: totalConsumed.toFixed(2), unit: 'kWh', cls:'cyan' },
     { label:'Remaining (mean)', val: remainingPct.toFixed(0)+'%', unit: (remainingPct/100*capacityKwh).toFixed(2)+' kWh',
       cls: remainingPct > 20 ? 'green' : remainingPct > 0 ? 'amber' : 'red' },
@@ -297,7 +393,7 @@ function runForecast() {
   const alertBox = document.getElementById('alertBox');
   if (critPeriod) {
     alertBox.className = 'alert-box crit';
-    alertBox.innerHTML = `<strong>🔴 CRITICAL:</strong> Battery depleted during <strong>${critPeriod}</strong> under mean consumption. Pessimistic scenario may deplete earlier.`;
+    alertBox.innerHTML = `<strong>🔴 CRITICAL:</strong> Battery depleted during <strong>${critPeriod}</strong> under mean consumption.`;
     alertBox.style.display = 'block';
   } else if (warnPeriod) {
     alertBox.className = 'alert-box warn';
@@ -307,35 +403,42 @@ function runForecast() {
     alertBox.style.display = 'none';
   }
 
-  // ── Chart ──
-  if (chartInst) { chartInst.destroy(); chartInst = null; }
+  // ── Chart (FIX: destroy previous, limit animation, proper container) ──
+  if (chartInst) {
+    chartInst.destroy();
+    chartInst = null;
+  }
 
-  const isDark = true;
+  const ctx = document.getElementById('battChart').getContext('2d');
   const gridCol = 'rgba(255,255,255,0.06)';
   const textCol = '#5a7a9a';
 
-  chartInst = new Chart(document.getElementById('battChart'), {
+  chartInst = new Chart(ctx, {
     type: 'line',
     data: {
       labels: chartLabels,
       datasets: [
         {
-          label: 'Pessimistic',
-          data: chartPess,
-          borderColor: 'transparent',
-          backgroundColor: 'rgba(0,201,122,0.12)',
-          fill: '+1',
-          pointRadius: 0,
-          tension: 0.3,
-        },
-        {
           label: 'Optimistic',
           data: chartOpt,
-          borderColor: 'transparent',
-          backgroundColor: 'rgba(0,201,122,0.12)',
+          borderColor: 'rgba(0,201,122,0.3)',
+          backgroundColor: 'rgba(0,201,122,0.08)',
+          borderWidth: 1,
           fill: false,
           pointRadius: 0,
           tension: 0.3,
+          order: 2
+        },
+        {
+          label: 'Pessimistic',
+          data: chartPess,
+          borderColor: 'rgba(0,201,122,0.3)',
+          backgroundColor: 'rgba(0,201,122,0.08)',
+          borderWidth: 1,
+          fill: '-1',   // fill between this and previous dataset (Optimistic)
+          pointRadius: 0,
+          tension: 0.3,
+          order: 3
         },
         {
           label: 'Mean',
@@ -349,12 +452,15 @@ function runForecast() {
           pointBorderWidth: 2,
           tension: 0.3,
           fill: false,
+          order: 1
         },
       ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: { duration: 400 },         // FIX: fast animation instead of default ~1s
+      resizeDelay: 100,                       // FIX: debounce resize events
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },
@@ -368,18 +474,16 @@ function runForecast() {
           bodyFont: { family: 'DM Sans', size: 12 },
           callbacks: {
             label: ctx => {
-              if (ctx.datasetIndex === 2) return ` Mean: ${ctx.parsed.y.toFixed(1)}%`;
-              if (ctx.datasetIndex === 1) return ` Optimistic: ${chartOpt[ctx.dataIndex]?.toFixed(1)}%`;
-              if (ctx.datasetIndex === 0) return ` Pessimistic: ${chartPess[ctx.dataIndex]?.toFixed(1)}%`;
+              const dsLabel = ctx.dataset.label;
+              return ` ${dsLabel}: ${ctx.parsed.y.toFixed(1)}%`;
             }
           }
         },
-        annotation: undefined,
       },
       scales: {
         x: {
           grid: { color: gridCol },
-          ticks: { color: textCol, font: { family: 'Space Mono', size: 10 } }
+          ticks: { color: textCol, font: { family: 'Space Mono', size: 10 }, maxRotation: 45 }
         },
         y: {
           min: 0, max: 100,
@@ -395,12 +499,13 @@ function runForecast() {
     plugins: [{
       id: 'critZone',
       beforeDraw(chart) {
-        const { ctx, chartArea: { left, right, bottom }, scales: { y } } = chart;
+        const { ctx: c, chartArea, scales: { y } } = chart;
+        if (!chartArea) return;  // FIX: guard against undefined chartArea during init
         const y20 = y.getPixelForValue(20);
-        ctx.save();
-        ctx.fillStyle = 'rgba(232,69,60,0.1)';
-        ctx.fillRect(left, y20, right - left, bottom - y20);
-        ctx.restore();
+        c.save();
+        c.fillStyle = 'rgba(232,69,60,0.08)';
+        c.fillRect(chartArea.left, y20, chartArea.right - chartArea.left, chartArea.bottom - y20);
+        c.restore();
       }
     }]
   });
@@ -408,12 +513,13 @@ function runForecast() {
   // ── Period cards ──
   const pClassFn = pct => pct <= 0 ? 'crit' : pct <= 20 ? 'warn' : '';
   const pctClass = pct => pct <= 0 ? 'crit' : pct <= 20 ? 'warn' : 'ok';
+
   document.getElementById('periodList').innerHTML = periodRows.map(r => `
     <div class="period-card ${pClassFn(r.pct_m)}">
       <div class="period-label">${r.p.label}</div>
       <div class="period-body">
-        <div class="period-wind"><strong>${r.p.windLo}–${r.p.windHi} kt</strong> avg ${r.p.windAvg.toFixed(0)} kt &nbsp;·&nbsp; ${r.wh_m.toFixed(0)} Wh/hr</div>
-        <div class="period-consume">Consumed: ${r.kwh_m.toFixed(2)} kWh (mean) &nbsp;·&nbsp; ${r.kwh_o.toFixed(2)}–${r.kwh_p.toFixed(2)} kWh (range)</div>
+        <div class="period-wind"><strong>${r.p.windLo}–${r.p.windHi} kt</strong> avg ${r.p.windAvg.toFixed(0)} kt · ${r.wh_m.toFixed(0)} Wh/hr</div>
+        <div class="period-consume">Consumed: ${r.kwh_m.toFixed(2)} kWh (mean) · ${r.kwh_o.toFixed(2)}–${r.kwh_p.toFixed(2)} kWh (range)</div>
       </div>
       <div class="period-batt">
         <div class="period-pct ${pctClass(r.pct_m)}">${Math.max(0,r.pct_m).toFixed(0)}%</div>
