@@ -57,8 +57,7 @@
 		
 			</section>	
 
-			<!-- Two -->
-			<!-- <section id="two" class="wrapper style1 fullscreen fade-up"> -->
+			<!-- About me -->
 			<section id="two" class="wrapper fullscreen fade-up style3">
 				<div class="inner" style="display:flex; flex-direction: column; justify-content: space-between;">
 					<div>
@@ -101,16 +100,35 @@
 				</div>
 			</section>
 
+      <!-- Tools -->
 			<section id="tools" class="fade-up wrapper" style="background-color: #312450;">
-        <a href="usv.html">usv tools here</a>
+        <div class="container-fluid h-100">
+          <div class="row h-50">
+            <div class="col-6 p-0">
+              <div class="quadrant">
+                <a href="usv/" class="link-wrapper">
+                  <div class="inner-content" style="background-image: url('photos/dogwan_sm.png.png');"></div>
+                </a>
+              </div>
+            </div>
+            <div class="col-6 p-0">
+              <div class="quadrant">
+                <a href="devco/" class="link-wrapper">
+                  <div class="inner-content" style="background-image: url('photos/devco.png');"></div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
 			</section>
 
+      <!-- Projects -->
 			<section id="projects" class="fade-up wrapper" style="background-color: #312450;">
 			<div class="inner" style="display: flex; justify-content: space-around; flex-direction: column; align-items: center;">
 				<h2 data-micron="fade" id="projects-header">Projects</h2>
 				<div class="slideshow-container">
 
-          <!-- USV tools page -->
+        <!-- USV tools page -->
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
 					<div class="image-overlay-container">
@@ -246,8 +264,38 @@
 			</div>
 			</section>
 
+			<!-- Contact -->
+			<section id="contact" style="display:flex; justify-content: center;" class="wrapper fullscreen fade-up style1">
+				<div class="inner">
+					<section>
+						<form action="https://formspree.io/f/mwprojze" method="post" nctype="text/plain">
+							<div class="fields">
+								<div class="field half">
+									<label for="name">Name</label>
+									<input type="text" name="name" id="name" />
+								</div>
+								<div class="field half">
+									<label for="email">Email</label>
+									<input type="email" name="email" id="email" />
+								</div>
+								<div class="field">
+									<label for="message">Message</label>
+									<textarea name="message" id="message" rows="5"></textarea>
+								</div>
+							</div>
+							<!-- Google reCAPTCHA widget -->
+							<div class="g-recaptcha" data-sitekey="6LekbdorAAAAAAS5s87qfeJjKmbr1MXUqF8wxn4F"></div>
+							<ul class="actions">
+								<input type="submit" name="submit" value="Submit">
+							</ul>
+						</form>
+					</section> 
 
-			<style>
+				</div>
+
+			</section> 
+
+			<!-- <style>
 				/* Container */
 				.slideshow-container {
 					position: relative;
@@ -327,38 +375,7 @@
 				.next {
 					right: 10px;
 				}
-			</style>
-
-			<!-- Contact -->
-			<section id="contact" style="display:flex; justify-content: center;" class="wrapper fullscreen fade-up style1">
-				<div class="inner">
-					<section>
-						<form action="https://formspree.io/f/mwprojze" method="post" nctype="text/plain">
-							<div class="fields">
-								<div class="field half">
-									<label for="name">Name</label>
-									<input type="text" name="name" id="name" />
-								</div>
-								<div class="field half">
-									<label for="email">Email</label>
-									<input type="email" name="email" id="email" />
-								</div>
-								<div class="field">
-									<label for="message">Message</label>
-									<textarea name="message" id="message" rows="5"></textarea>
-								</div>
-							</div>
-							<!-- Google reCAPTCHA widget -->
-							<div class="g-recaptcha" data-sitekey="6LekbdorAAAAAAS5s87qfeJjKmbr1MXUqF8wxn4F"></div>
-							<ul class="actions">
-								<input type="submit" name="submit" value="Submit">
-							</ul>
-						</form>
-					</section> 
-
-				</div>
-
-			</section> 
+			</style> -->
 
 		</div>
 
