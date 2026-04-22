@@ -162,17 +162,17 @@ textarea::placeholder{color:var(--text-dim)}
   </div>
 
   <div class="field">
-    <div class="field-label">NOAA Forecast</div>
+    <div class="field-label"><a href="https://www.ndbc.noaa.gov/data/Forecasts/FZPN26.KWBC.html" target="_blank">NOAA Forecast</a></div>
     <div class="fetch-row">
       <select class="zone-select" id="zoneSelect">
         <option value="PZZ825">PZZ825 — Pt Arena to Pigeon Pt, 60–150nm</option>
-        <option value="PZZ820">PZZ820 — Pt St George to Pt Arena, 60–150nm</option>
+        <!-- <option value="PZZ820">PZZ820 — Pt St George to Pt Arena, 60–150nm</option>
         <option value="PZZ810">PZZ810 — Pt St George to Pt Arena, 10–60nm</option>
         <option value="PZZ830">PZZ830 — Pt Arena to Pigeon Pt, Coastal</option>
-        <option value="PZZ800">PZZ800 — Pt St George to Pt Arena, Coastal</option>
+        <option value="PZZ800">PZZ800 — Pt St George to Pt Arena, Coastal</option> -->
       </select>
-      <button class="fetch-btn" id="fetchBtn" onclick="fetchForecast()">⬇ Auto-fetch</button>
-      <span class="fetch-status" id="fetchStatus"></span>
+      <!-- <button class="fetch-btn" id="fetchBtn" onclick="fetchForecast()">⬇ Auto-fetch</button> -->
+      <!-- <span class="fetch-status" id="fetchStatus"></span> -->
     </div>
     <textarea id="forecastText" placeholder="Forecast will appear here after auto-fetch, or paste manually:&#10;&#10;TODAY S to SW winds 10 to 20 kt..."></textarea>
     <div style="font-size:11px;color:var(--text-dim);margin-top:6px">Source: NWS Offshore Waters Forecast (FZPN26·KWBC) · updates 4× daily</div>
