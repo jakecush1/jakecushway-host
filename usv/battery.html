@@ -166,14 +166,14 @@ textarea::placeholder{color:var(--text-dim)}
     <div class="fetch-row">
       <select class="zone-select" id="zoneSelect">
         <option value="PZZ825">PZZ825 — Pt Arena to Pigeon Pt, 60–150nm</option>
-        <!-- <option value="PZZ820">PZZ820 — Pt St George to Pt Arena, 60–150nm</option>
+        <option value="PZZ820">PZZ820 — Pt St George to Pt Arena, 60–150nm</option>
         <option value="PZZ810">PZZ810 — Pt St George to Pt Arena, 10–60nm</option>
         <option value="PZZ830">PZZ830 — Pt Arena to Pigeon Pt, Coastal</option>
-        <option value="PZZ800">PZZ800 — Pt St George to Pt Arena, Coastal</option> -->
+        <option value="PZZ800">PZZ800 — Pt St George to Pt Arena, Coastal</option>
       </select>
-      <!-- <button class="fetch-btn" id="fetchBtn" onclick="fetchForecast()">⬇ Auto-fetch</button> -->
+      <button class="fetch-btn" id="fetchBtn" onclick="fetchForecast()">⬇ Auto-fetch</button>
       <button style="color: teal;" class="fetch-btn" id="fetchBtn"><a href="https://www.ndbc.noaa.gov/data/Forecasts/FZPN26.KWBC.html" target="_blank">Forecast Here</a></button>
-      <!-- <span class="fetch-status" id="fetchStatus"></span> -->
+      <span class="fetch-status" id="fetchStatus"></span>
     </div>
     <textarea id="forecastText" placeholder="Copy and paste Forecast Here:&#10;&#10;TODAY S to SW winds 10 to 20 kt..."></textarea>
     <div style="font-size:11px;color:var(--text-dim);margin-top:6px">Source: NWS Offshore Waters Forecast (FZPN26·KWBC) · updates 4× daily</div>
@@ -297,6 +297,12 @@ async function fetchForecast() {
   status.textContent = '';
 
   try {
+    
+    // test api call
+    const testCall = 'https://api.weather.gov';
+    const testRes = await fetch(testCall, { headers: { 'Accept': 'application/geo+json' } });
+    console.log(testRes);
+
     // Step 1: get latest product listing for Offshore Waters Forecast from MTR office
     const listUrl = 'https://api.weather.gov/products?type=OFF&location=MTR&limit=1';
     const listRes = await fetch(listUrl, { headers: { 'Accept': 'application/geo+json' } });
