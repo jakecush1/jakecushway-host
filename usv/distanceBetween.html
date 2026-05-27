@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GPS Distance — Between Two Points</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --surface: #111827;
+      --border: #1e2d40;
+      --accent: #00d4ff;
+      --accent2: #00ff9d;
+      --text: #e2e8f0;
+      --muted: #4a5568;
+      --mono: 'Space Mono', monospace;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      margin-bottom: 48px;
+    }
+
+    .label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: var(--mono);
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    h1 span { color: var(--accent); }
+
+    .subtitle {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .upload-grid { grid-template-columns: 1fr; }
+    }
+
+    .drop-zone {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--surface);
+      position: relative;
+    }
+
+    .drop-zone:hover, .drop-zone.over {
+      border-color: var(--accent);
+      background: rgba(0,212,255,0.04);
+    }
+
+    .drop-zone.loaded {
+      border-color: var(--accent2);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+      opacity: 0.5;
+    }
+
+    .drop-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .drop-hint {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .file-name {
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .format-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-family: var(--mono);
+    }
+
+    .format-note code {
+      color: var(--accent);
+      background: rgba(0,212,255,0.08);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .run-btn {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 14px 36px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      display: block;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+
+    .run-btn:hover { opacity: 0.85; }
+    .run-btn:active { transform: scale(0.98); }
+    .run-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* Stats bar */
+    .stats-bar {
+      display: none;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stats-bar.visible { display: grid; }
+
+    @media (max-width: 600px) {
+      .stats-bar { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .stat-card .s-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .stat-card .s-value {
+      font-family: var(--mono);
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .stat-card .s-unit {
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: 3px;
+    }
+
+    /* Table */
+    .table-wrap {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .table-wrap.visible { display: block; }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-header span {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .export-btn {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .export-btn:hover { background: rgba(0,212,255,0.1); }
+
+    .table-scroll {
+      overflow-x: auto;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    thead th {
+      background: #0d1520;
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(30,45,64,0.6);
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover { background: rgba(0,212,255,0.03); }
+
+    tbody td {
+      padding: 9px 16px;
+      color: var(--text);
+    }
+
+    tbody td.dist {
+      color: var(--accent2);
+      font-weight: 700;
+    }
+
+    .error-msg {
+      display: none;
+      background: rgba(255,80,80,0.08);
+      border: 1px solid rgba(255,80,80,0.3);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #ff6b6b;
+      margin-bottom: 20px;
+    }
+
+    .error-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="label">USV Tools</div>
+    <h1>GPS Distance<br><span>Between Two Points</span></h1>
+    <p class="subtitle">Upload two CSV files with matching timestamps to compute distance at each point.</p>
+  </header>
+
+  <div class="upload-grid">
+    <div class="drop-zone" id="zoneA">
+      <input type="file" accept=".csv" id="fileA">
+      <div class="drop-icon">📡</div>
+      <div class="drop-label">Dataset A</div>
+      <div class="drop-hint">Click or drag CSV</div>
+      <div class="file-name" id="nameA"></div>
+    </div>
+    <div class="drop-zone" id="zoneB">
+      <input type="file" accept=".csv" id="fileB">
+      <div class="drop-icon">📡</div>
+      <div class="drop-label">Dataset B</div>
+      <div class="drop-hint">Click or drag CSV</div>
+      <div class="file-name" id="nameB"></div>
+    </div>
+  </div>
+
+  <p class="format-note">Required columns: <code>Time</code> &nbsp;<code>Latitude</code> &nbsp;<code>Longitude</code></p>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <button class="run-btn" id="runBtn" disabled>Calculate Distance</button>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-card">
+      <div class="s-label">Matched Rows</div>
+      <div class="s-value" id="sMatched">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="s-label">Min Distance</div>
+      <div class="s-value" id="sMin">—<span class="s-unit">m</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="s-label">Max Distance</div>
+      <div class="s-value" id="sMax">—<span class="s-unit">m</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="s-label">Mean Distance</div>
+      <div class="s-value" id="sMean">—<span class="s-unit">m</span></div>
+    </div>
+  </div>
+
+  <div class="table-wrap" id="tableWrap">
+    <div class="table-header">
+      <span id="rowCount"></span>
+      <button class="export-btn" id="exportBtn">Export CSV</button>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Lat A</th>
+            <th>Lon A</th>
+            <th>Lat B</th>
+            <th>Lon B</th>
+            <th>Distance (m)</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let dataA = null, dataB = null, results = [];
+
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+    return (2 * R * Math.asin(Math.sqrt(a))).toFixed(3);
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    return lines.slice(1).map(line => {
+      const vals = line.split(',').map(v => v.trim());
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = vals[i]);
+      return obj;
+    });
+  }
+
+  function validateCSV(rows, label) {
+    const required = ['Time', 'Latitude', 'Longitude'];
+    const missing = required.filter(r => !Object.keys(rows[0] || {}).includes(r));
+    if (missing.length) throw new Error(`${label} is missing columns: ${missing.join(', ')}`);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+
+  function hideError() {
+    document.getElementById('errorMsg').classList.remove('visible');
+  }
+
+  function loadFile(file, label, nameElId, zoneId) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const rows = parseCSV(e.target.result);
+        validateCSV(rows, label);
+        if (label === 'A') dataA = rows;
+        else dataB = rows;
+        document.getElementById(nameElId).textContent = file.name;
+        document.getElementById(zoneId).classList.add('loaded');
+        hideError();
+        checkReady();
+      } catch(err) {
+        showError(err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function checkReady() {
+    document.getElementById('runBtn').disabled = !(dataA && dataB);
+  }
+
+  // File inputs
+  document.getElementById('fileA').addEventListener('change', e => {
+    if (e.target.files[0]) loadFile(e.target.files[0], 'A', 'nameA', 'zoneA');
+  });
+  document.getElementById('fileB').addEventListener('change', e => {
+    if (e.target.files[0]) loadFile(e.target.files[0], 'B', 'nameB', 'zoneB');
+  });
+
+  // Drag and drop
+  ['zoneA', 'zoneB'].forEach(id => {
+    const zone = document.getElementById(id);
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('over');
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const label = id === 'zoneA' ? 'A' : 'B';
+      const nameEl = id === 'zoneA' ? 'nameA' : 'nameB';
+      loadFile(file, label, nameEl, id);
+    });
+  });
+
+  document.getElementById('runBtn').addEventListener('click', () => {
+    hideError();
+    results = [];
+
+    const mapA = {};
+    dataA.forEach(r => mapA[r.Time] = r);
+
+    let matched = 0;
+    dataB.forEach(rowB => {
+      const rowA = mapA[rowB.Time];
+      if (!rowA) return;
+      matched++;
+      const dist = haversine(
+        parseFloat(rowA.Latitude), parseFloat(rowA.Longitude),
+        parseFloat(rowB.Latitude), parseFloat(rowB.Longitude)
+      );
+      results.push({
+        Time: rowB.Time,
+        Lat_A: rowA.Latitude, Lon_A: rowA.Longitude,
+        Lat_B: rowB.Latitude, Lon_B: rowB.Longitude,
+        Distance_meters: parseFloat(dist)
+      });
+    });
+
+    if (results.length === 0) {
+      showError('No matching timestamps found between the two files.');
+      return;
+    }
+
+    const dists = results.map(r => r.Distance_meters);
+    const min = Math.min(...dists).toFixed(3);
+    const max = Math.max(...dists).toFixed(3);
+    const mean = (dists.reduce((a,b) => a+b, 0) / dists.length).toFixed(3);
+
+    document.getElementById('sMatched').textContent = matched;
+    document.getElementById('sMin').innerHTML = `${min}<span class="s-unit">m</span>`;
+    document.getElementById('sMax').innerHTML = `${max}<span class="s-unit">m</span>`;
+    document.getElementById('sMean').innerHTML = `${mean}<span class="s-unit">m</span>`;
+    document.getElementById('statsBar').classList.add('visible');
+
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    results.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.Time}</td>
+        <td>${parseFloat(r.Lat_A).toFixed(5)}</td>
+        <td>${parseFloat(r.Lon_A).toFixed(5)}</td>
+        <td>${parseFloat(r.Lat_B).toFixed(5)}</td>
+        <td>${parseFloat(r.Lon_B).toFixed(5)}</td>
+        <td class="dist">${r.Distance_meters}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('rowCount').textContent = `${results.length} rows`;
+    document.getElementById('tableWrap').classList.add('visible');
+  });
+
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const header = 'Time,Latitude_A,Longitude_A,Latitude_B,Longitude_B,Distance_meters';
+    const rows = results.map(r =>
+      `${r.Time},${r.Lat_A},${r.Lon_A},${r.Lat_B},${r.Lon_B},${r.Distance_meters}`
+    );
+    const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'distance_output.csv';
+    a.click();
+  });
+</script>
+</body>
+</html>
