@@ -209,13 +209,13 @@ textarea::placeholder{color:var(--text-dim)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ── Model: net kWh consumed per 12h period (motor + hotel − solar, all embedded)
-// Built from 358 actual 24h battery voltage drops matched to avg wind speed.
-// Outlier-filtered (removes transit/recharge events). Linear fit on bin medians.
-// DX16 solar embedded as baseline. DX13 adds +0.113 kWh per 12h (less solar).
-const C_MEAN = [0.026998, 0.064774];   // median  — 12h net kWh = a·wind + b
-const C_OPT  = [0.014463, 0.009782];   // 25th pct (optimistic)
-const C_PESS = [0.047486, 0.033864];   // 75th pct (pessimistic)
-const DX13_PENALTY_KWH_12H = 0.113;    // extra depletion per 12h when using DX13
+// Built from 182 12h voltage-drop windows across 13 deployments (Jan–May 2026).
+// DX16 baseline (88 windows). DX13 penalty = intercept diff (94 windows).
+// net_kwh_12h = a·wind_avg_kt + b
+const C_MEAN = [0.024533, 0.263640];   // median  — 12h net kWh = a·wind + b
+const C_OPT  = [0.024533, -0.010748];  // 25th pct (optimistic)
+const C_PESS = [0.024533, 0.299376];   // 75th pct (pessimistic)
+const DX13_PENALTY_KWH_12H = 0.0358;   // extra depletion per 12h when using DX13
 
 function polyval(c, x) {
   if (c.length === 4) return Math.max(0, c[0]*x*x*x + c[1]*x*x + c[2]*x + c[3]);
@@ -297,54 +297,40 @@ async function fetchForecast() {
   status.textContent = '';
 
   try {
-    
-    // test api call
-    const testCall = 'https://api.weather.gov';
-    const testRes = await fetch(testCall, { headers: { 'Accept': 'application/geo+json' } });
-    console.log(testRes);
+    // Primary: NWS zone forecast API — returns structured JSON per period
+    const zoneUrl = `https://api.weather.gov/zones/offshore/${zone}/forecast`;
+    const res = await fetch(zoneUrl, {
+      headers: { 'Accept': 'application/geo+json', 'User-Agent': 'USV-BatteryPredictor/1.0 (OOR)' }
+    });
+    if (!res.ok) throw new Error(`NWS zone ${res.status}`);
+    const data = await res.json();
 
-    // Step 1: get latest product listing for Offshore Waters Forecast from MTR office
-    const listUrl = 'https://api.weather.gov/products?type=OFF&location=MTR&limit=1';
-    const listRes = await fetch(listUrl, { headers: { 'Accept': 'application/geo+json' } });
-    if (!listRes.ok) throw new Error(`NWS list: ${listRes.status}`);
-    const listData = await listRes.json();
+    const periods = data?.properties?.periods || [];
+    if (!periods.length) throw new Error('No forecast periods returned');
 
-    const products = listData['@graph'] || [];
-    if (!products.length) throw new Error('No products returned from NWS');
+    // Reconstruct text that parseNOAA() expects: "TODAY\nS winds 10 to 20 kt..."
+    ta.value = periods.map(p => `${p.name.toUpperCase()}\n${p.detailedForecast}`).join('\n');
 
-    // Step 2: fetch the actual product text
-    const productUrl = products[0]['@id'];
-    const prodRes = await fetch(productUrl, { headers: { 'Accept': 'application/geo+json' } });
-    if (!prodRes.ok) throw new Error(`NWS product: ${prodRes.status}`);
-    const prodData = await prodRes.json();
-
-    const fullText = prodData.productText || '';
-    if (!fullText) throw new Error('Empty product text');
-
-    // Step 3: extract the selected zone section
-    const extracted = extractZone(fullText, zone);
-    if (!extracted) throw new Error(`Zone ${zone} not found in forecast`);
-
-    ta.value = extracted;
-    const issued = prodData.issuanceTime ? new Date(prodData.issuanceTime).toLocaleString() : 'unknown';
+    const updated = data?.properties?.updated
+      ? new Date(data.properties.updated).toLocaleString() : 'unknown';
     status.className = 'fetch-status ok';
-    status.textContent = `✓ Loaded ${zone} · issued ${issued}`;
+    status.textContent = `✓ ${zone} · updated ${updated}`;
 
   } catch (err) {
-    // Fallback: try corsproxy.io for the raw text file
+    // Fallback: corsproxy.io raw text file
     try {
       const rawUrl = 'https://corsproxy.io/?https://tgftp.weather.gov/data/forecasts/fzpn26.txt';
       const res = await fetch(rawUrl);
-      if (!res.ok) throw new Error(`proxy: ${res.status}`);
+      if (!res.ok) throw new Error(`proxy ${res.status}`);
       const text = await res.text();
       const extracted = extractZone(text, zone);
-      if (!extracted) throw new Error(`Zone ${zone} not found`);
+      if (!extracted) throw new Error(`Zone ${zone} not found in fallback`);
       ta.value = extracted;
       status.className = 'fetch-status ok';
-      status.textContent = `✓ Loaded via fallback · ${zone}`;
+      status.textContent = `✓ ${zone} via fallback`;
     } catch (err2) {
       status.className = 'fetch-status err';
-      status.textContent = `✗ ${err.message} — paste manually above`;
+      status.textContent = `✗ ${err.message} — paste forecast manually`;
     }
   } finally {
     btn.disabled = false;
