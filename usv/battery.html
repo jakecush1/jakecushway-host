@@ -297,41 +297,40 @@ async function fetchForecast() {
   status.textContent = '';
 
   try {
-    // Primary: NWS zone forecast API — returns structured JSON per period
-    const zoneUrl = `https://api.weather.gov/zones/offshore/${zone}/forecast`;
-    const res = await fetch(zoneUrl, {
+    // Fetch all OFF products and find the one containing the selected PZZ zone
+    // (location= filter doesn't work reliably for KWBC, so we scan all ~25 products)
+    const listRes = await fetch('https://api.weather.gov/products?type=OFF&limit=25', {
       headers: { 'Accept': 'application/geo+json', 'User-Agent': 'USV-BatteryPredictor/1.0 (OOR)' }
     });
-    if (!res.ok) throw new Error(`NWS zone ${res.status}`);
-    const data = await res.json();
+    if (!listRes.ok) throw new Error(`NWS list ${listRes.status}`);
+    const listData = await listRes.json();
+    const products = listData['@graph'] || [];
+    if (!products.length) throw new Error('No OFF products found');
 
-    const periods = data?.properties?.periods || [];
-    if (!periods.length) throw new Error('No forecast periods returned');
+    // Find the product that contains the selected zone
+    let extracted = null, issued = 'unknown';
+    for (const prod of products) {
+      const prodRes = await fetch(prod['@id'], {
+        headers: { 'Accept': 'application/geo+json', 'User-Agent': 'USV-BatteryPredictor/1.0 (OOR)' }
+      });
+      if (!prodRes.ok) continue;
+      const prodData = await prodRes.json();
+      const text = prodData.productText || '';
+      if (text.includes(zone)) {
+        extracted = extractZone(text, zone);
+        issued = prodData.issuanceTime ? new Date(prodData.issuanceTime).toLocaleString() : 'unknown';
+        break;
+      }
+    }
+    if (!extracted) throw new Error(`Zone ${zone} not found in any OFF product`);
 
-    // Reconstruct text that parseNOAA() expects: "TODAY\nS winds 10 to 20 kt..."
-    ta.value = periods.map(p => `${p.name.toUpperCase()}\n${p.detailedForecast}`).join('\n');
-
-    const updated = data?.properties?.updated
-      ? new Date(data.properties.updated).toLocaleString() : 'unknown';
+    ta.value = extracted;
     status.className = 'fetch-status ok';
-    status.textContent = `✓ ${zone} · updated ${updated}`;
+    status.textContent = `✓ ${zone} · issued ${issued}`;
 
   } catch (err) {
-    // Fallback: corsproxy.io raw text file
-    try {
-      const rawUrl = 'https://corsproxy.io/?https://tgftp.weather.gov/data/forecasts/fzpn26.txt';
-      const res = await fetch(rawUrl);
-      if (!res.ok) throw new Error(`proxy ${res.status}`);
-      const text = await res.text();
-      const extracted = extractZone(text, zone);
-      if (!extracted) throw new Error(`Zone ${zone} not found in fallback`);
-      ta.value = extracted;
-      status.className = 'fetch-status ok';
-      status.textContent = `✓ ${zone} via fallback`;
-    } catch (err2) {
-      status.className = 'fetch-status err';
-      status.textContent = `✗ ${err.message} — paste forecast manually`;
-    }
+    status.className = 'fetch-status err';
+    status.textContent = `✗ ${err.message} — paste forecast manually`;
   } finally {
     btn.disabled = false;
     btn.innerHTML = '⬇ Auto-fetch';
