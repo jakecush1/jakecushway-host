@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Jake Cushway - Website Development and Software Programming</title>
+		<title>Jake Cushway</title>
 		<meta charset="utf-8" />
 		<meta name="description" content="Jake Cushway is a Full Stack Web Developer based out of Victoria, British Columbia, Canada. including HTML, CSS, PHP, Nodejs, Reactjs, Javascrip, server management, website security, and database design."/>
 		<meta name= "keywords" content="jake cushway, web design, website builder, javascript, html, css, full stack"/>
@@ -36,6 +36,44 @@
       }
       #tools .inner-content:hover {
         filter: brightness(0.7);
+      }
+
+      .info-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+      .info-modal-overlay.open {
+        display: flex;
+      }
+      .info-modal {
+        background: #312450;
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 90%;
+        width: 400px;
+        position: relative;
+        text-align: center;
+      }
+      .info-modal h3 {
+        margin-top: 0;
+      }
+      .info-modal-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: white;
       }
     </style>
 	</head>
@@ -204,13 +242,26 @@
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
 					<div class="image-overlay-container">
+						<img class="side-photo" data-micron="flicker" src="photos/sp-logo.png" alt="sideproj">
+						<div class="overlay-text">sideproj</div>
+					</div>
+					</div>
+					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+					<a href="https://sideproj.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('sideproj', 'A collection of side projects, live at sideproj.ca.')">Info</button>
+					</div>
+				</div>
+
+				<div class="slide">
+					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
 						<div class="overlay-text">Sudoku game</div>
 					</div>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
-					<a><button data-micron="bounce" class="button">Info</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('Sudoku game', 'A browser-based Sudoku game built with JavaScript.')">Info</button>
 					</div>
 				</div>
 
@@ -223,7 +274,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="pages/QR-generator.html"><button data-micron="bounce" class="button">Demo</button></a>
-					<a><button data-micron="bounce" class="button">Info</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('QR Code Generator', 'A simple tool for generating custom QR codes.')">Info</button>
 					</div>
 				</div>
 
@@ -249,7 +300,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="media/808/" target="_blank"><button data-micron="bounce" class="button">Demo</button></a>
-					<a"><button data-micron="bounce" class="button">Info</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('808 Drum Machine', 'A step-sequencer drum machine in the browser, inspired by the classic Roland TR-808.')">Info</button>
 					</div>
 				</div>
 
@@ -262,7 +313,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://mathine.uvic.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<a></a><button data-micron="bounce" class="button">Info</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('Mathiné', 'Mathiné, hosted at mathine.uvic.ca.')">Info</button>
 					</div>
 				</div>
 
@@ -275,7 +326,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://sinixt.org/" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<a></a><button data-micron="bounce" class="button">Info</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('Custom Website', 'A custom website built for the Autonomous Sinixt Nation, hosted at sinixt.org.')">Info</button>
 					</div>
 				</div>
 <!-- 
@@ -301,20 +352,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://basinclimatesource.ca/climate-projections" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<a"><button data-micron="bounce" class="button">Info</button></a>
-					</div>
-				</div>
-
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/sp.png" alt="sideproj">
-						<div class="overlay-text">sideproj</div>
-					</div>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://sideproj.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<a></a><button data-micron="bounce" class="button">Info</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('Basin Climate Source', 'A climate projections tool, hosted at basinclimatesource.ca.')">Info</button>
 					</div>
 				</div>
 
@@ -452,6 +490,15 @@
 			</div>
 
 		</footer> -->
+		<!-- Info modal -->
+		<div id="info-modal-overlay" class="info-modal-overlay" onclick="if(event.target===this) closeInfo()">
+			<div class="info-modal">
+				<span class="info-modal-close" onclick="closeInfo()">&times;</span>
+				<h3 id="info-modal-title"></h3>
+				<p id="info-modal-text"></p>
+			</div>
+		</div>
+
 		<!-- Scripts -->
 		<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 		<script src="assets/js/jquery.min.js"></script>
@@ -527,6 +574,16 @@
 			window.onload = function() {
 			showSlides(slideIndex);
 			};
+
+			function openInfo(title, text) {
+			document.getElementById('info-modal-title').textContent = title;
+			document.getElementById('info-modal-text').textContent = text;
+			document.getElementById('info-modal-overlay').classList.add('open');
+			}
+
+			function closeInfo() {
+			document.getElementById('info-modal-overlay').classList.remove('open');
+			}
 		</script>
 	</body>
 </html>
