@@ -38,6 +38,60 @@
         filter: brightness(0.7);
       }
 
+      .projects-columns {
+        display: flex;
+        width: 100%;
+        gap: 30px;
+        align-items: flex-start;
+        justify-content: center;
+      }
+      .projects-column {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 560px;
+      }
+      .projects-subhead {
+        text-align: center;
+        font-size: 0.8rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        opacity: 0.7;
+        margin-bottom: 15px;
+      }
+      /* Two columns share the row, so drop the single-carousel width cap */
+      .projects-column .slideshow-container {
+        width: 100%;
+        max-width: 100%;
+        height: 50vh;
+      }
+      /* Let the image box shrink to the rendered image so the caption stays pinned to it */
+      .projects-column .slideshow-container img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 35vh;
+      }
+      /* Fixed image band keeps the button rows aligned across columns and between slides */
+      .projects-column .slide > div:first-child {
+        height: 35vh;
+        justify-content: center;
+      }
+      .projects-column .slideshow-container .prev,
+      .projects-column .slideshow-container .next {
+        z-index: 2;
+      }
+      @media screen and (max-width: 980px) {
+        .projects-columns {
+          flex-direction: column;
+          align-items: center;
+          gap: 0;
+        }
+        .projects-column {
+          width: 100%;
+          max-width: 666px;
+        }
+      }
+
       .slide-link {
         display: block;
         text-align: center;
@@ -265,159 +319,180 @@
 			<section id="projects" class="fade-up wrapper" style="background-color: #312450;">
 			<div class="inner" style="display: flex; justify-content: space-around; flex-direction: column; align-items: center;">
 				<h2 data-micron="fade" id="projects-header">Projects</h2>
+
+				<div class="projects-columns">
+
+				<!-- Vibed -->
+				<div class="projects-column">
+				<h3 class="projects-subhead">vibed</h3>
 				<div class="slideshow-container">
 
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="https://sideproj.ca" target="_blank" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/sp-logo.png" alt="sideproj">
-						<div class="overlay-text">sideproj</div>
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="https://sideproj.ca" target="_blank" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/sp-logo.png" alt="sideproj">
+							<div class="overlay-text">sideproj</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="https://sideproj.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('sideproj')">Info</button>
+						</div>
 					</div>
-					</a>
+
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="https://jc-808.vercel.app/" target="_blank" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/808.png" alt="JC-808 drum machine">
+							<div class="overlay-text">JC-808</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="https://jc-808.vercel.app/" target="_blank"><button data-micron="bounce" class="button">Demo</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('jc-808')">Info</button>
+						</div>
 					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://sideproj.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('sideproj')">Info</button>
+
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="usv/" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/usvTools.png" alt="USV tools">
+							<div class="overlay-text">USV tools</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="usv/"><button data-micron="bounce" class="button">Link</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('usv')">Info</button>
+						</div>
 					</div>
+
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="https://www.jakecushway.ca/media/qr/" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/qrCode.png" alt="QR code generator">
+							<div class="overlay-text">QR Code Generator</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="https://www.jakecushway.ca/media/qr/"><button data-micron="bounce" class="button">Demo</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('qr')">Info</button>
+						</div>
+					</div>
+
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="media/other/pages/sudokuJs.html" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
+							<div class="overlay-text">Sudoku game</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="media/other/pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('sudoku')">Info</button>
+						</div>
+					</div>
+
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="media/strudel/" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/strudel.png" alt="Strudel Live Studio">
+							<div class="overlay-text">Strudel Live Studio</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="media/strudel/"><button data-micron="bounce" class="button">Demo</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('strudel')">Info</button>
+						</div>
+					</div>
+
+					<!-- Navigation buttons -->
+					<a class="prev">&#10094;</a>
+					<a class="next">&#10095;</a>
+
+				</div>
 				</div>
 
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="usv/" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/usvTools.png" alt="USV tools">
-						<div class="overlay-text">USV tools</div>
-					</div>
-					</a>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="usv/"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('usv')">Info</button>
-					</div>
-        </div>
+				<!-- By hand -->
+				<div class="projects-column">
+				<h3 class="projects-subhead">by hand</h3>
+				<div class="slideshow-container">
 
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="https://jc-808.vercel.app/" target="_blank" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/808.png" alt="JC-808 drum machine">
-						<div class="overlay-text">JC-808</div>
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="https://sinixt.org/" target="_blank" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/sinixthome.png" alt="Autonomous Sinixt">
+							<div class="overlay-text">Custom Website</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="https://sinixt.org/" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('sinixt')">Info</button>
+						</div>
 					</div>
-					</a>
+
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="https://basinclimatesource.ca/climate-projections" target="_blank" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/bsc.png" alt="Basin Climate Source">
+							<div class="overlay-text">Basin Climate Source</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="https://basinclimatesource.ca/climate-projections" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('basin')">Info</button>
+						</div>
 					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://jc-808.vercel.app/" target="_blank"><button data-micron="bounce" class="button">Demo</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('jc-808')">Info</button>
+
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<a href="https://mathine.uvic.ca" target="_blank" class="slide-link">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/mathine.png" alt="Mathine">
+							<div class="overlay-text">Mathiné</div>
+						</div>
+						</a>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="https://mathine.uvic.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
+						<button data-micron="bounce" class="button" onclick="openInfo('mathine')">Info</button>
+						</div>
 					</div>
+<!--
+					<div class="slide">
+						<div style="display:flex; flex-direction: column; justify-content: center;">
+						<div class="image-overlay-container">
+							<img class="side-photo" data-micron="flicker" src="photos/sotb.png" alt="State Of The Basin">
+							<div class="overlay-text">State Of The Basin</div>
+						</div>
+						</div>
+						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+						<a href="https://stateofthebasin.ca/community-profiles" target="_blank"><button data-micron="bounce" class="button">Link</button>
+						<a><button data-micron="bounce" class="button">Info</button></a>
+						</div>
+					</div> -->
+
+					<!-- Navigation buttons -->
+					<a class="prev">&#10094;</a>
+					<a class="next">&#10095;</a>
+
 				</div>
-
-        <div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="https://www.jakecushway.ca/media/qr/" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/qrCode.png" alt="QR code generator">
-						<div class="overlay-text">QR Code Generator</div>
-					</div>
-					</a>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://www.jakecushway.ca/media/qr/"><button data-micron="bounce" class="button">Demo</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('qr')">Info</button>
-					</div>
 				</div>
-
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="media/other/pages/sudokuJs.html" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
-						<div class="overlay-text">Sudoku game</div>
-					</div>
-					</a>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="media/other/pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('sudoku')">Info</button>
-					</div>
-				</div>
-
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="media/strudel/" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/strudel.png" alt="Strudel Live Studio">
-						<div class="overlay-text">Strudel Live Studio</div>
-					</div>
-					</a>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="media/strudel/"><button data-micron="bounce" class="button">Demo</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('strudel')">Info</button>
-					</div>
-				</div>
-
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="https://mathine.uvic.ca" target="_blank" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/mathine.png" alt="Mathine">
-						<div class="overlay-text">Mathiné</div>
-					</div>
-					</a>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://mathine.uvic.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('mathine')">Info</button>
-					</div>
-				</div>
-
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="https://sinixt.org/" target="_blank" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/sinixthome.png" alt="Autonomous Sinixt">
-						<div class="overlay-text">Custom Website</div>
-					</div>
-					</a>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://sinixt.org/" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('sinixt')">Info</button>
-					</div>
-				</div>
-<!-- 
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/sotb.png" alt="State Of The Basin">
-						<div class="overlay-text">State Of The Basin</div>
-					</div>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://stateofthebasin.ca/community-profiles" target="_blank"><button data-micron="bounce" class="button">Link</button>
-					<a><button data-micron="bounce" class="button">Info</button></a>
-					</div>
-				</div> -->
-
-				<div class="slide">
-					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="https://basinclimatesource.ca/climate-projections" target="_blank" class="slide-link">
-					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/bsc.png" alt="Basin Climate Source">
-						<div class="overlay-text">Basin Climate Source</div>
-					</div>
-					</a>
-					</div>
-					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="https://basinclimatesource.ca/climate-projections" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('basin')">Info</button>
-					</div>
-				</div>
-
-				<!-- Navigation buttons -->
-				<a class="prev" onclick="prevSlide()">&#10094;</a>
-				<a class="next" onclick="nextSlide()">&#10095;</a>
 
 				</div>
 			</div>
@@ -611,29 +686,29 @@
 			});
 		</script>
 		<script>
-			let slideIndex = 1;
+			/* Each .slideshow-container runs its own independent slideshow. */
+			document.addEventListener('DOMContentLoaded', () => {
+				document.querySelectorAll('.slideshow-container').forEach(container => {
+					const slides = Array.from(container.querySelectorAll('.slide'));
+					if (!slides.length) return;
 
-			function plusSlide(n) {
-			showSlides(slideIndex += n);
-			}
+					let index = 0;
 
-			function showSlides(n) {
-			let slides = document.getElementsByClassName("slide");
-			if (n > slides.length) { slideIndex = 1; }
-			if (n < 1) { slideIndex = slides.length; }
-			for (let i = 0; i < slides.length; i++) {
-				slides[i].style.display = "none";
-			}
-			slides[slideIndex - 1].style.display = "block";
-			}
+					function showSlide(n) {
+						index = (n + slides.length) % slides.length;
+						slides.forEach((slide, i) => {
+							slide.style.display = (i === index) ? 'block' : 'none';
+						});
+					}
 
-			function prevSlide() { plusSlide(-1); }
-			function nextSlide() { plusSlide(1); }
+					const prev = container.querySelector('.prev');
+					const next = container.querySelector('.next');
+					if (prev) prev.addEventListener('click', () => showSlide(index - 1));
+					if (next) next.addEventListener('click', () => showSlide(index + 1));
 
-			/* ✅ Run on page load */
-			window.onload = function() {
-			showSlides(slideIndex);
-			};
+					showSlide(0);
+				});
+			});
 
 			/* Project info copy. Add or edit entries here — the modal reads from this. */
 			const PROJECT_INFO = {
