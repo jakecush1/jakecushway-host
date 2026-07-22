@@ -38,6 +38,18 @@
         filter: brightness(0.7);
       }
 
+      .slide-link {
+        display: block;
+        text-align: center;
+        border-bottom: none;
+      }
+      .slide-link img {
+        transition: filter 0.3s ease;
+      }
+      .slide-link:hover img {
+        filter: brightness(0.7);
+      }
+
       .info-modal-overlay {
         display: none;
         position: fixed;
@@ -169,11 +181,6 @@
       <section id="tools" class="fade-up wrapper" style="background-color: #312450;">
         <div class="tools-row">
           <div class="quadrant">
-            <a href="usv/" class="link-wrapper">
-              <div class="inner-content" style="background-image: url('photos/usvTools.png');"></div>
-            </a>
-          </div>
-          <div class="quadrant">
             <a href="media/" class="link-wrapper">
               <div class="inner-content" style="background-image: url('photos/devco.png');"></div>
             </a>
@@ -195,7 +202,7 @@
             </div>
             </div>
             <div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-            <a href="pages/QR-generator.html"><button data-micron="bounce" class="button">Demo</button></a>
+            <a href="https://www.jakecushway.ca/media/qr/"><button data-micron="bounce" class="button">Demo</button></a>
             <a><button data-micron="bounce" class="button">Info</button></a>
             </div>
           </div>
@@ -241,10 +248,12 @@
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="https://sideproj.ca" target="_blank" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/sp-logo.png" alt="sideproj">
 						<div class="overlay-text">sideproj</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://sideproj.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
@@ -254,10 +263,12 @@
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="media/other/pages/sudokuJs.html" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
 						<div class="overlay-text">Sudoku game</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="media/other/pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
@@ -267,36 +278,42 @@
 
         <div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="https://www.jakecushway.ca/media/qr/" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/qrCode.png" alt="QR code generator">
 						<div class="overlay-text">QR Code Generator</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="pages/QR-generator.html"><button data-micron="bounce" class="button">Demo</button></a>
+					<a href="https://www.jakecushway.ca/media/qr/"><button data-micron="bounce" class="button">Demo</button></a>
 					<button data-micron="bounce" class="button" onclick="openInfo('QR Code Generator', 'A simple tool for generating custom QR codes.')">Info</button>
 					</div>
 				</div>
 
-				<!-- <div class="slide">
+				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="usv/" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/OOR-logo.avif" alt="Open Ocean Robotics">
 						<div class="overlay-text">USV tools</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="usv/"><button data-micron="bounce" class="button">Link</button></a>
-					<a></a><button data-micron="bounce" class="button">Info</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('USV tools', 'A set of tools built for uncrewed surface vessel operations.')">Info</button>
 					</div>
-        </div> -->
+        </div>
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="media/808/" target="_blank" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/808.png" alt="808 Drum Machine">
 						<div class="overlay-text">808 Drum Machine</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="media/808/" target="_blank"><button data-micron="bounce" class="button">Demo</button></a>
@@ -306,10 +323,12 @@
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="https://mathine.uvic.ca" target="_blank" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/mathine.png" alt="Mathine">
 						<div class="overlay-text">Mathiné</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://mathine.uvic.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
@@ -319,10 +338,12 @@
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="https://sinixt.org/" target="_blank" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/sinixthome.png" alt="Autonomous Sinixt">
 						<div class="overlay-text">Custom Website</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://sinixt.org/" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
@@ -345,10 +366,12 @@
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="https://basinclimatesource.ca/climate-projections" target="_blank" class="slide-link">
 					<div class="image-overlay-container">
 						<img class="side-photo" data-micron="flicker" src="photos/bsc.png" alt="Basin Climate Source">
 						<div class="overlay-text">Basin Climate Source</div>
 					</div>
+					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://basinclimatesource.ca/climate-projections" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
