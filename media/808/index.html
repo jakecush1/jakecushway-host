@@ -1,180 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>808 Drum Machine & Synth</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.36/Tone.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; background: #222; color: white; }
-        .container { margin: 20px auto; width: 80%; max-width: 900px; background: #333; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(255,255,255,0.2); }
-        .step-grid { display: grid; grid-template-columns: repeat(16, 40px); gap: 5px; justify-content: center; margin-bottom: 10px; }
-        .step { width: 40px; height: 40px; background: gray; border-radius: 5px; border: 1px solid white; cursor: pointer; }
-        .step.active { background: red; }
-        button { margin: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; background: #ff5722; color: white; cursor: pointer; }
-        button:hover { background: #e64a19; }
-        .button-on { background: green !important; }
-        .keyboard { display: flex; justify-content: center; margin-top: 20px; position: relative; }
-        .key { width: 40px; height: 120px; margin: 2px; background: orange; color: black; border: 1px solid black; text-align: center; line-height: 120px; cursor: pointer; position: relative; }
-        .black-key { width: 30px; height: 80px; background: black; color: white; position: absolute; z-index: 2; left: 20px; top: 0; }
-        .selected { background: yellow !important; }
-        input[type="range"] { width: 80%; max-width: 300px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JC-808 Rhythm Composer</title>
+<meta name="description" content="A browser drum machine and synthesiser built with the Web Audio API — twelve analogue-modelled percussion voices, a 16-step sequencer with swing and accent, a playable synth with arpeggiator, and WAV export.">
+<meta name="theme-color" content="#17171a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2317171a'/%3E%3Crect x='5' y='13' width='5' height='6' rx='1' fill='%23d8382c'/%3E%3Crect x='12' y='13' width='5' height='6' rx='1' fill='%23e8792a'/%3E%3Crect x='19' y='13' width='5' height='6' rx='1' fill='%23e8bf2c'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>808 Drum Machine & Synth</h1>
-    <div class="container">
-        <h2>Tempo Control</h2>
-        <input type="range" id="tempoDial" min="60" max="200" value="120">
-        <p>Tempo: <span id="tempoValue">120</span> BPM</p>
-        <button onclick="toggleBoth()" id="bothButton">Start Both</button>
+
+<div class="app">
+
+  <header class="masthead">
+    <div class="brand">
+      <h1>JC&#8209;808</h1>
+      <span class="model">Rhythm Composer</span>
+      <span class="sub">Twelve analogue-modelled voices, sequencer &amp; synthesiser — built from scratch with the Web Audio API.</span>
+    </div>
+    <nav>
+      <a href="../">Media</a>
+      <a href="../../">Portfolio</a>
+      <a href="#help">Shortcuts</a>
+    </nav>
+  </header>
+
+  <!-- ===================== TRANSPORT ===================== -->
+  <section class="panel">
+    <div class="transport">
+
+      <div class="transport-group">
+        <button class="play-btn" id="playBtn" type="button" aria-label="Play">
+          <svg viewBox="0 0 24 24"><path id="playIcon" d="M6 4l14 8-14 8z"></path></svg>
+        </button>
+        <div class="readout">
+          <span class="value" id="bpmReadout">120</span>
+          <span class="label">Tempo</span>
+        </div>
+        <div id="tempoSlot"></div>
+        <button class="btn" id="tapBtn" type="button">Tap</button>
+      </div>
+
+      <div class="transport-group">
+        <div id="swingSlot"></div>
+        <div id="accentSlot"></div>
+        <div id="driveSlot"></div>
+        <div id="volSlot"></div>
+      </div>
+
+      <div class="transport-group">
+        <div class="field">
+          <span>Bank</span>
+          <div class="banks" id="banks"></div>
+        </div>
+        <button class="btn" id="chainBtn" type="button">Chain</button>
+        <label class="field">
+          <span>Steps</span>
+          <select class="select" id="lengthSel"></select>
+        </label>
+      </div>
+
+      <div class="transport-group">
+        <label class="field">
+          <span>Preset</span>
+          <select class="select" id="presetSel">
+            <option value="">Load…</option>
+          </select>
+        </label>
+        <button class="btn" id="randomBtn" type="button">Random</button>
+        <button class="btn danger" id="clearBtn" type="button">Clear</button>
+        <button class="btn" id="undoBtn" type="button">Undo</button>
+      </div>
+
+      <div class="transport-group">
+        <button class="btn" id="shareBtn" type="button">Share</button>
+        <button class="btn" id="exportBtn" type="button">Export WAV</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== SEQUENCER ===================== -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Rhythm Section</h2>
+      <span class="panel-title" style="letter-spacing:.1em;text-transform:none;">
+        Click steps to build a pattern · <kbd>▾</kbd> opens level / tune / decay
+      </span>
+    </div>
+    <div class="machine-scroll">
+      <div class="machine" id="machine"></div>
+    </div>
+  </section>
+
+  <!-- ===================== SYNTH ===================== -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2 class="panel-title">Synthesiser</h2>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <button class="btn" id="monoBtn" type="button">Poly</button>
+        <button class="btn" id="octDown" type="button">Oct &minus;</button>
+        <span class="readout" style="min-width:64px;padding:5px 10px;">
+          <span class="value" id="octReadout" style="font-size:15px;">+0</span>
+          <span class="label">Oct</span>
+        </span>
+        <button class="btn" id="octUp" type="button">Oct +</button>
+        <button class="btn" id="panicBtn" type="button">Panic</button>
+      </div>
     </div>
 
-    <div class="container">
-        <h2>Drum Machine</h2>
-        <div class="step-grid" id="stepGrid"></div>
-        <button onclick="toggleDrumMachine()" id="drumButton">Start Drum Machine</button>
+    <div class="synth-grid">
+      <div class="module">
+        <h3>Oscillator</h3>
+        <div class="module-row">
+          <div class="seg" id="waveSeg"></div>
+        </div>
+        <div class="module-row" id="oscSlots" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="module">
+        <h3>Filter</h3>
+        <div class="module-row" id="filterSlots"></div>
+      </div>
+
+      <div class="module">
+        <h3>Envelope</h3>
+        <div class="module-row" id="envSlots"></div>
+      </div>
+
+      <div class="module">
+        <h3>Arpeggiator</h3>
+        <div class="module-row">
+          <button class="btn" id="arpBtn" type="button">Arp</button>
+          <button class="btn" id="latchBtn" type="button">Latch</button>
+          <label class="field">
+            <span>Rate</span>
+            <select class="select" id="arpRate"></select>
+          </label>
+        </div>
+        <div class="module-row" style="margin-top:10px;">
+          <div class="seg" id="arpModeSeg"></div>
+        </div>
+        <div class="module-row" id="arpSlots" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="module">
+        <h3>Mix &amp; Effects</h3>
+        <div class="module-row" id="mixSlots"></div>
+      </div>
+
+      <div class="module">
+        <h3>Output</h3>
+        <canvas class="scope" id="scope"></canvas>
+      </div>
     </div>
 
-    <div class="container">
-        <h2>Synth Selector</h2>
-        <select id="synthType">
-            <option value="default">E-keys</option>
-            <option value="spacey">Spacey</option>
-        </select>
-        <h2>Synth</h2>
-        <div class="keyboard" id="keyboard"></div>
-        <button onclick="toggleArpeggiator()" id="arpeggiatorButton">Start Arpeggiator</button>
+    <div class="keyboard-wrap">
+      <div class="keyboard" id="keyboard"></div>
     </div>
+  </section>
 
-    <script>
-        let selectedNotes = [];
-        let arpeggiatorPlaying = false;
-        let arpLoop;
-        let drumPlaying = false;
-        
-        const synths = {
-            default: new Tone.PolySynth(Tone.Synth).toDestination(),
-            spacey: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "sine" }, envelope: { attack: 0.5, release: 2 } }).toDestination(),
-            retro: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.3, sustain: 0.4, release: 0.1 } }).toDestination(),
-            psychedelic: new Tone.PolySynth(Tone.Synth, { oscillator: { type: "triangle" }, modulation: { type: "sine" } }).toDestination()
-        };
-                
-        const kick = new Tone.MembraneSynth().toDestination();
-        const snare = new Tone.NoiseSynth({ noise: { type: "white" }, envelope: { attack: 0.001, decay: 0.2, sustain: 0 } }).toDestination();
-        const hihat = new Tone.MetalSynth({ frequency: 200, envelope: { attack: 0.01, decay: 0.1, release: 0.1 }, harmonicity: 5 }).toDestination();
-        let drumLoop;
-        // let arpLoop;
-        let currentSynth = synths.default;
+  <!-- ===================== HELP ===================== -->
+  <section class="panel" id="help">
+    <div class="panel-head">
+      <h2 class="panel-title">Controls</h2>
+    </div>
+    <div class="help-grid">
+      <div>
+        <h4>Transport</h4>
+        <dl>
+          <dt><kbd>Space</kbd></dt><dd>Play / stop</dd>
+          <dt><kbd>Esc</kbd></dt><dd>All notes off</dd>
+          <dt>Shift + bank</dt><dd>Copy current bank</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Drum pads</h4>
+        <dl>
+          <dt><kbd>1</kbd>…<kbd>=</kbd></dt><dd>Trigger the twelve voices in order (BD → MA)</dd>
+          <dt>Click a name</dt><dd>Audition that voice</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Keyboard</h4>
+        <dl>
+          <dt><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>…</dt><dd>White keys, C upwards</dd>
+          <dt><kbd>W</kbd><kbd>E</kbd><kbd>T</kbd>…</dt><dd>Black keys</dd>
+          <dt><kbd>Z</kbd> / <kbd>X</kbd></dt><dd>Octave down / up</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Knobs</h4>
+        <dl>
+          <dt>Drag / wheel</dt><dd>Adjust</dd>
+          <dt>Shift + drag</dt><dd>Fine</dd>
+          <dt>Double-click</dt><dd>Reset to default</dd>
+          <dt>Arrow keys</dt><dd>Adjust when focused</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Notes</h4>
+        <dl>
+          <dt>Accent</dt><dd>The bottom lane lifts every hit on that step</dd>
+          <dt>Arp</dt><dd>Runs off the sequencer clock — press play, then hold keys</dd>
+          <dt>Latch</dt><dd>Each key toggles in and out of the chord; <kbd>Esc</kbd> clears it</dd>
+          <dt>Export</dt><dd>Renders two passes of the pattern (or the chain) to WAV</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
 
-        let drumPattern = { kick: Array(16).fill(false), snare: Array(16).fill(false), hihat: Array(16).fill(false) };
+  <footer>
+    Built with the Web Audio API — no samples, no libraries. Patterns save to this browser and to the share link.
+  </footer>
+</div>
 
-        document.getElementById("synthType").addEventListener("change", (event) => {
-            currentSynth = synths[event.target.value];
-        });
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-        function createGrid() {
-            const grid = document.getElementById("stepGrid");
-            ["kick", "snare", "hihat"].forEach(drum => {
-                for (let i = 0; i < 16; i++) {
-                    const step = document.createElement("div");
-                    step.className = "step";
-                    step.onclick = () => {
-                        drumPattern[drum][i] = !drumPattern[drum][i];
-                        step.classList.toggle("active");
-                    };
-                    grid.appendChild(step);
-                }
-            });
-        }
+<div class="gate" id="gate">
+  <div>
+    <h2>JC&#8209;808</h2>
+    <p>Browsers need a click before they'll make a sound. Power on to start the sequencer, or enter quietly and build a pattern first.</p>
+    <button class="power" id="powerBtn" type="button">Power on</button>
+    <div style="margin-top:16px;">
+      <button class="btn ghost" id="gateSkip" type="button">Enter without playing</button>
+    </div>
+  </div>
+</div>
 
-        function createKeyboard() {
-            const keyboard = document.getElementById("keyboard");
-            const notes = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
-            const blackNotes = { "C4": "C#4", "D4": "D#4", "F4": "F#4", "G4": "G#4", "A4": "A#4" };
-
-            notes.forEach(note => {
-                const key = document.createElement("div");
-                key.className = "key";
-                key.innerText = note;
-                key.onclick = () => selectNoteForArpeggiator(note, key);
-                keyboard.appendChild(key);
-
-                if (blackNotes[note]) {
-                    const blackKey = document.createElement("div");
-                    blackKey.className = "key black-key";
-                    blackKey.innerText = blackNotes[note];
-                    blackKey.onclick = () => selectNoteForArpeggiator(blackNotes[note], blackKey);
-                    key.appendChild(blackKey);
-                }
-            });
-        }
-
-        function selectNoteForArpeggiator(note, keyElement) {
-            if (selectedNotes.includes(note)) {
-                selectedNotes = selectedNotes.filter(n => n !== note);
-                keyElement.classList.remove("selected");
-            } else {
-                selectedNotes.push(note);
-                keyElement.classList.add("selected");
-            }
-        }
-
-        function toggleArpeggiator() {
-            arpeggiatorPlaying = !arpeggiatorPlaying;
-            document.getElementById("arpeggiatorButton").innerText = arpeggiatorPlaying ? "Stop Arpeggiator" : "Start Arpeggiator";
-            if (arpeggiatorPlaying && selectedNotes.length > 0) {
-                let index = 0;
-                arpLoop = new Tone.Loop(time => {
-                    currentSynth.triggerAttackRelease(selectedNotes[index], "8n", time);
-                    index = (index + 1) % selectedNotes.length;
-                }, "0.5s").start(0);
-                Tone.Transport.start();
-            } else if (arpLoop) {
-                arpLoop.stop();
-            }
-        }
-
-        function toggleDrumMachine() {
-            drumPlaying = !drumPlaying;
-            document.getElementById("drumButton").innerText = drumPlaying ? "Stop Drum Machine" : "Start Drum Machine";
-            if (drumPlaying) {
-                drumLoop = new Tone.Sequence((time, step) => {
-                    if (drumPattern.kick[step]) kick.triggerAttackRelease("C2", "8n", time);
-                    if (drumPattern.snare[step]) snare.triggerAttackRelease("8n", time);
-                    if (drumPattern.hihat[step]) hihat.triggerAttackRelease("8n", time);
-                }, [...Array(16).keys()], "16n").start(0);
-                Tone.Transport.start();
-            } else {
-                drumLoop.stop();
-            }
-        }
-
-        function toggleBoth() {
-            if (drumPlaying || arpeggiatorPlaying) {
-                if (drumPlaying) toggleDrumMachine();
-                if (arpeggiatorPlaying) toggleArpeggiator();
-            } else {
-                toggleDrumMachine();
-                toggleArpeggiator();
-            }
-        }
-
-        // Tempo control
-        const tempoDial = document.getElementById("tempoDial");
-        const tempoValue = document.getElementById("tempoValue");
-
-        tempoDial.addEventListener("input", (event) => {
-            const bpm = event.target.value;
-            Tone.Transport.bpm.value = bpm;
-            tempoValue.innerText = bpm;
-        });
-
-        // Initialize the BPM
-        Tone.Transport.bpm.value = 120;
-
-        createGrid();
-        createKeyboard();
-    </script>
+<script src="app.js"></script>
 </body>
 </html>

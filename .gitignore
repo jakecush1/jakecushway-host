@@ -7,6 +7,7 @@ media/pangea/par3.mp4
 IDE/Editor files
 .vscode/
 .idea/
+.claude/settings.local.json
 
 OS-generated files
 .DS_Store
