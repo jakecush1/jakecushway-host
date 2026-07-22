@@ -71,12 +71,45 @@
         padding: 30px;
         border-radius: 12px;
         max-width: 90%;
-        width: 400px;
+        width: 520px;
+        max-height: 80vh;
+        overflow-y: auto;
         position: relative;
-        text-align: center;
+        text-align: left;
       }
       .info-modal h3 {
         margin-top: 0;
+        padding-right: 25px;
+      }
+      .info-modal-body p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1em;
+      }
+      .info-modal-body p:last-child {
+        margin-bottom: 0;
+      }
+      .info-modal-tech {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .info-modal-tech .tech-label {
+        display: block;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        opacity: 0.6;
+        margin-bottom: 10px;
+      }
+      .info-modal-tech .tech-tag {
+        display: inline-block;
+        font-size: 0.75rem;
+        line-height: 1;
+        padding: 6px 10px;
+        margin: 0 6px 6px 0;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.12);
       }
       .info-modal-close {
         position: absolute;
@@ -97,7 +130,6 @@
 					<ul>
 						<li><a href="#intro">Home</a></li>
 						<!-- <li><a href="#two">About Me</a></li> -->
-						<li><a href="#tools">Tools</a></li>
 						<li><a href="#projects">Projects</a></li>
 						<li><a href="#contact">Contact</a></li>
 					</ul>
@@ -177,17 +209,6 @@
 				</div>
 			</section> -->
 
-      <!-- Tools -->
-      <section id="tools" class="fade-up wrapper" style="background-color: #312450;">
-        <div class="tools-row">
-          <div class="quadrant">
-            <a href="media/" class="link-wrapper">
-              <div class="inner-content" style="background-image: url('photos/devco.png');"></div>
-            </a>
-          </div>
-        </div>
-      </section>
-
 
 			<!-- <section id="tools" class="fade-up wrapper" style="background-color: #312450;">
         <div class="inner" style="display: flex; justify-content: space-around; flex-direction: column; align-items: center;">
@@ -257,22 +278,37 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://sideproj.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('sideproj', 'A collection of side projects, live at sideproj.ca.')">Info</button>
+					<button data-micron="bounce" class="button" onclick="openInfo('sideproj')">Info</button>
 					</div>
 				</div>
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="media/other/pages/sudokuJs.html" class="slide-link">
+					<a href="usv/" class="slide-link">
 					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
-						<div class="overlay-text">Sudoku game</div>
+						<img class="side-photo" data-micron="flicker" src="photos/usvTools.png" alt="USV tools">
+						<div class="overlay-text">USV tools</div>
 					</div>
 					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="media/other/pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('Sudoku game', 'A browser-based Sudoku game built with JavaScript.')">Info</button>
+					<a href="usv/"><button data-micron="bounce" class="button">Link</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('usv')">Info</button>
+					</div>
+        </div>
+
+				<div class="slide">
+					<div style="display:flex; flex-direction: column; justify-content: center;">
+					<a href="https://jc-808.vercel.app/" target="_blank" class="slide-link">
+					<div class="image-overlay-container">
+						<img class="side-photo" data-micron="flicker" src="photos/808.png" alt="JC-808 drum machine">
+						<div class="overlay-text">JC-808</div>
+					</div>
+					</a>
+					</div>
+					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
+					<a href="https://jc-808.vercel.app/" target="_blank"><button data-micron="bounce" class="button">Demo</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('jc-808')">Info</button>
 					</div>
 				</div>
 
@@ -287,37 +323,37 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://www.jakecushway.ca/media/qr/"><button data-micron="bounce" class="button">Demo</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('QR Code Generator', 'A simple tool for generating custom QR codes.')">Info</button>
+					<button data-micron="bounce" class="button" onclick="openInfo('qr')">Info</button>
 					</div>
 				</div>
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="usv/" class="slide-link">
+					<a href="media/other/pages/sudokuJs.html" class="slide-link">
 					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/OOR-logo.avif" alt="Open Ocean Robotics">
-						<div class="overlay-text">USV tools</div>
+						<img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
+						<div class="overlay-text">Sudoku game</div>
 					</div>
 					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="usv/"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('USV tools', 'A set of tools built for uncrewed surface vessel operations.')">Info</button>
+					<a href="media/other/pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('sudoku')">Info</button>
 					</div>
-        </div>
+				</div>
 
 				<div class="slide">
 					<div style="display:flex; flex-direction: column; justify-content: center;">
-					<a href="media/808/" target="_blank" class="slide-link">
+					<a href="media/strudel/" class="slide-link">
 					<div class="image-overlay-container">
-						<img class="side-photo" data-micron="flicker" src="photos/808.png" alt="808 Drum Machine">
-						<div class="overlay-text">808 Drum Machine</div>
+						<img class="side-photo" data-micron="flicker" src="photos/strudel.png" alt="Strudel Live Studio">
+						<div class="overlay-text">Strudel Live Studio</div>
 					</div>
 					</a>
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-					<a href="media/808/" target="_blank"><button data-micron="bounce" class="button">Demo</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('808 Drum Machine', 'A drum machine and synthesiser built from scratch with the Web Audio API — twelve analogue-modelled percussion voices, a 16-step sequencer with swing, accent and four pattern banks, a playable synth with arpeggiator, and WAV export. No samples, no libraries.')">Info</button>
+					<a href="media/strudel/"><button data-micron="bounce" class="button">Demo</button></a>
+					<button data-micron="bounce" class="button" onclick="openInfo('strudel')">Info</button>
 					</div>
 				</div>
 
@@ -332,7 +368,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://mathine.uvic.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('Mathiné', 'Mathiné, hosted at mathine.uvic.ca.')">Info</button>
+					<button data-micron="bounce" class="button" onclick="openInfo('mathine')">Info</button>
 					</div>
 				</div>
 
@@ -347,7 +383,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://sinixt.org/" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('Custom Website', 'A custom website built for the Autonomous Sinixt Nation, hosted at sinixt.org.')">Info</button>
+					<button data-micron="bounce" class="button" onclick="openInfo('sinixt')">Info</button>
 					</div>
 				</div>
 <!-- 
@@ -375,7 +411,7 @@
 					</div>
 					<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
 					<a href="https://basinclimatesource.ca/climate-projections" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-					<button data-micron="bounce" class="button" onclick="openInfo('Basin Climate Source', 'A climate projections tool, hosted at basinclimatesource.ca.')">Info</button>
+					<button data-micron="bounce" class="button" onclick="openInfo('basin')">Info</button>
 					</div>
 				</div>
 
@@ -518,7 +554,8 @@
 			<div class="info-modal">
 				<span class="info-modal-close" onclick="closeInfo()">&times;</span>
 				<h3 id="info-modal-title"></h3>
-				<p id="info-modal-text"></p>
+				<div id="info-modal-text" class="info-modal-body"></div>
+				<div id="info-modal-tech" class="info-modal-tech"></div>
 			</div>
 		</div>
 
@@ -598,9 +635,123 @@
 			showSlides(slideIndex);
 			};
 
-			function openInfo(title, text) {
-			document.getElementById('info-modal-title').textContent = title;
-			document.getElementById('info-modal-text').textContent = text;
+			/* Project info copy. Add or edit entries here — the modal reads from this. */
+			const PROJECT_INFO = {
+			'sideproj': {
+				title: 'sideproj',
+				body: [
+				'A home for the small things — experiments, one-off tools and half-ideas that do not warrant a repo of their own, collected in one place at sideproj.ca.',
+				'Each piece is self-contained and shipped as soon as it works, which keeps the barrier to starting something new about as low as it can get.'
+				],
+				tech: ['JavaScript', 'Vercel']
+			},
+
+			'usv': {
+				title: 'USV tools',
+				body: [
+				'A suite of three browser tools built during an internship at Open Ocean Robotics to support uncrewed surface vessel (USV) operations — planning missions, reconciling trip data, and validating field tests.',
+				'Battery Forecast takes a pasted NOAA marine forecast, parses out wind speed and sea state for each period, and models battery level forward against motor draw and solar intake. It returns a recommended return time and a charted depletion curve across the forecast window. The consumption coefficients are not guesses: a Python script fits a linear regression over months of logged deployment data — battery voltage, hourly solar production, motor power and true wind speed — and emits the model constants the page runs on.',
+				'Dual-Sensor Route Analyzer computes official trip distance from two independent position logs, GPS and AIS. It runs a Haversine distance over each track, drops segments whose implied speed exceeds a configurable knot threshold as sensor error, then reconciles the two cleaned totals into a single figure and exports a markdown report.',
+				'Distance Between compares position logs from the USV and its support boat to produce vessel separation at every timestamp — a ground-truth record for energy-harvesting, radar and acoustic tests where range is the variable under test.',
+				'Everything runs client-side. CSV files are parsed in the browser and never leave the machine, which matters when the logs are operational vessel data.'
+				],
+				tech: ['Vanilla JavaScript', 'Chart.js', 'Bootstrap', 'Python', 'pandas', 'NumPy']
+			},
+
+			'jc-808': {
+				title: 'JC-808',
+				body: [
+				'A drum machine and synthesiser built from scratch with the Web Audio API — no samples and no audio libraries. Every sound is synthesised live from oscillators, noise and filter envelopes, modelled on the analogue circuits of the original hardware.',
+				'Twelve percussion voices run under a 16-step sequencer with swing, per-step accent and four pattern banks. Alongside it sits a playable synth with an arpeggiator, and anything you make can be rendered out to WAV directly from the browser.'
+				],
+				tech: ['Web Audio API', 'Vanilla JavaScript', 'Canvas', 'Vercel']
+			},
+
+			'qr': {
+				title: 'QR Code Generator',
+				body: [
+				'A single-purpose tool: paste a URL or any text, get a QR code back instantly. Codes are generated at the highest error-correction level, so they still scan reliably when printed small, stickered onto something curved, or partially obscured.',
+				'Output renders to a canvas and downloads as a PNG. There is no server and no upload step — the code is generated in the page, so whatever you encode stays on your machine.'
+				],
+				tech: ['Vanilla JavaScript', 'qrcode.js', 'Tailwind CSS', 'Canvas']
+			},
+
+			'sudoku': {
+				title: 'Sudoku game',
+				body: [
+				'A playable Sudoku board with a generator and solver written from scratch — the interesting part is not the game, it is guaranteeing every puzzle is fair.',
+				'A randomised backtracking solver with a minimum-remaining-values heuristic fills a complete grid, then clues are removed one at a time. After each removal a solution counter re-solves the board and stops as soon as it finds a second answer; if the puzzle is no longer uniquely solvable, the clue goes back. Difficulty is the number of clues left standing.',
+				'The same solver drives the hint and solve buttons. One HTML file, no dependencies.'
+				],
+				tech: ['Vanilla JavaScript', 'Backtracking', 'Constraint propagation']
+			},
+
+			'strudel': {
+				title: 'Strudel Live Studio',
+				body: [
+				'A focused studio shell around Strudel, the browser-based pattern language for algorithmic music. Write patterns as code and hear them play back instantly, with no install and nothing to configure.',
+				'The page embeds the Strudel environment in a sandboxed frame with audio permissions granted, wraps it in a full-height layout with loading and failure states, and gets out of the way — the point is a clean surface to live-code on.'
+				],
+				tech: ['Strudel', 'Tailwind CSS', 'JavaScript']
+			},
+
+			'mathine': {
+				title: 'Mathiné',
+				body: [
+				'Mathiné, hosted at mathine.uvic.ca.'
+				],
+				tech: []
+			},
+
+			'sinixt': {
+				title: 'Custom Website',
+				body: [
+				'A custom website built for the Autonomous Sinixt Nation, hosted at sinixt.org.'
+				],
+				tech: []
+			},
+
+			'basin': {
+				title: 'Basin Climate Source',
+				body: [
+				'A climate projections tool, hosted at basinclimatesource.ca.'
+				],
+				tech: []
+			}
+			};
+
+			function openInfo(key) {
+			const info = PROJECT_INFO[key];
+			if (!info) return;
+
+			document.getElementById('info-modal-title').textContent = info.title;
+
+			const bodyEl = document.getElementById('info-modal-text');
+			bodyEl.innerHTML = '';
+			info.body.forEach(paragraph => {
+				const p = document.createElement('p');
+				p.textContent = paragraph;
+				bodyEl.appendChild(p);
+			});
+
+			const techEl = document.getElementById('info-modal-tech');
+			techEl.innerHTML = '';
+			if (info.tech && info.tech.length) {
+				const label = document.createElement('span');
+				label.className = 'tech-label';
+				label.textContent = 'Built with';
+				techEl.appendChild(label);
+				info.tech.forEach(item => {
+					const tag = document.createElement('span');
+					tag.className = 'tech-tag';
+					tag.textContent = item;
+					techEl.appendChild(tag);
+				});
+				techEl.style.display = '';
+			} else {
+				techEl.style.display = 'none';
+			}
+
 			document.getElementById('info-modal-overlay').classList.add('open');
 			}
 
