@@ -38,70 +38,204 @@
         filter: brightness(0.7);
       }
 
-      .projects-columns {
-        display: flex;
-        width: 100%;
-        gap: 30px;
-        align-items: flex-start;
-        justify-content: center;
+      /* ===== Projects: one full-screen carousel ===== */
+      #projects {
+        height: 100vh;
+        padding: 0;
+        overflow: hidden;
       }
-      .projects-column {
-        flex: 1 1 0;
-        min-width: 0;
-        max-width: 560px;
+      /* Below 1280px the sidebar collapses into a fixed top bar the wrapper pads for */
+      @media screen and (max-width: 1280px) {
+        #projects { height: calc(100vh - 3.5em); }
       }
-      .projects-subhead {
-        text-align: center;
-        font-size: 0.8rem;
-        letter-spacing: 0.25em;
-        text-transform: uppercase;
-        opacity: 0.7;
-        margin-bottom: 15px;
-      }
-      /* Two columns share the row, so drop the single-carousel width cap */
-      .projects-column .slideshow-container {
-        width: 100%;
-        max-width: 100%;
-        height: 50vh;
-      }
-      /* Let the image box shrink to the rendered image so the caption stays pinned to it */
-      .projects-column .slideshow-container img {
-        width: auto;
-        height: auto;
-        max-width: 100%;
-        max-height: 35vh;
-      }
-      /* Fixed image band keeps the button rows aligned across columns and between slides */
-      .projects-column .slide > div:first-child {
-        height: 35vh;
-        justify-content: center;
-      }
-      .projects-column .slideshow-container .prev,
-      .projects-column .slideshow-container .next {
-        z-index: 2;
-      }
-      @media screen and (max-width: 980px) {
-        .projects-columns {
-          flex-direction: column;
-          align-items: center;
-          gap: 0;
-        }
-        .projects-column {
-          width: 100%;
-          max-width: 666px;
-        }
+      @media screen and (max-width: 736px) {
+        #projects { height: 100vh; }
       }
 
-      .slide-link {
-        display: block;
-        text-align: center;
+      /* Break out of the 75em reading column so the carousel fills the panel */
+      #projects > .inner {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      .carousel {
+        position: relative;
+        height: 100%;
+        width: 100%;
+      }
+
+      /* Floats over the stage so the slides keep the full height */
+      .carousel-label {
+        position: absolute;
+        top: 2rem;
+        left: 2.5rem;
+        z-index: 4;
+        font-size: 0.7rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
+      .cslide {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 6.5rem 5rem;
+        opacity: 0;
+        visibility: hidden;
+        transform: scale(0.99);
+        transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s;
+      }
+      .cslide.is-active {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+      }
+
+      /* Shrinks to the image so the caption stays pinned under it at every size */
+      .cslide-hit {
+        display: flex;
+        flex: 0 1 auto;
+        min-height: 0;
+        max-width: 100%;
+        align-items: center;
+        justify-content: center;
         border-bottom: none;
       }
-      .slide-link img {
-        transition: filter 0.3s ease;
+      /* Height cap does the fitting so 16:9 screenshots and square tiles share a silhouette */
+      .cslide-hit img {
+        max-width: 100%;
+        max-height: 62vh;
+        width: auto;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 22px 55px rgba(0, 0, 0, 0.45);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
       }
-      .slide-link:hover img {
-        filter: brightness(0.7);
+      .cslide-hit:hover img {
+        transform: translateY(-6px);
+        box-shadow: 0 34px 75px rgba(0, 0, 0, 0.6);
+      }
+
+      .cslide-meta {
+        flex-shrink: 0;
+        padding-top: 1.5rem;
+        text-align: center;
+      }
+      .cslide-title {
+        margin: 0 0 0.4rem 0;
+        font-size: 1.4rem;
+        letter-spacing: 0.08em;
+      }
+      .cslide-sub {
+        margin: 0 0 1.1rem 0;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+        opacity: 0.55;
+      }
+      .cslide-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+      }
+      .cslide-actions .button {
+        margin: 0;
+      }
+
+      .carousel-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.2rem;
+        height: 3.2rem;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: white;
+        font-size: 1.35rem;
+        line-height: 1;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .carousel-arrow:hover {
+        background-color: rgba(0, 0, 0, 0.75);
+      }
+      .carousel-arrow.prev { left: 1.5rem; }
+      .carousel-arrow.next { right: 1.5rem; }
+
+      .carousel-dots {
+        position: absolute;
+        bottom: 1.9rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 4;
+        display: flex;
+        gap: 0.6rem;
+      }
+      .carousel-dot {
+        width: 8px;
+        height: 8px;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.28);
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+      .carousel-dot:hover { background-color: rgba(255, 255, 255, 0.55); }
+      .carousel-dot.is-active {
+        background-color: #ffffff;
+        transform: scale(1.35);
+      }
+
+      .carousel-count {
+        position: absolute;
+        bottom: 1.7rem;
+        right: 2.5rem;
+        z-index: 4;
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
+      @media screen and (max-width: 1280px) {
+        /* The collapsed top bar eats 3.5em, so the image cap has to come down with it */
+        .cslide-hit img { max-height: 56vh; }
+      }
+
+      @media screen and (max-width: 980px) {
+        .cslide { padding: 3rem 4.5rem 4.5rem; }
+        .carousel-arrow { width: 2.6rem; height: 2.6rem; font-size: 1.1rem; }
+        .carousel-arrow.prev { left: 0.75rem; }
+        .carousel-arrow.next { right: 0.75rem; }
+        .carousel-label { left: 1.5rem; top: 1.5rem; }
+        .carousel-count { right: 1.5rem; }
+      }
+
+      @media screen and (max-width: 736px) {
+        .cslide { padding: 2rem 1rem 4rem; }
+        .cslide-hit img { max-height: 50vh; }
+        .carousel-arrow { width: 2.3rem; height: 2.3rem; font-size: 1rem; }
+        .carousel-arrow.prev { left: 0.4rem; }
+        .carousel-arrow.next { right: 0.4rem; }
+        .cslide-meta { padding-top: 1.75rem; }
+        .cslide-title { font-size: 1.15rem; }
+        .cslide-sub { font-size: 0.72rem; }
+        .carousel-label { display: none; }
+        .carousel-count { right: 1rem; }
       }
 
       .info-modal-overlay {
@@ -133,7 +267,29 @@
       }
       .info-modal h3 {
         margin-top: 0;
+        margin-bottom: 12px;
         padding-right: 25px;
+      }
+      .info-modal-badge {
+        display: inline-block;
+        font-size: 0.65rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        line-height: 1;
+        padding: 7px 12px;
+        margin-bottom: 18px;
+        border-radius: 20px;
+        border: 1px solid transparent;
+      }
+      .info-modal-badge.build-vibed {
+        background: rgba(150, 110, 220, 0.25);
+        border-color: rgba(180, 150, 240, 0.5);
+        color: #d9c9ff;
+      }
+      .info-modal-badge.build-by-hand {
+        background: rgba(220, 165, 100, 0.2);
+        border-color: rgba(230, 180, 120, 0.5);
+        color: #f2d5ae;
       }
       .info-modal-body p {
         font-size: 0.95rem;
@@ -317,182 +473,141 @@
 
       <!-- Projects -->
 			<section id="projects" class="fade-up wrapper" style="background-color: #312450;">
-			<div class="inner" style="display: flex; justify-content: space-around; flex-direction: column; align-items: center;">
-				<h2 data-micron="fade" id="projects-header">Projects</h2>
+			<div class="inner">
+				<div class="carousel">
+				<span class="carousel-label">Projects</span>
 
-				<div class="projects-columns">
-
-				<!-- Vibed -->
-				<div class="projects-column">
-				<h3 class="projects-subhead">vibed</h3>
-				<div class="slideshow-container">
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="https://sideproj.ca" target="_blank" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/sp-logo.png" alt="sideproj">
-							<div class="overlay-text">sideproj</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="https://sideproj.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('sideproj')">Info</button>
+				<!-- Slides run most impressive first. Reorder these blocks to reorder the carousel. -->
+				<div class="cslide">
+					<a class="cslide-hit" href="usv/">
+						<img src="photos/usvTools.png" alt="USV tools">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">USV tools</h3>
+						<p class="cslide-sub">Open Ocean Robotics &mdash; mission planning &amp; trip analysis</p>
+						<div class="cslide-actions">
+							<a href="usv/" class="button">Link</a>
+							<button class="button" onclick="openInfo('usv')">Info</button>
 						</div>
 					</div>
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="https://jc-808.vercel.app/" target="_blank" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/808.png" alt="JC-808 drum machine">
-							<div class="overlay-text">JC-808</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="https://jc-808.vercel.app/" target="_blank"><button data-micron="bounce" class="button">Demo</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('jc-808')">Info</button>
-						</div>
-					</div>
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="usv/" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/usvTools.png" alt="USV tools">
-							<div class="overlay-text">USV tools</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="usv/"><button data-micron="bounce" class="button">Link</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('usv')">Info</button>
-						</div>
-					</div>
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="https://www.jakecushway.ca/media/qr/" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/qrCode.png" alt="QR code generator">
-							<div class="overlay-text">QR Code Generator</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="https://www.jakecushway.ca/media/qr/"><button data-micron="bounce" class="button">Demo</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('qr')">Info</button>
-						</div>
-					</div>
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="media/other/pages/sudokuJs.html" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
-							<div class="overlay-text">Sudoku game</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="media/other/pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('sudoku')">Info</button>
-						</div>
-					</div>
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="media/strudel/" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/strudel.png" alt="Strudel Live Studio">
-							<div class="overlay-text">Strudel Live Studio</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="media/strudel/"><button data-micron="bounce" class="button">Demo</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('strudel')">Info</button>
-						</div>
-					</div>
-
-					<!-- Navigation buttons -->
-					<a class="prev">&#10094;</a>
-					<a class="next">&#10095;</a>
-
-				</div>
 				</div>
 
-				<!-- By hand -->
-				<div class="projects-column">
-				<h3 class="projects-subhead">by hand</h3>
-				<div class="slideshow-container">
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="https://sinixt.org/" target="_blank" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/sinixt-sq.png" alt="Autonomous Sinixt">
-							<div class="overlay-text">Custom Website</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="https://sinixt.org/" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('sinixt')">Info</button>
+				<div class="cslide">
+					<a class="cslide-hit" href="https://jc-808.vercel.app/" target="_blank" rel="noopener">
+						<img src="photos/jc808.png" alt="JC-808 drum machine">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">JC-808</h3>
+						<p class="cslide-sub">Drum machine &amp; synthesiser built from scratch with the Web Audio API</p>
+						<div class="cslide-actions">
+							<a href="https://jc-808.vercel.app/" target="_blank" rel="noopener" class="button">Demo</a>
+							<button class="button" onclick="openInfo('jc-808')">Info</button>
 						</div>
 					</div>
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="https://basinclimatesource.ca/climate-projections" target="_blank" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/bsc-sq.png" alt="Basin Climate Source">
-							<div class="overlay-text">Basin Climate Source</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="https://basinclimatesource.ca/climate-projections" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('basin')">Info</button>
-						</div>
-					</div>
-
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<a href="https://mathine.uvic.ca" target="_blank" class="slide-link">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/mathine-sq.png" alt="Mathine">
-							<div class="overlay-text">Mathiné</div>
-						</div>
-						</a>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="https://mathine.uvic.ca" target="_blank"><button data-micron="bounce" class="button">Link</button></a>
-						<button data-micron="bounce" class="button" onclick="openInfo('mathine')">Info</button>
-						</div>
-					</div>
-<!--
-					<div class="slide">
-						<div style="display:flex; flex-direction: column; justify-content: center;">
-						<div class="image-overlay-container">
-							<img class="side-photo" data-micron="flicker" src="photos/sotb.png" alt="State Of The Basin">
-							<div class="overlay-text">State Of The Basin</div>
-						</div>
-						</div>
-						<div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-						<a href="https://stateofthebasin.ca/community-profiles" target="_blank"><button data-micron="bounce" class="button">Link</button>
-						<a><button data-micron="bounce" class="button">Info</button></a>
-						</div>
-					</div> -->
-
-					<!-- Navigation buttons -->
-					<a class="prev">&#10094;</a>
-					<a class="next">&#10095;</a>
-
 				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="https://basinclimatesource.ca/climate-projections" target="_blank" rel="noopener">
+						<img src="photos/basinclimatesource.png" alt="Basin Climate Source">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">Basin Climate Source</h3>
+						<p class="cslide-sub">Climate projections tool for the Columbia Basin-Boundary region</p>
+						<div class="cslide-actions">
+							<a href="https://basinclimatesource.ca/climate-projections" target="_blank" rel="noopener" class="button">Link</a>
+							<button class="button" onclick="openInfo('basin')">Info</button>
+						</div>
+					</div>
 				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="https://mathine.uvic.ca" target="_blank" rel="noopener">
+						<img src="photos/mathine.png" alt="Mathine">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">Mathin&eacute;</h3>
+						<p class="cslide-sub">Student platform for the University of Victoria</p>
+						<div class="cslide-actions">
+							<a href="https://mathine.uvic.ca" target="_blank" rel="noopener" class="button">Link</a>
+							<button class="button" onclick="openInfo('mathine')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="https://sinixt.org/" target="_blank" rel="noopener">
+						<img src="photos/sinixthome.png" alt="Autonomous Sinixt">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">Custom Website</h3>
+						<p class="cslide-sub">Built for the Autonomous Sinixt Nation</p>
+						<div class="cslide-actions">
+							<a href="https://sinixt.org/" target="_blank" rel="noopener" class="button">Link</a>
+							<button class="button" onclick="openInfo('sinixt')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="https://sideproj.ca" target="_blank" rel="noopener">
+						<img src="photos/side-proj.png" alt="sideproj">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">sideproj</h3>
+						<p class="cslide-sub">A home for the experiments and one-off tools</p>
+						<div class="cslide-actions">
+							<a href="https://sideproj.ca" target="_blank" rel="noopener" class="button">Link</a>
+							<button class="button" onclick="openInfo('sideproj')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="media/strudel/">
+						<img src="photos/strudel.png" alt="Strudel Live Studio">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">Strudel Live Studio</h3>
+						<p class="cslide-sub">A studio shell for live-coding algorithmic music in the browser</p>
+						<div class="cslide-actions">
+							<a href="media/strudel/" class="button">Demo</a>
+							<button class="button" onclick="openInfo('strudel')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="media/other/pages/sudokuJs.html">
+						<img src="photos/sudoku.png" alt="Sudoku">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">Sudoku game</h3>
+						<p class="cslide-sub">Generator and solver with guaranteed unique solutions</p>
+						<div class="cslide-actions">
+							<a href="media/other/pages/sudokuJs.html" class="button">Demo</a>
+							<button class="button" onclick="openInfo('sudoku')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="https://www.jakecushway.ca/media/qr/">
+						<img src="photos/qrCode.png" alt="QR code generator">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">QR Code Generator</h3>
+						<p class="cslide-sub">High error-correction codes generated entirely in the browser</p>
+						<div class="cslide-actions">
+							<a href="https://www.jakecushway.ca/media/qr/" class="button">Demo</a>
+							<button class="button" onclick="openInfo('qr')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<button class="carousel-arrow prev" type="button" aria-label="Previous project">&#10094;</button>
+				<button class="carousel-arrow next" type="button" aria-label="Next project">&#10095;</button>
+				<div class="carousel-dots"></div>
+				<div class="carousel-count"><span class="c-now">01</span> / <span class="c-total">09</span></div>
 
 				</div>
 			</div>
@@ -629,6 +744,7 @@
 			<div class="info-modal">
 				<span class="info-modal-close" onclick="closeInfo()">&times;</span>
 				<h3 id="info-modal-title"></h3>
+				<span id="info-modal-badge" class="info-modal-badge"></span>
 				<div id="info-modal-text" class="info-modal-body"></div>
 				<div id="info-modal-tech" class="info-modal-tech"></div>
 			</div>
@@ -686,34 +802,75 @@
 			});
 		</script>
 		<script>
-			/* Each .slideshow-container runs its own independent slideshow. */
+			/* Full-screen projects carousel. Slide order is the markup order. */
 			document.addEventListener('DOMContentLoaded', () => {
-				document.querySelectorAll('.slideshow-container').forEach(container => {
-					const slides = Array.from(container.querySelectorAll('.slide'));
-					if (!slides.length) return;
+				const carousel = document.querySelector('.carousel');
+				if (!carousel) return;
 
-					let index = 0;
+				const slides = Array.from(carousel.querySelectorAll('.cslide'));
+				if (!slides.length) return;
 
-					function showSlide(n) {
-						index = (n + slides.length) % slides.length;
-						slides.forEach((slide, i) => {
-							slide.style.display = (i === index) ? 'block' : 'none';
-						});
-					}
+				const dotsWrap = carousel.querySelector('.carousel-dots');
+				const nowEl = carousel.querySelector('.c-now');
+				const totalEl = carousel.querySelector('.c-total');
+				const pad = n => String(n).padStart(2, '0');
+				let index = 0;
 
-					const prev = container.querySelector('.prev');
-					const next = container.querySelector('.next');
-					if (prev) prev.addEventListener('click', () => showSlide(index - 1));
-					if (next) next.addEventListener('click', () => showSlide(index + 1));
+				if (totalEl) totalEl.textContent = pad(slides.length);
 
-					showSlide(0);
+				const dots = slides.map((slide, i) => {
+					const dot = document.createElement('button');
+					dot.type = 'button';
+					dot.className = 'carousel-dot';
+					dot.setAttribute('aria-label', 'Go to project ' + (i + 1));
+					dot.addEventListener('click', () => show(i));
+					dotsWrap.appendChild(dot);
+					return dot;
 				});
+
+				function show(n) {
+					index = (n + slides.length) % slides.length;
+					slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
+					dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+					if (nowEl) nowEl.textContent = pad(index + 1);
+				}
+
+				carousel.querySelector('.carousel-arrow.prev').addEventListener('click', () => show(index - 1));
+				carousel.querySelector('.carousel-arrow.next').addEventListener('click', () => show(index + 1));
+
+				/* Arrow keys drive the carousel, but only while it is actually on screen */
+				document.addEventListener('keydown', event => {
+					const modal = document.getElementById('info-modal-overlay');
+					if (modal && modal.classList.contains('open')) {
+						if (event.key === 'Escape') closeInfo();
+						return;
+					}
+					const box = carousel.getBoundingClientRect();
+					if (box.bottom < 0 || box.top > window.innerHeight) return;
+					if (event.key === 'ArrowLeft') show(index - 1);
+					if (event.key === 'ArrowRight') show(index + 1);
+				});
+
+				/* Horizontal swipe on touch devices */
+				let touchStartX = null;
+				carousel.addEventListener('touchstart', event => {
+					touchStartX = event.touches[0].clientX;
+				}, { passive: true });
+				carousel.addEventListener('touchend', event => {
+					if (touchStartX === null) return;
+					const delta = event.changedTouches[0].clientX - touchStartX;
+					if (Math.abs(delta) > 50) show(delta < 0 ? index + 1 : index - 1);
+					touchStartX = null;
+				}, { passive: true });
+
+				show(0);
 			});
 
 			/* Project info copy. Add or edit entries here — the modal reads from this. */
 			const PROJECT_INFO = {
 			'sideproj': {
 				title: 'sideproj',
+				build: 'vibed',
 				body: [
 				'A home for the small things — experiments, one-off tools and half-ideas that do not warrant a repo of their own, collected in one place at sideproj.ca.',
 				'Each piece is self-contained and shipped as soon as it works, which keeps the barrier to starting something new about as low as it can get.'
@@ -723,6 +880,7 @@
 
 			'usv': {
 				title: 'USV tools',
+				build: 'vibed',
 				body: [
 				'A suite of three browser tools built during an internship at Open Ocean Robotics to support uncrewed surface vessel (USV) operations — planning missions, reconciling trip data, and validating field tests.',
 				'Battery Forecast takes a pasted NOAA marine forecast, parses out wind speed and sea state for each period, and models battery level forward against motor draw and solar intake. It returns a recommended return time and a charted depletion curve across the forecast window. The consumption coefficients are not guesses: a Python script fits a linear regression over months of logged deployment data — battery voltage, hourly solar production, motor power and true wind speed — and emits the model constants the page runs on.',
@@ -735,6 +893,7 @@
 
 			'jc-808': {
 				title: 'JC-808',
+				build: 'vibed',
 				body: [
 				'A drum machine and synthesiser built from scratch with the Web Audio API — no samples and no audio libraries. Every sound is synthesised live from oscillators, noise and filter envelopes, modelled on the analogue circuits of the original hardware.',
 				'Twelve percussion voices run under a 16-step sequencer with swing, per-step accent and four pattern banks. Alongside it sits a playable synth with an arpeggiator, and anything you make can be rendered out to WAV directly from the browser.'
@@ -744,6 +903,7 @@
 
 			'qr': {
 				title: 'QR Code Generator',
+				build: 'vibed',
 				body: [
 				'A single-purpose tool: paste a URL or any text, get a QR code back instantly. Codes are generated at the highest error-correction level, so they still scan reliably when printed small, stickered onto something curved, or partially obscured.',
 				'Output renders to a canvas and downloads as a PNG. There is no server and no upload step — the code is generated in the page, so whatever you encode stays on your machine.'
@@ -753,6 +913,7 @@
 
 			'sudoku': {
 				title: 'Sudoku game',
+				build: 'vibed',
 				body: [
 				'A playable Sudoku board with a generator and solver written from scratch — the interesting part is not the game, it is guaranteeing every puzzle is fair.',
 				'A randomised backtracking solver with a minimum-remaining-values heuristic fills a complete grid, then clues are removed one at a time. After each removal a solution counter re-solves the board and stops as soon as it finds a second answer; if the puzzle is no longer uniquely solvable, the clue goes back. Difficulty is the number of clues left standing.',
@@ -763,6 +924,7 @@
 
 			'strudel': {
 				title: 'Strudel Live Studio',
+				build: 'vibed',
 				body: [
 				'A focused studio shell around Strudel, the browser-based pattern language for algorithmic music. Write patterns as code and hear them play back instantly, with no install and nothing to configure.',
 				'The page embeds the Strudel environment in a sandboxed frame with audio permissions granted, wraps it in a full-height layout with loading and failure states, and gets out of the way — the point is a clean surface to live-code on.'
@@ -772,6 +934,7 @@
 
 			'mathine': {
 				title: 'Mathiné',
+				build: 'by hand',
 				body: [
 				'Mathiné, hosted at mathine.uvic.ca.'
 				],
@@ -780,6 +943,7 @@
 
 			'sinixt': {
 				title: 'Custom Website',
+				build: 'by hand',
 				body: [
 				'A custom website built for the Autonomous Sinixt Nation, hosted at sinixt.org.'
 				],
@@ -788,6 +952,7 @@
 
 			'basin': {
 				title: 'Basin Climate Source',
+				build: 'by hand',
 				body: [
 				'A climate projections tool, hosted at basinclimatesource.ca.'
 				],
@@ -800,6 +965,15 @@
 			if (!info) return;
 
 			document.getElementById('info-modal-title').textContent = info.title;
+
+			const badgeEl = document.getElementById('info-modal-badge');
+			if (info.build) {
+				badgeEl.textContent = info.build;
+				badgeEl.className = 'info-modal-badge build-' + info.build.replace(/\s+/g, '-');
+				badgeEl.style.display = '';
+			} else {
+				badgeEl.style.display = 'none';
+			}
 
 			const bodyEl = document.getElementById('info-modal-text');
 			bodyEl.innerHTML = '';
