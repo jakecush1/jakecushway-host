@@ -1921,7 +1921,7 @@ input, select, textarea {
 		button.primary,
 		.button.primary {
 			background-color: #ffffff;
-			color: #312450 !important;
+			color: #251c3b !important;
 		}
 
 			input[type="submit"].primary:after,
@@ -2370,7 +2370,7 @@ input, select, textarea {
 
 		select option {
 			color: #ffffff;
-			background: #312450;
+			background: #251c3b;
 		}
 
 		select:focus::-ms-value {
@@ -2539,7 +2539,7 @@ input, select, textarea {
 			display: block;
 			background: #ffffff;
 			border-radius: 100%;
-			color: #312450;
+			color: #251c3b;
 			text-align: center;
 			line-height: 2.5em;
 			margin: 0 0 1.3em 0;
@@ -3624,7 +3624,7 @@ input, select, textarea {
 
 	#sidebar {
 		padding: 2.5em 2.5em 0.5em 2.5em ;
-		background: #312450;
+		background: #251c3b;
 		cursor: default;
 		height: 100vh;
 		left: 0;
@@ -3861,7 +3861,7 @@ input, select, textarea {
 			}
 
 			#sidebar nav a:before {
-				background: #3c2c62;
+				background: #2f2350;
 			}
 
 			#sidebar nav a:after {

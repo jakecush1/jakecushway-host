@@ -19,7 +19,7 @@
       #tools .quadrant {
         flex: 1;
         height: 50vh;
-        border: 10px solid #312450;
+        border: 10px solid #251c3b;
         box-sizing: border-box;
       }
       #tools .link-wrapper {
@@ -254,7 +254,8 @@
         display: flex;
       }
       .info-modal {
-        background: #312450;
+        /* A step lighter than the section so the panel still reads as raised */
+        background: #2c2148;
         color: white;
         padding: 30px;
         border-radius: 12px;
@@ -359,16 +360,13 @@
 							<h1 class ="font-bold center transition-opacity duration-500 ease-in-out" 
 							id="greeting-header">Hello,</h1> 								
 							<p data-micron="fade">My name is Jake. I am a Software Developer in Victoria.</p>
-							<ul class="actions">
-								<li><a href="files/JacobCushwaysResume.pdf" download class="button">Download Resume</a></li>
-								<!-- <li><a href="#contact" class="button">Contact info</a></li> -->
-							</ul>
 							<ul class="icons">
 								<!-- <li><a href="#"><img class="logo-img" data-micron="fade" src="photos/email.png"/></a></li> -->
 								<!-- <li><a href="demoUSV.html" class="icon fa-heart"><span class="label">USV</span></a></li>
 								<li><a href="demo.html" class="icon fa-anchor"><span class="label">Media</span></a></li> -->
+								<li><a href="files/JacobCushwaysResume.pdf" download title="Download resume" class="icon solid fa-file-lines"><span class="label">Resume</span></a></li>
 								<li><a href="https://github.com/jakecush1" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-								<li><a href="https://www.linkedin.com/in/jakecushway/" class="icon brands fa-linkedin"><span class="label">GitHub</span></a></li>
+								<li><a href="https://www.linkedin.com/in/jakecushway/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
 							</ul>
 						</div>
 					</div>
@@ -420,7 +418,7 @@
 			</section> -->
 
 
-			<!-- <section id="tools" class="fade-up wrapper" style="background-color: #312450;">
+			<!-- <section id="tools" class="fade-up wrapper" style="background-color: #251c3b;">
         <div class="inner" style="display: flex; justify-content: space-around; flex-direction: column; align-items: center;">
           <h2 data-micron="fade" id="projects-header">Tools</h2>
           <div class="slideshow-container">
@@ -472,22 +470,22 @@
 			</section> -->
 
       <!-- Projects -->
-			<section id="projects" class="fade-up wrapper" style="background-color: #312450;">
+			<section id="projects" class="fade-up wrapper" style="background-color: #251c3b;">
 			<div class="inner">
 				<div class="carousel">
 				<span class="carousel-label">Projects</span>
 
 				<!-- Slides run most impressive first. Reorder these blocks to reorder the carousel. -->
 				<div class="cslide">
-					<a class="cslide-hit" href="usv/">
-						<img src="photos/usvTools.png" alt="USV tools">
+					<a class="cslide-hit" href="https://sideproj.ca" target="_blank" rel="noopener">
+						<img src="photos/side-proj.png" alt="sideproj">
 					</a>
 					<div class="cslide-meta">
-						<h3 class="cslide-title">USV tools</h3>
-						<p class="cslide-sub">Open Ocean Robotics &mdash; mission planning &amp; trip analysis</p>
+						<h3 class="cslide-title">sideproj</h3>
+						<p class="cslide-sub">A home for the experiments and one-off tools</p>
 						<div class="cslide-actions">
-							<a href="usv/" class="button">Link</a>
-							<button class="button" onclick="openInfo('usv')">Info</button>
+							<a href="https://sideproj.ca" target="_blank" rel="noopener" class="button">Link</a>
+							<button class="button" onclick="openInfo('sideproj')">Info</button>
 						</div>
 					</div>
 				</div>
@@ -549,15 +547,15 @@
 				</div>
 
 				<div class="cslide">
-					<a class="cslide-hit" href="https://sideproj.ca" target="_blank" rel="noopener">
-						<img src="photos/side-proj.png" alt="sideproj">
+					<a class="cslide-hit" href="usv/">
+						<img src="photos/usvTools.png" alt="USV tools">
 					</a>
 					<div class="cslide-meta">
-						<h3 class="cslide-title">sideproj</h3>
-						<p class="cslide-sub">A home for the experiments and one-off tools</p>
+						<h3 class="cslide-title">USV tools</h3>
+						<p class="cslide-sub">Open Ocean Robotics &mdash; mission planning &amp; trip analysis</p>
 						<div class="cslide-actions">
-							<a href="https://sideproj.ca" target="_blank" rel="noopener" class="button">Link</a>
-							<button class="button" onclick="openInfo('sideproj')">Info</button>
+							<a href="usv/" class="button">Link</a>
+							<button class="button" onclick="openInfo('usv')">Info</button>
 						</div>
 					</div>
 				</div>
