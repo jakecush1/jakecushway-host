@@ -493,7 +493,7 @@
 
 				<div class="cslide">
 					<a class="cslide-hit" href="https://sideproj.ca" target="_blank" rel="noopener">
-						<img src="photos/side-proj.png" alt="sideproj">
+						<img src="photos/side-proj.jpg" alt="sideproj">
 					</a>
 					<div class="cslide-meta">
 						<h3 class="cslide-title">sideproj</h3>
@@ -501,6 +501,21 @@
 						<div class="cslide-actions">
 							<a href="https://sideproj.ca" target="_blank" rel="noopener" class="button">Link</a>
 							<button class="button" onclick="openInfo('sideproj')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="cslide">
+					<a class="cslide-hit" href="https://obamafy.vercel.app" target="_blank" rel="noopener">
+						<img src="photos/obamafy.jpg" alt="Obamafy screenprint poster maker">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">Obamafy</h3>
+						<p class="cslide-sub">Turn any photo into a two-to-four ink screenprint poster</p>
+						<div class="cslide-actions">
+							<a href="https://obamafy.vercel.app" target="_blank" rel="noopener" class="button">Demo</a>
+							<a href="https://github.com/jakecush1/obamafy" target="_blank" rel="noopener" class="button">GitHub</a>
+							<button class="button" onclick="openInfo('obamafy')">Info</button>
 						</div>
 					</div>
 				</div>
@@ -620,7 +635,7 @@
 				<button class="carousel-arrow prev" type="button" aria-label="Previous project">&#10094;</button>
 				<button class="carousel-arrow next" type="button" aria-label="Next project">&#10095;</button>
 				<div class="carousel-dots"></div>
-				<div class="carousel-count"><span class="c-now">01</span> / <span class="c-total">10</span></div>
+				<div class="carousel-count"><span class="c-now">01</span> / <span class="c-total">11</span></div>
 
 				</div>
 			</div>
@@ -900,6 +915,17 @@
 				'Each piece is self-contained and shipped as soon as it works, which keeps the barrier to starting something new about as low as it can get.'
 				],
 				tech: ['JavaScript', 'Vercel']
+			},
+
+			'obamafy': {
+				title: 'Obamafy',
+				build: 'vibed',
+				body: [
+				'A screenprint poster maker in the style of the 2008 Hope poster. Drop in a photo and it comes back as a bold poster in two, three or four flat inks — useful for actual screen printing or multi-colour 3D printing, where every colour has to be its own layer.',
+				'The pipeline runs on a canvas in plain JavaScript: the photo is converted to luminance, Gaussian-blurred with three box-blur passes, stretched between its 1st and 99th percentile tones, then split into ink bands. A line-hatching pass offsets the bands row by row so the edges between inks break into horizontal stripes, like the original print.',
+				'You can drag tone-split markers over a live histogram, swap palettes, set the message band and typeface, and export a 2400px PNG. The preview caches the framing and blur steps so palette and tone changes redraw instantly. One HTML file, and photos never leave the browser.'
+				],
+				tech: ['Vanilla JavaScript', 'Canvas', 'Vercel']
 			},
 
 			'usv': {
