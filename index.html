@@ -477,6 +477,21 @@
 
 				<!-- Slides run most impressive first. Reorder these blocks to reorder the carousel. -->
 				<div class="cslide">
+					<a class="cslide-hit" href="https://bedroom-studio-three.vercel.app/" target="_blank" rel="noopener">
+						<img src="photos/bedroom-studio.jpg" alt="Bedroom Studio">
+					</a>
+					<div class="cslide-meta">
+						<h3 class="cslide-title">Bedroom Studio</h3>
+						<p class="cslide-sub">A lofi 3D bedroom music studio &mdash; the JC-808 and chiptune tools, in the browser</p>
+						<div class="cslide-actions">
+							<a href="https://bedroom-studio-three.vercel.app/" target="_blank" rel="noopener" class="button">Demo</a>
+							<a href="https://github.com/jakecush1/bedroom-studio" target="_blank" rel="noopener" class="button">GitHub</a>
+							<button class="button" onclick="openInfo('bedroom-studio')">Info</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="cslide">
 					<a class="cslide-hit" href="https://sideproj.ca" target="_blank" rel="noopener">
 						<img src="photos/side-proj.png" alt="sideproj">
 					</a>
@@ -605,7 +620,7 @@
 				<button class="carousel-arrow prev" type="button" aria-label="Previous project">&#10094;</button>
 				<button class="carousel-arrow next" type="button" aria-label="Next project">&#10095;</button>
 				<div class="carousel-dots"></div>
-				<div class="carousel-count"><span class="c-now">01</span> / <span class="c-total">09</span></div>
+				<div class="carousel-count"><span class="c-now">01</span> / <span class="c-total">10</span></div>
 
 				</div>
 			</div>
@@ -866,6 +881,17 @@
 
 			/* Project info copy. Add or edit entries here — the modal reads from this. */
 			const PROJECT_INFO = {
+			'bedroom-studio': {
+				title: 'Bedroom Studio',
+				build: 'vibed',
+				body: [
+				'Room 808 — a rainy-night 3D bedroom studio rendered in Three.js. Every machine in the room is a working instrument or tool: click one and the camera walks up to it and opens its panel.',
+				'The JC-808 drum machine sits on the desk alongside a microphone guitar tuner, and the rack holds browser rebuilds of the ChipWorld chiptune tools — a four-channel CHIP-4 sound engine that renders MIDI carts with square, triangle and noise voices, and a real-time 8-bit crusher running as an AudioWorklet. Song analysis, audio-to-sheet-music and a chipify pipeline are in progress.',
+				'All the DSP runs client-side — FFT, beat tracking, pYIN pitch detection and Spotify\'s Basic Pitch model — so nothing is uploaded, and anything you make can be saved to the tape library or rendered out as WAV.'
+				],
+				tech: ['Three.js', 'Web Audio API', 'AudioWorklet', 'Basic Pitch', 'Vite', 'Vercel']
+			},
+
 			'sideproj': {
 				title: 'sideproj',
 				build: 'vibed',
