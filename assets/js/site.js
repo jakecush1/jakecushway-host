@@ -235,15 +235,16 @@
   var PROJECTS = Array.isArray(window.PROJECTS) ? window.PROJECTS.slice() : [];
   if (!PROJECTS.length) console.warn('[site] window.PROJECTS is missing or empty.');
   var CATEGORY_ORDER = ['Audio', 'Tools', 'Client work', 'Product', 'Experiments'];
-  var HERO_ORDER = ['bedroom-studio', 'jc-808', 'obamafy', 'mathine', 'basin-climate-source', 'usv-tools', 'autonomous-sinixt'];
+  var HERO_ORDER = ['city-square', 'bedroom-studio', 'sideproj', 'ai-photobooth', 'obamafy', 'mathine', 'basin-climate-source', 'autonomous-sinixt'];
   var bySlug = {};
   PROJECTS.forEach(function (p) { bySlug[p.slug] = p; });
 
   function imgSrc(p, small) { return small ? (p.imageSmall || p.image) : (p.image || p.imageSmall); }
   function hasImage(p) { return !!(p.image || p.imageSmall); }
-  function mediaHTML(p, small, lazy) {
+  function mediaHTML(p, small, lazy, sizes) {
     if (!hasImage(p)) return '<div class="ph" aria-hidden="true">' + esc(p.title) + '</div>';
-    return '<img src="' + esc(imgSrc(p, small)) + '" alt="' + esc(p.imageAlt || p.title) + '" width="' + (p.imageW || 1600) + '" height="' + (p.imageH || 1000) + '"' +
+    var srcset = (sizes && p.image && p.imageSmall) ? ' srcset="' + esc(p.imageSmall) + ' 800w, ' + esc(p.image) + ' 1600w" sizes="' + esc(sizes) + '"' : '';
+    return '<img src="' + esc(imgSrc(p, small)) + '"' + srcset + ' alt="' + esc(p.imageAlt || p.title) + '" width="' + (p.imageW || 1600) + '" height="' + (p.imageH || 1000) + '"' +
       (lazy ? ' loading="lazy"' : '') + ' decoding="async" data-ph="' + esc(p.title) + '">';
   }
   function buildLabel(p) { return p.build === 'hand-built' ? 'Hand-built' : p.build === 'ai-assisted' ? 'AI-assisted' : ''; }
@@ -280,7 +281,7 @@
       var li = document.createElement('li'); li.style.setProperty('--i', i);
       var b = document.createElement('button'); b.type = 'button'; b.className = 'pill'; b.textContent = p.title;
       b.setAttribute('data-slug', p.slug); b.setAttribute('data-cursor', 'open');
-      b.addEventListener('click', function () { openCase(p.slug, b); });
+      b.addEventListener('click', function () { if (heroPreview) heroPreview.classList.remove('is-visible'); openCase(p.slug, b); });
       if (finePointer && !reduced && hasImage(p)) {
         var show = function () {
           heroPreviewImg.src = imgSrc(p, true);
@@ -291,7 +292,7 @@
           heroPreview.classList.add('is-visible');
         };
         var hide = function () { heroPreview.classList.remove('is-visible'); };
-        b.addEventListener('pointerenter', show); b.addEventListener('focus', show);
+        b.addEventListener('pointerenter', show); b.addEventListener('focus', function () { if (b.matches(':focus-visible')) show(); });
         b.addEventListener('pointerleave', hide); b.addEventListener('blur', hide);
       }
       li.appendChild(b); frag.appendChild(li);
@@ -310,7 +311,7 @@
       var li = document.createElement('li'); li.className = 'reveal'; li.style.setProperty('--i', i);
       li.innerHTML =
         '<button type="button" class="card" data-slug="' + esc(p.slug) + '" data-cursor="view" aria-label="Open case study: ' + esc(p.title) + '">' +
-          '<span class="card__media">' + mediaHTML(p, false, i > 0) + '</span>' +
+          '<span class="card__media">' + mediaHTML(p, false, true, '(max-width: 640px) calc(100vw - 32px), (max-width: 1100px) 50vw, 33vw') + '</span>' +
           '<span class="card__caption"><span class="card__title">' + esc(p.title) + '</span><span class="card__year mono label">' + esc(p.year) + '</span>' +
           '<span class="card__kicker">' + esc(p.kicker) + '</span></span>' +
         '</button>';

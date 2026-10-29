@@ -1,13 +1,38 @@
 /* projects-data.js — the single source of truth for the Work section.
    Plain script (no module): defines window.PROJECTS.
-   Order = display order. Exactly 3 `featured`, exactly 7 `heroPill`.
+   Order = display order (list rows, drawer prev/next).
+   featured: true  -> large card in the Selected work grid (keep exactly 3).
+   heroPill: true  -> pill in the hero stack; pill order follows this array.
    Categories used: Audio · Tools · Client work · Product · Experiments
    build: 'ai-assisted' | 'hand-built' (omit when unknown). image may be null. */
 window.PROJECTS = [
   {
+    slug: 'city-square',
+    title: 'City Square',
+    kicker: 'A rainy-night street in Three.js with two doors: one into the Side Proj tavern, one up to Bedroom Studio.',
+    category: 'Experiments',
+    year: '2026',
+    featured: true,
+    heroPill: true,
+    role: 'Design, 3D, development',
+    tags: ['Three.js', 'Procedural', 'Shaders'],
+    tech: ['Three.js', 'Canvas textures', 'Custom post-processing', 'Vite', 'Vercel'],
+    image: 'photos/web/city-square-1600.webp',
+    imageSmall: 'photos/web/city-square-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'City Square: a rainy cobbled street at night between The Garrison Tavern on the left and a neon-signed apartment block on the right.',
+    links: { live: 'https://city-square.vercel.app/', repo: 'https://github.com/jakecush1/city-square' },
+    body: [
+      'City Square is the front door to my 3D work. You arrive on a rainy cobbled street between two lit buildings and pick one: The Garrison Tavern on the left opens Side Proj, the band tavern, and the 音楽アパート apartment on the right opens Room 808, the bedroom studio. Hover a building and it lights up; click it and the camera walks to the door, fades out, and the destination opens inside the page with a bar to get back to the street. Browser back and Escape also bring you home, and #tavern and #studio deep-link straight inside.',
+      'Everything in the scene is procedural. The cobbles, plaster, concrete, signage and neon are painted onto canvases at startup, so there are no texture downloads. The illustrated look comes from toon-ramped materials and a custom post pass that inks edges wherever depth or surface normals jump, lays paper grain over the frame and flattens the palette. The wet-street reflections are additive light smears aimed at the camera rather than real reflections, which keeps the scene cheap enough to run on a laptop.',
+      'Each door points at its own deployed site, so the tavern and the studio stay separate projects with their own repos. If a destination is unreachable, the street says so instead of opening a blank frame.'
+    ]
+  },
+  {
     slug: 'bedroom-studio',
     title: 'Bedroom Studio',
-    kicker: 'A rainy-night 3D bedroom studio where every machine on the desk is a working instrument.',
+    kicker: 'A rainy-night 3D bedroom studio where every machine on the desk is a working instrument, including the JC-808.',
     category: 'Audio',
     year: '2026',
     featured: true,
@@ -23,33 +48,57 @@ window.PROJECTS = [
     imageAlt: 'Room 808: a dim 3D bedroom at night with a desk lamp, monitor, drum machine, keyboard and rain outside the window.',
     links: { live: 'https://bedroom-studio-three.vercel.app/', repo: 'https://github.com/jakecush1/bedroom-studio' },
     body: [
-      'Room 808 is a lofi bedroom studio rendered in Three.js: rain on the window, a desk lamp, a glowing rack of gear. Every machine in the room is a real tool. Click one and the camera walks up to it and opens its panel, so the room doubles as a launcher for everything I have built for the browser.',
-      'The studio side holds the JC-808 drum machine, a microphone tuner, Scribe and Analyzer for working with recorded audio, and a radio. The ChipWorld side is a set of chiptune tools rebuilt for the web: CHIP-4, a four-channel sound engine with square, triangle and noise voices; Crusher, a real-time 8-bit bit-crusher running as an AudioWorklet; and Chipify, which pushes a track through that pipeline.',
-      'All of the DSP runs client-side: FFT, beat tracking, pYIN pitch detection and Spotify’s Basic Pitch model for turning audio into notes. Nothing is uploaded. Anything you make can be kept in the tape library or rendered out as a WAV, and the rain and lofi filters are toggles rather than decoration.'
+      'Room 808 is a lofi bedroom studio rendered in Three.js: rain on the window, a desk lamp, a glowing rack of gear. Every machine in the room is a real tool. Click one and the camera walks up to it and opens its panel, so the room doubles as a launcher for the audio tools I have built for the browser.',
+      'The centrepiece is the JC-808, a drum machine and synthesiser I built from scratch on the Web Audio API with no samples and no audio libraries. Twelve analogue-modelled voices sit under a 16-step sequencer with swing, drive, per-step accent and four chainable pattern banks, and underneath is a two-lane synth with looping recorders, an arpeggiator, and delay and reverb on the mix. Patterns can be shared as a link or exported as a WAV. It also runs on its own at jc-808.vercel.app.',
+      'Around it are a guitar tuner, vocal autotune, automatic mastering, and ChipWorld: chiptune tools rebuilt for the web, including CHIP-4, a four-channel sound engine with square, triangle and noise voices, and Chipify, which turns a track into a four-channel chiptune.',
+      'All of the DSP runs client-side, from FFT and beat tracking to pYIN pitch detection and Spotify’s Basic Pitch model for turning audio into notes. Nothing is uploaded, and anything you make can be kept in the tape library or rendered out as a WAV.'
     ]
   },
   {
-    slug: 'jc-808',
-    title: 'JC-808',
-    kicker: 'A drum machine and synthesiser built from scratch in the Web Audio API — no samples, no audio libraries.',
-    category: 'Audio',
+    slug: 'sideproj',
+    title: 'Side Proj',
+    kicker: 'A band page for Side Project built as an interactive 3D medieval tavern: click the glowing objects to play their songs.',
+    category: 'Experiments',
     year: '2026',
     featured: true,
     heroPill: true,
-    role: 'Design, engineering',
-    tags: ['Web Audio', 'Synthesis', 'Sequencing'],
-    tech: ['Web Audio API', 'Vanilla JavaScript', 'Canvas', 'Vercel'],
+    role: 'Design, 3D, development',
+    tags: ['React Three Fiber', '3D', 'Audio'],
+    tech: ['React', 'TypeScript', 'React Three Fiber', 'Zustand', 'Howler.js', 'Tailwind CSS', 'Vite'],
     build: 'ai-assisted',
-    image: 'photos/web/jc-808-1600.webp',
-    imageSmall: 'photos/web/jc-808-800.webp',
+    image: 'photos/web/sideproj-1600.webp',
+    imageSmall: 'photos/web/sideproj-800.webp',
     imageW: 1600,
     imageH: 1000,
-    imageAlt: 'JC-808 Rhythm Composer interface: tempo, swing and accent knobs above a 16-step grid of lit drum pads.',
-    links: { live: 'https://jc-808.vercel.app/' },
+    imageAlt: 'A 3D medieval tavern with a band seated around a round table, a fireplace, banners and a song list panel in the corner.',
+    links: { live: 'https://sideproj.ca', repo: 'https://github.com/jakecush1/3js-interactive-tavern' },
     body: [
-      'JC-808 is a rhythm composer that runs entirely in the browser. Every sound is synthesised live from oscillators, noise and filter envelopes, modelled on the analogue circuits of the original hardware. There are no samples and no audio libraries, just the Web Audio graph.',
-      'Twelve voices (bass drum through maracas) sit under a 16-step sequencer with swing, drive and a per-step accent lane. Each voice has its own level, tune and decay, and each step can be painted with echo or reverb. Four pattern banks can be chained, there are presets from four-to-the-floor to cascara, and the whole state can be shared as a link or exported as a WAV.',
-      'Underneath is a synthesiser with two lanes, Bass and Lead, each with its own looping recorder: a one-bar count-in, overdub on every pass, quantize from quarter notes to 1/32. The synth itself has saw, square, triangle and sine oscillators with detune and a sub, a resonant filter with envelope, ADSR, an arpeggiator with latch, and delay and reverb on the mix. Everything is playable from the keyboard.'
+      'sideproj.ca is a custom band page for Side Project, and instead of a landing page it is a tavern. Four musicians sit around a candlelit table in a full 3D room with timber beams, a fireplace, banners and a chandelier. The band, songs, shows and contact details all live inside the same scene.',
+      'Click a glowing object and the tavern plays one of the band’s actual songs; click the room and beer bottles rain from the ceiling. A small player in the corner keeps the current tune, play and skip, and the setlist, so the joke never gets in the way of listening.',
+      'It is built with React, TypeScript and React Three Fiber, with Zustand for state and Howler.js for playback. The characters come from a procedural Renaissance figure kit, and the wood, stone, plaster and cloth textures are generated at runtime, so the scene downloads no images. It is also the left-hand door in City Square.'
+    ]
+  },
+  {
+    slug: 'ai-photobooth',
+    title: 'AI Photobooth',
+    kicker: 'A physical photobooth on a Raspberry Pi that takes payment, prints your photo and offers an AI filter.',
+    category: 'Product',
+    year: '2026',
+    featured: false,
+    heroPill: true,
+    role: 'Hardware, software, product',
+    tags: ['Raspberry Pi', 'React', 'Convex', 'Python'],
+    tech: ['Python', 'React', 'Convex', 'Raspberry Pi', 'Camera module'],
+    image: null,
+    imageSmall: null,
+    imageW: 0,
+    imageH: 0,
+    imageAlt: '',
+    links: {},
+    body: [
+      'A physical photobooth built around a Raspberry Pi and a camera module. You pay, it takes your picture, and it prints the photo on the spot. Optionally it runs the shot through an AI filter first.',
+      'The interface is a React app, the booth logic and hardware control are written in Python, and Convex is the backend. It is a small end-to-end product: hardware, backend, UI and a real transaction in one box.',
+      'This one lives in the physical world, so there is no link. Ask me about it.'
     ]
   },
   {
@@ -58,7 +107,7 @@ window.PROJECTS = [
     kicker: 'Turn a photo into a flat-ink screenprint poster or a laser-ready engraving, entirely in the browser.',
     category: 'Tools',
     year: '2026',
-    featured: true,
+    featured: false,
     heroPill: true,
     role: 'Design, image processing',
     tags: ['Canvas', 'Image processing', 'Fabrication'],
@@ -71,9 +120,9 @@ window.PROJECTS = [
     imageAlt: 'Poster maker interface with ink controls on the left and a four-colour Hope-style poster of a cat on the right.',
     links: { live: 'https://obamafy.vercel.app', repo: 'https://github.com/jakecush1/obamafy' },
     body: [
-      'Obamafy started as a screenprint poster maker in the style of the 2008 Hope poster. Drop in a photo and it comes back as a bold poster in two, three or four flat inks, which is exactly what you need for actual screen printing or multi-colour 3D printing, where every colour has to be its own layer.',
+      'Obamafy, now published as Poster & Engrave, started as a screenprint poster maker in the style of the 2008 Hope poster. Drop in a photo and it comes back as a bold poster in two, three or four flat inks, which is what screen printing or multi-colour 3D printing needs, since every colour has to be its own layer.',
       'The pipeline runs on a canvas in plain JavaScript. The photo is converted to luminance, Gaussian-blurred with three box-blur passes, stretched between its 1st and 99th percentile tones, then split into ink bands. A line-hatching pass offsets the bands row by row so the edges between inks break into horizontal stripes, like the original print. You can drag the tone-split markers, swap palettes, change the frame and zoom, and the preview caches the framing and blur steps so palette changes redraw instantly.',
-      'It has since grown a second mode, Poster & Engrave: the same tone separation produces a laser-ready engraving. It outputs a two-tone PNG with one pixel per laser dot and a .lbrn2 file that opens in LightBurn with the image placed, sized and set to pass-through, plus options for keychain holes, outline cuts and material previews. Photos never leave the browser.'
+      'It has since grown a laser engraving mode: the same tone separation produces a laser-ready engraving. It outputs a two-tone PNG with one pixel per laser dot and a .lbrn2 file that opens in LightBurn with the image placed, sized and set to pass-through, plus options for keychain holes, outline cuts and material previews. Photos never leave the browser.'
     ]
   },
   {
@@ -95,15 +144,15 @@ window.PROJECTS = [
     imageAlt: 'Mathiné landing page on mathine.uvic.ca with UVic branding and a navigation bar for Kanban, Calendar, Brain Dump and Brightspace courses.',
     links: { live: 'https://mathine.uvic.ca' },
     body: [
-      'Mathiné is a workspace for University of Victoria students. The tagline is “All your coursework, organized”: Brightspace deadlines, task breakdowns, calendar events and brain-dump notes together in one place, so you navigate less and get more done.',
+      'Mathiné is a workspace for University of Victoria students. The tagline is “All your coursework, organized”: Brightspace deadlines, task breakdowns, calendar events and brain-dump notes together in one place.',
       'The app has a dashboard, a to-do view that breaks assignments into steps, a calendar, a Brain Dump space for loose notes, and a My Courses view that connects to Brightspace, UVic’s learning platform, for course and deadline information. Settings, feedback, an exam schedule and links to other online tools round it out.',
-      'I built it with Vue.js and serve it through Nginx at mathine.uvic.ca. It was built by students for students, and it has been iterated on student feedback since launch, which is the main reason it looks and works the way it does today.'
+      'Mathiné is an INSPIRE UVic project, built by students for students. I worked on it in Vue.js, it is served through Nginx at mathine.uvic.ca, and I fixed bugs and refined the UX based on feedback collected from students.'
     ]
   },
   {
     slug: 'basin-climate-source',
     title: 'Basin Climate Source',
-    kicker: 'Climate projections for the Columbia Basin-Boundary region: 40+ indicators, three scenarios, mapped to 2080.',
+    kicker: 'Climate projections for the Columbia Basin-Boundary region: 40 indicators, three scenarios, mapped to the 2080s.',
     category: 'Client work',
     year: '2023–24',
     featured: false,
@@ -120,8 +169,32 @@ window.PROJECTS = [
     links: { live: 'https://basinclimatesource.ca/climate-projections' },
     body: [
       'Columbia Basin Climate Source is a Columbia Basin Trust initiative developed by Selkirk Innovates at Selkirk College. It is the one-stop site for climate information in the Columbia Basin-Boundary region: fine-scale projection data for local communities, regional impacts, a database of local climate action and plain-language guidance on reading climate science.',
-      'The Climate Projections explorer is the data-heavy part. Users pick from more than 40 indicators grouped as hot and cold weather, average temperature, growing season, and average and extreme precipitation; choose a low, medium or high emissions scenario (SSP1-2.6, SSP2-4.5, SSP5-8.5); and step through 30-year averages around each decade from the 1960s to the 2080s. The map shows the minimum, median or maximum across seven climate models, and both the spatial layers and the tabular data can be downloaded for GIS or spreadsheet work.',
+      'The Climate Projections explorer is the data-heavy part. Users pick from 40 indicators grouped as hot and cold weather, average temperature, growing season, and average and extreme precipitation; choose a low, medium or high emissions scenario (SSP1-2.6, SSP2-4.5, SSP5-8.5); and step through 30-year averages around each decade from the 1960s to the 2080s. The map shows the minimum, median or maximum across seven climate models, and both the spatial layers and the tabular data can be downloaded for GIS or spreadsheet work.',
       'I joined Selkirk Innovates as a full-stack developer intern from May 2023 to May 2024 and built features for this platform and for its sister project, State of the Basin. The work was grant-funded and aimed at community members, which meant every change had to hold up for planners and residents who are not data specialists.'
+    ]
+  },
+  {
+    slug: 'autonomous-sinixt',
+    title: 'Autonomous Sinixt',
+    kicker: 'The Autonomous Sinixt website, hosted and maintained on my own Linux server.',
+    category: 'Client work',
+    year: '2023–25',
+    featured: false,
+    heroPill: true,
+    role: 'Web development, hosting, maintenance',
+    tags: ['WordPress', 'Self-hosting', 'Maintenance'],
+    tech: ['WordPress', 'Linux', 'Apache', 'Self-hosted'],
+    build: 'hand-built',
+    image: 'photos/web/autonomous-sinixt-1600.webp',
+    imageSmall: 'photos/web/autonomous-sinixt-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'sinixt.org homepage: a mountain and forest photograph under the heading Our Land, with the site navigation above.',
+    links: { live: 'https://sinixt.org/' },
+    body: [
+      'sinixt.org is the public home of the Autonomous Sinixt and their traditional governance body, the Smum iem. The site carries their own words: who they are, their land north of the Grand Bend on the Columbia River, the history behind the “extinct” declaration and why it is not the Sinixt Peoples who went extinct, current projects such as the film Take It to the Water, year-in-review pages, media and resources, and ways to support the work.',
+      'My job is to keep that content easy to find and easy for the Nation to keep current: the site structure (About, Our Land, History, Smum Iem, Media & Resources, Projects, Year in Review, Support, Contact, FAQ), updates, and photography-led pages that stay out of the way of the writing.',
+      'I also host it. Since 2023 the site has run on a private Linux server I administer, so I handle the web server, updates and uptime, and the Nation has one person to call.'
     ]
   },
   {
@@ -131,7 +204,7 @@ window.PROJECTS = [
     category: 'Tools',
     year: '2026',
     featured: false,
-    heroPill: true,
+    heroPill: false,
     role: 'Engineering, data analysis',
     tags: ['Data tools', 'Python', 'Charts'],
     tech: ['Vanilla JavaScript', 'Chart.js', 'Bootstrap', 'Python', 'pandas', 'NumPy'],
@@ -144,32 +217,31 @@ window.PROJECTS = [
     links: { live: 'usv/' },
     body: [
       'A set of three tools I built during my internship at Open Ocean Robotics to support uncrewed surface vessel (USV) operations: planning how long a boat can stay out, recording official trip distance, and validating field tests. All three run client-side. CSV logs are parsed in the browser and never leave the machine, which matters when the files are operational vessel data.',
-      'Battery Forecast takes a pasted NOAA marine forecast, parses wind speed and sea state for each period, and models battery level forward against motor draw and solar intake, returning a recommended return time and a charted depletion curve. The coefficients come from data, not guesses: a Python script reads months of deployment logs from two vessels, converts battery voltage to kWh through a lookup table, resamples voltage, wind and per-panel solar to hourly, cuts the record into 12-hour day and night windows, and fits net consumption against average wind speed. The 25th and 75th percentile residuals become the optimistic and pessimistic bands the page draws.',
-      'Dual-Sensor Route Analyzer computes trip distance from two independent position logs, GPS and AIS. It runs a Haversine distance over each track, drops segments whose implied speed exceeds a configurable knot threshold as sensor error, reconciles the two cleaned totals into a single figure and exports a markdown report. Distance Between compares the USV log against the support boat’s to produce vessel separation at every timestamp, a ground-truth record for energy-harvesting, radar and acoustic tests where range is the variable under test.'
+      'Battery Forecast takes a pasted NOAA marine forecast, parses the wind speed for each forecast period, and models battery level forward against motor draw and solar intake, returning a recommended return time and a charted depletion curve. The coefficients come from data, not guesses: a Python script reads months of deployment logs from two vessels, converts battery voltage to kWh through a lookup table, resamples voltage, wind and per-panel solar to hourly, cuts the record into 12-hour day and night windows, and fits net consumption against average wind speed. The 25th and 75th percentile residuals become the optimistic and pessimistic bands the page draws.',
+      'Dual-Sensor Route Analyzer computes trip distance from two independent position logs, GPS and the NAV (AIS) feed. It runs a Haversine distance over each track, drops segments whose implied speed exceeds a configurable knot threshold as sensor error, reconciles the two cleaned totals into a single figure and exports a markdown report. Distance Between compares the USV log against the support boat’s to produce vessel separation at every timestamp, a ground-truth record for energy-harvesting, radar and acoustic tests where range is the variable under test.'
     ]
   },
   {
-    slug: 'autonomous-sinixt',
-    title: 'Autonomous Sinixt',
-    kicker: 'A custom website for the Autonomous Sinixt, built, hosted and maintained on my own Linux server.',
+    slug: 'state-of-the-basin',
+    title: 'State of the Basin',
+    kicker: 'A regional well-being indicators platform for the Columbia Basin, from census data to community profiles.',
     category: 'Client work',
-    year: '2023–25',
+    year: '2023–24',
     featured: false,
-    heroPill: true,
-    role: 'Design, development, hosting',
-    tags: ['Web design', 'Self-hosting', 'Maintenance'],
-    tech: ['HTML/CSS', 'Linux', 'Nginx', 'Apache', 'Self-hosted'],
+    heroPill: false,
+    role: 'Full-stack developer intern',
+    tags: ['Data platform', 'Full-stack'],
+    tech: ['JavaScript', 'Data tables', 'Selkirk Innovates'],
     build: 'hand-built',
-    image: 'photos/web/autonomous-sinixt-1600.webp',
-    imageSmall: 'photos/web/autonomous-sinixt-800.webp',
+    image: 'photos/web/state-of-the-basin-1600.webp',
+    imageSmall: 'photos/web/state-of-the-basin-800.webp',
     imageW: 1600,
     imageH: 1000,
-    imageAlt: 'sinixt.org homepage: a mountain and forest photograph under the heading Our Land, with the site navigation above.',
-    links: { live: 'https://sinixt.org/' },
+    imageAlt: 'State of the Basin website showing a Population page with census tables beside a sidebar of well-being indicators.',
+    links: { live: 'https://stateofthebasin.ca/' },
     body: [
-      'sinixt.org is the public home of the Autonomous Sinixt and their traditional governance body, the Smum iem. The site carries their own words: who they are, their land north of the Grand Bend on the Columbia River, the history behind the “extinct” declaration and why it is not the Sinixt Peoples who went extinct, current projects such as the film Take It to the Water, year-in-review pages, media and resources, and ways to support the work.',
-      'My job was to make that content easy to find and easy for the Nation to keep current. I designed and built the site with a clear top-level structure (About, Our Land, History, Smum Iem, Media & Resources, Projects, Year in Review, Support, Contact, FAQ) and photography-led pages that stay out of the way of the writing.',
-      'I also host it. The site runs on a private Linux server I administer, so I handle the web server, updates and uptime, and the client has one person to call. It has been live and maintained since 2023.'
+      'State of the Basin is a Selkirk Innovates initiative that monitors and reports on indicators of social, economic, environmental and cultural well-being across the Columbia Basin-Boundary region. Dozens of indicators sit under Society, Economy, Environment and Culture, from population and housing affordability to snowpack, wildfire and park visitation, each backed by sourced data such as the Census of Population and BC Stats and presented as downloadable tables.',
+      'Alongside the regional indicators the site publishes community indicators and per-community profiles, feature articles, annual Snapshot reports and subjective well-being reports. During my Selkirk Innovates internship I built features for this platform in parallel with Basin Climate Source. Most of the work was making dense tabular data readable and keeping the structure consistent across a very large number of indicator pages.'
     ]
   },
   {
@@ -240,76 +312,6 @@ window.PROJECTS = [
     body: [
       'A single-purpose tool: paste a URL or any text, get a QR code. Codes are generated at the highest error-correction level, so they still scan when printed small, stuck onto something curved or partly obscured.',
       'Output renders to a canvas and downloads as a PNG. There is no server and no upload step. The code is generated in the page, so whatever you encode stays on your machine.'
-    ]
-  },
-  {
-    slug: 'sideproj',
-    title: 'Side Proj',
-    kicker: 'A band website built as an interactive 3D medieval tavern: click the glowing objects to play the songs.',
-    category: 'Experiments',
-    year: '2026',
-    featured: false,
-    heroPill: false,
-    role: 'Design, 3D, development',
-    tags: ['React Three Fiber', '3D', 'Audio'],
-    tech: ['React', 'Three.js', 'React Three Fiber', 'Howler.js', 'Vercel'],
-    build: 'ai-assisted',
-    image: 'photos/web/sideproj-1600.webp',
-    imageSmall: 'photos/web/sideproj-800.webp',
-    imageW: 1600,
-    imageH: 1000,
-    imageAlt: 'A 3D medieval tavern with a band seated around a round table, a fireplace, banners and a song list panel in the corner.',
-    links: { live: 'https://sideproj.ca' },
-    body: [
-      'sideproj.ca is the website for the band Side Proj, and instead of a landing page it is a tavern. The room is a full 3D scene: timber beams, a fireplace, banners, paintings, candles on a chandelier, and the band seated around a table with their instruments. The Band, Songs, Shows and Contact all live inside the same room.',
-      'Click a glowing object and the tavern plays one of the songs; click the room and beer bottles drop from the ceiling. A small player in the corner keeps the current tune, play and skip, and the setlist, so the joke never gets in the way of actually listening.',
-      'It is built with React and Three.js through React Three Fiber, with Howler.js handling playback. It is the most purely fun thing on this page, and it was also a good exercise in keeping a heavy 3D scene responsive in a browser.'
-    ]
-  },
-  {
-    slug: 'ai-photobooth',
-    title: 'AI Photobooth',
-    kicker: 'A physical photobooth on a Raspberry Pi that takes payment, prints your photo and offers an AI filter.',
-    category: 'Product',
-    year: '2026',
-    featured: false,
-    heroPill: false,
-    role: 'Hardware, software, product',
-    tags: ['Raspberry Pi', 'React', 'Convex', 'Python'],
-    tech: ['Python', 'React', 'Convex', 'Raspberry Pi', 'Camera module'],
-    image: null,
-    imageSmall: null,
-    imageW: 0,
-    imageH: 0,
-    imageAlt: '',
-    links: {},
-    body: [
-      'A physical photobooth built around a Raspberry Pi and a camera module. You pay, it takes your picture, and it prints the photo on the spot. Optionally it runs the shot through an AI filter first.',
-      'The interface is a React app, the booth logic and hardware control are written in Python, and Convex holds the shared state so the screen, the camera, the payment step and the printer stay in sync. It is a small end-to-end product: hardware, backend, UI and a real transaction in one box.',
-      'This one lives in the physical world, so there is no link. Ask me about it.'
-    ]
-  },
-  {
-    slug: 'state-of-the-basin',
-    title: 'State of the Basin',
-    kicker: 'A regional well-being indicators platform for the Columbia Basin, from census data to community profiles.',
-    category: 'Client work',
-    year: '2023–24',
-    featured: false,
-    heroPill: false,
-    role: 'Full-stack developer intern',
-    tags: ['Data platform', 'Full-stack'],
-    tech: ['JavaScript', 'Data tables', 'Selkirk Innovates'],
-    build: 'hand-built',
-    image: 'photos/web/state-of-the-basin-1600.webp',
-    imageSmall: 'photos/web/state-of-the-basin-800.webp',
-    imageW: 1600,
-    imageH: 1000,
-    imageAlt: 'State of the Basin website showing a Population page with census tables beside a sidebar of well-being indicators.',
-    links: { live: 'https://stateofthebasin.ca/' },
-    body: [
-      'State of the Basin is a Selkirk Innovates initiative that monitors and reports on indicators of social, economic, environmental and cultural well-being across the Columbia Basin-Boundary region. Dozens of indicators sit under Society, Economy, Environment and Culture, from population and housing affordability to snowpack, wildfire and park visitation, each backed by sourced data such as the Census of Population and BC Stats and presented as downloadable tables.',
-      'Alongside the regional indicators the site publishes community indicators and per-community profiles, feature articles, annual Snapshot reports and subjective well-being reports. During my Selkirk Innovates internship I built features for this platform in parallel with Basin Climate Source. Most of the work was making dense tabular data readable and keeping the structure consistent across a very large number of indicator pages.'
     ]
   }
 ];

@@ -294,7 +294,9 @@ export default async function initHero(canvas, opts = {}) {
     renderer.dispose();
     try { renderer.forceContextLoss(); } catch (_) { /* ignore */ }
   }
-  on(window, 'pagehide', dispose, { once: true });
+  // Back/forward cache: a persisted page comes back with this same instance, so only pause it.
+  on(window, 'pagehide', (e) => { if (e.persisted) setRunning(false); else dispose(); });
+  on(window, 'pageshow', (e) => { if (e.persisted && !disposed) { evaluate(); if (reduced) render(); } });
 
   // ---------- go ----------
   readScroll();
