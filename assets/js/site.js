@@ -29,20 +29,20 @@
   });
 
   /* ---------------- Theme ---------------- */
-  var themeBtn = $('#theme-toggle');
+  var themeBtns = Array.prototype.slice.call(document.querySelectorAll('[data-theme-toggle]'));
   var themeMeta = $('meta[name="theme-color"]');
   function currentTheme() { return html.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
   function applyTheme(t, persist) {
     html.setAttribute('data-theme', t);
     if (themeMeta) themeMeta.setAttribute('content', t === 'light' ? '#ffffff' : '#000000');
-    if (themeBtn) themeBtn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+    themeBtns.forEach(function (b) { b.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme'); });
     if (persist) {
       try { localStorage.setItem('theme', t); } catch (e) {}
       try { window.dispatchEvent(new CustomEvent('themechange', { detail: t })); } catch (e) {}
     }
   }
   applyTheme(currentTheme(), false);
-  if (themeBtn) themeBtn.addEventListener('click', function () { applyTheme(currentTheme() === 'light' ? 'dark' : 'light', true); });
+  themeBtns.forEach(function (b) { b.addEventListener('click', function () { applyTheme(currentTheme() === 'light' ? 'dark' : 'light', true); }); });
 
   /* ---------------- Nav scroll state + hero parallax ---------------- */
   var nav = $('#nav');
