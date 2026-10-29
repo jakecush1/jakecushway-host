@@ -1,1062 +1,324 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>Jake Cushway</title>
-		<meta charset="utf-8" />
-		<meta name="description" content="Jake Cushway is a Full Stack Web Developer based out of Victoria, British Columbia, Canada. including HTML, CSS, PHP, Nodejs, Reactjs, Javascrip, server management, website security, and database design."/>
-		<meta name= "keywords" content="jake cushway, web design, website builder, javascript, html, css, full stack"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<link href="https://unpkg.com/webkul-micron@1.1.6/dist/css/micron.min.css" type="text/css" rel="stylesheet">
-		<script src="https://unpkg.com/webkul-micron@1.1.6/dist/script/micron.min.js" type="text/javascript"></script>
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-    <style>
-      #tools .tools-row {
-        display: flex;
-        width: 100%;
-      }
-      #tools .quadrant {
-        flex: 1;
-        height: 50vh;
-        border: 10px solid #251c3b;
-        box-sizing: border-box;
-      }
-      #tools .link-wrapper {
-        display: block;
-        height: 100%;
-        width: 100%;
-      }
-      #tools .inner-content {
-        height: 100%;
-        width: 100%;
-        background-size: cover;
-        background-position: center;
-        transition: filter 0.3s ease;
-      }
-      #tools .inner-content:hover {
-        filter: brightness(0.7);
-      }
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Jake Cushway — Software Developer in Victoria, BC</title>
+  <meta name="description" content="Jake Cushway is a software developer in Victoria, BC who builds web products, data tools and browser instruments — from climate-data platforms for the Columbia Basin to a drum machine synthesised from scratch in the Web Audio API.">
+  <link rel="canonical" href="https://www.jakecushway.ca/">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#000000">
+  <meta name="author" content="Jake Cushway">
 
-      /* ===== Projects: one full-screen carousel ===== */
-      #projects {
-        height: 100vh;
-        padding: 0;
-        overflow: hidden;
-      }
-      /* Below 1280px the sidebar collapses into a fixed top bar the wrapper pads for */
-      @media screen and (max-width: 1280px) {
-        #projects { height: calc(100vh - 3.5em); }
-      }
-      @media screen and (max-width: 736px) {
-        #projects { height: 100vh; }
-      }
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Jake Cushway">
+  <meta property="og:title" content="Jake Cushway — Software Developer in Victoria, BC">
+  <meta property="og:description" content="Web products, data tools and browser instruments. Built in Victoria, shipped everywhere.">
+  <meta property="og:url" content="https://www.jakecushway.ca/">
+  <meta property="og:image" content="https://www.jakecushway.ca/photos/web/bedroom-studio-1600.webp">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="1000">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jake Cushway — Software Developer in Victoria, BC">
+  <meta name="twitter:description" content="Web products, data tools and browser instruments. Built in Victoria, shipped everywhere.">
+  <meta name="twitter:image" content="https://www.jakecushway.ca/photos/web/bedroom-studio-1600.webp">
 
-      /* Break out of the 75em reading column so the carousel fills the panel */
-      #projects > .inner {
-        width: 100%;
-        max-width: none;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
-      .carousel {
-        position: relative;
-        height: 100%;
-        width: 100%;
-      }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap">
+  <link rel="stylesheet" href="assets/css/site.css">
 
-      /* Floats over the stage so the slides keep the full height */
-      .carousel-label {
-        position: absolute;
-        top: 2rem;
-        left: 2.5rem;
-        z-index: 4;
-        font-size: 0.7rem;
-        letter-spacing: 0.35em;
-        text-transform: uppercase;
-        opacity: 0.4;
-        pointer-events: none;
-      }
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    (function () {
+      document.documentElement.classList.add('js');
+      try {
+        var q = /[?&]theme=(light|dark)\b/.exec(location.search);
+        var t = q ? q[1] : localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
 
-      .cslide {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 4rem 6.5rem 5rem;
-        opacity: 0;
-        visibility: hidden;
-        transform: scale(0.99);
-        transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s;
-      }
-      .cslide.is-active {
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-      }
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+  <script type="module" src="assets/js/hero.js"></script>
 
-      /* Shrinks to the image so the caption stays pinned under it at every size */
-      .cslide-hit {
-        display: flex;
-        flex: 0 1 auto;
-        min-height: 0;
-        max-width: 100%;
-        align-items: center;
-        justify-content: center;
-        border-bottom: none;
-      }
-      /* Height cap does the fitting so 16:9 screenshots and square tiles share a silhouette */
-      .cslide-hit img {
-        max-width: 100%;
-        max-height: 62vh;
-        width: auto;
-        height: auto;
-        border-radius: 12px;
-        box-shadow: 0 22px 55px rgba(0, 0, 0, 0.45);
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-      }
-      .cslide-hit:hover img {
-        transform: translateY(-6px);
-        box-shadow: 0 34px 75px rgba(0, 0, 0, 0.6);
-      }
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Jake Cushway",
+    "jobTitle": "Software Developer",
+    "url": "https://www.jakecushway.ca/",
+    "email": "mailto:jakecushway96@gmail.com",
+    "address": { "@type": "PostalAddress", "addressLocality": "Victoria", "addressRegion": "BC", "addressCountry": "CA" },
+    "alumniOf": [
+      { "@type": "CollegeOrUniversity", "name": "University of Victoria" },
+      { "@type": "CollegeOrUniversity", "name": "Selkirk College" }
+    ],
+    "sameAs": ["https://github.com/jakecush1", "https://www.linkedin.com/in/jakecushway/"]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      .cslide-meta {
-        flex-shrink: 0;
-        padding-top: 1.5rem;
-        text-align: center;
-      }
-      .cslide-title {
-        margin: 0 0 0.4rem 0;
-        font-size: 1.4rem;
-        letter-spacing: 0.08em;
-      }
-      .cslide-sub {
-        margin: 0 0 1.1rem 0;
-        font-size: 0.8rem;
-        letter-spacing: 0.05em;
-        opacity: 0.55;
-      }
-      .cslide-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-      }
-      .cslide-actions .button {
-        margin: 0;
-      }
+  <div id="cursor" class="cursor" aria-hidden="true"><span class="cursor__label" id="cursor-label"></span></div>
 
-      .carousel-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 3.2rem;
-        height: 3.2rem;
-        padding: 0;
-        border: none;
-        border-radius: 50%;
-        background-color: rgba(0, 0, 0, 0.4);
-        color: white;
-        font-size: 1.35rem;
-        line-height: 1;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-      .carousel-arrow:hover {
-        background-color: rgba(0, 0, 0, 0.75);
-      }
-      .carousel-arrow.prev { left: 1.5rem; }
-      .carousel-arrow.next { right: 1.5rem; }
+  <div id="page">
+    <header class="nav" id="nav">
+      <button class="pill nav__menu" id="menu-open" type="button" aria-haspopup="dialog" aria-controls="menu" aria-expanded="false" data-cursor="open">Menu</button>
+      <a class="nav__wordmark" href="#top">Jake Cushway</a>
+      <div class="nav__actions">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to light theme" data-cursor="open">
+          <svg class="icon icon--moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+          <svg class="icon icon--sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="icon-btn icon-btn--expand" id="contact-open" type="button" aria-haspopup="dialog" aria-controls="contact-panel" aria-expanded="false" data-cursor="open">
+          <svg class="icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>
+          <span class="icon-btn__label">Get in touch</span>
+        </button>
+      </div>
+    </header>
 
-      .carousel-dots {
-        position: absolute;
-        bottom: 1.9rem;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 4;
-        display: flex;
-        gap: 0.6rem;
-      }
-      .carousel-dot {
-        width: 8px;
-        height: 8px;
-        padding: 0;
-        border: none;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.28);
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-      }
-      .carousel-dot:hover { background-color: rgba(255, 255, 255, 0.55); }
-      .carousel-dot.is-active {
-        background-color: #ffffff;
-        transform: scale(1.35);
-      }
+    <main id="main">
+      <!-- ============ HERO ============ -->
+      <section class="hero" id="top" aria-label="Introduction">
+        <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
+        <div class="hero__fallback" aria-hidden="true"></div>
+        <div class="hero__overlay" aria-hidden="true"></div>
 
-      .carousel-count {
-        position: absolute;
-        bottom: 1.7rem;
-        right: 2.5rem;
-        z-index: 4;
-        font-size: 0.75rem;
-        letter-spacing: 0.2em;
-        opacity: 0.45;
-        pointer-events: none;
-      }
+        <div class="hero__inner">
+          <h1 class="hero__title">
+            <span class="hero__line"><span class="hero__line-inner">I make</span></span>
+            <span class="hero__line hero__line--indent"><span class="hero__line-inner">software.</span></span>
+          </h1>
 
-      @media screen and (max-width: 1280px) {
-        /* The collapsed top bar eats 3.5em, so the image cap has to come down with it */
-        .cslide-hit img { max-height: 56vh; }
-      }
+          <p class="hero__intro">Software developer in Victoria, BC. I build web products, data tools and browser instruments — from climate-data platforms for the Columbia Basin to a drum machine synthesised from scratch in the Web Audio API.</p>
 
-      @media screen and (max-width: 980px) {
-        .cslide { padding: 3rem 4.5rem 4.5rem; }
-        .carousel-arrow { width: 2.6rem; height: 2.6rem; font-size: 1.1rem; }
-        .carousel-arrow.prev { left: 0.75rem; }
-        .carousel-arrow.next { right: 0.75rem; }
-        .carousel-label { left: 1.5rem; top: 1.5rem; }
-        .carousel-count { right: 1.5rem; }
-      }
+          <nav class="hero__pills" aria-label="Featured work">
+            <ul id="hero-pills" class="hero__pill-list"></ul>
+          </nav>
 
-      @media screen and (max-width: 736px) {
-        .cslide { padding: 2rem 1rem 4rem; }
-        .cslide-hit img { max-height: 50vh; }
-        .carousel-arrow { width: 2.3rem; height: 2.3rem; font-size: 1rem; }
-        .carousel-arrow.prev { left: 0.4rem; }
-        .carousel-arrow.next { right: 0.4rem; }
-        .cslide-meta { padding-top: 1.75rem; }
-        .cslide-title { font-size: 1.15rem; }
-        .cslide-sub { font-size: 0.72rem; }
-        .carousel-label { display: none; }
-        .carousel-count { right: 1rem; }
-      }
+          <div class="hero__preview" id="hero-preview" aria-hidden="true"><img id="hero-preview-img" alt="" width="240" height="150" decoding="async"></div>
 
-      .info-modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-      }
-      .info-modal-overlay.open {
-        display: flex;
-      }
-      .info-modal {
-        /* A step lighter than the section so the panel still reads as raised */
-        background: #2c2148;
-        color: white;
-        padding: 30px;
-        border-radius: 12px;
-        max-width: 90%;
-        width: 520px;
-        max-height: 80vh;
-        overflow-y: auto;
-        position: relative;
-        text-align: left;
-      }
-      .info-modal h3 {
-        margin-top: 0;
-        margin-bottom: 12px;
-        padding-right: 25px;
-      }
-      .info-modal-badge {
-        display: inline-block;
-        font-size: 0.65rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        line-height: 1;
-        padding: 7px 12px;
-        margin-bottom: 18px;
-        border-radius: 20px;
-        border: 1px solid transparent;
-      }
-      .info-modal-badge.build-vibed {
-        background: rgba(150, 110, 220, 0.25);
-        border-color: rgba(180, 150, 240, 0.5);
-        color: #d9c9ff;
-      }
-      .info-modal-badge.build-by-hand {
-        background: rgba(220, 165, 100, 0.2);
-        border-color: rgba(230, 180, 120, 0.5);
-        color: #f2d5ae;
-      }
-      .info-modal-body p {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin-bottom: 1em;
-      }
-      .info-modal-body p:last-child {
-        margin-bottom: 0;
-      }
-      .info-modal-tech {
-        margin-top: 20px;
-        padding-top: 15px;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      .info-modal-tech .tech-label {
-        display: block;
-        font-size: 0.7rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        opacity: 0.6;
-        margin-bottom: 10px;
-      }
-      .info-modal-tech .tech-tag {
-        display: inline-block;
-        font-size: 0.75rem;
-        line-height: 1;
-        padding: 6px 10px;
-        margin: 0 6px 6px 0;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.12);
-      }
-      .info-modal-close {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        cursor: pointer;
-        font-size: 1.5rem;
-        line-height: 1;
-        color: white;
-      }
-    </style>
-	</head>
-	<body class="is-preload">
-		<!-- Sidebar -->
-		<section id="sidebar">
-			<div class="inner">
-				<nav>
-					<ul>
-						<li><a href="#intro">Home</a></li>
-						<!-- <li><a href="#two">About Me</a></li> -->
-						<li><a href="#projects">Projects</a></li>
-						<li><a href="#contact">Contact</a></li>
-					</ul>
-				</nav>
-			</div>
-		</section>
-
-		<!-- Wrapper -->
-		<div id="wrapper">
-
-			<!-- Intro -->
-			<section data-micron="fade" id="intro" class="wrapper fullscreen fade-up style1 spotlights">
-				<section>
-					<!-- <img id="image-jake" data-micron="fade" src="photos/jake.jpg" alt="" data-position="center center"/> -->
-					<div class="content">
-						<div class="inner">
-							<h1 class ="font-bold center transition-opacity duration-500 ease-in-out" 
-							id="greeting-header">Hello,</h1> 								
-							<p data-micron="fade">My name is Jake. I am a Software Developer in Victoria.</p>
-							<ul class="icons">
-								<!-- <li><a href="#"><img class="logo-img" data-micron="fade" src="photos/email.png"/></a></li> -->
-								<!-- <li><a href="demoUSV.html" class="icon fa-heart"><span class="label">USV</span></a></li>
-								<li><a href="demo.html" class="icon fa-anchor"><span class="label">Media</span></a></li> -->
-								<li><a href="files/JacobCushwaysResume.pdf" download title="Download resume" class="icon solid fa-file-lines"><span class="label">Resume</span></a></li>
-								<li><a href="https://github.com/jakecush1" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-								<li><a href="https://www.linkedin.com/in/jakecushway/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
-							</ul>
-						</div>
-					</div>
-				</section>
-		
-			</section>	
-
-			<!-- About me -->
-			<!-- <section id="two" class="wrapper fullscreen fade-up style3">
-				<div class="inner" style="display:flex; flex-direction: column; justify-content: space-between;">
-					<div>
-						<div style="display: flex; flex-direction: column; align-items: center;">
-							<p style="margin-bottom: 0px;">Get to know more</p>
-							<h2 data-micron="fade">About Me</h2>
-						</div>
-						<p style="margin-bottom: 20px" data-micron="fade"></p>
-					</div>
-
-					<div data-micron="bounce" class="features" style="margin: 20px 0 0 0">
-						<section>
-							<span id="trigger" data-micron="squeeze"class="icon solid major fa-code"></span>
-							<h3 id="trigger" data-micron="flicker">Languages</h3>
-							<p id="trigger" data-micron="jerk">
-								<ul>
-									<a class="scrolly"><li data-micron="bounce">C</li></a>
-									<a class="scrolly"><li data-micron="bounce">Python</li></a>
-									<a class="scrolly"><li data-micron="bounce">Javascript</li></a>
-									<a class="scrolly"><li data-micron="bounce">Rust</li></a>
-									<a class="scrolly"><li data-micron="bounce">Java</li></a>
-								</ul>
-							</p>
-						</section>
-
-						<section>
-							<span data-micron="tada"class="icon solid major fa-code"></span>
-							<h3 data-micron="groove">Experience</h3>
-							<p data-micron="swing" > 
-							<ul>
-								<a class="scrolly"><li data-micron="bounce">BSc. Computer Science Software Systems</li></a>
-								<a class="scrolly"><li data-micron="bounce">Full-Stack-development Certificate</li></a>
-								<a href="https://selkirk.ca/research-innovation/selkirk-innovates" target="_blank" class="scrolly"><li data-micron="bounce">Selkirk Innovates Reasearch assistant</li></a>
-								<a href="https://www.openoceanrobotics.com/" target="_blank" class="scrolly"><li data-micron="bounce">Open Ocean Robotics Intern</li></a>
-							</ul>
-							</p>
-						</section>
-
-					</div>
-				</div>
-			</section> -->
-
-
-			<!-- <section id="tools" class="fade-up wrapper" style="background-color: #251c3b;">
-        <div class="inner" style="display: flex; justify-content: space-around; flex-direction: column; align-items: center;">
-          <h2 data-micron="fade" id="projects-header">Tools</h2>
-          <div class="slideshow-container">
-
-          <div class="slide">
-            <div style="display:flex; flex-direction: column; justify-content: center;">
-            <div class="image-overlay-container">
-              <img class="side-photo" data-micron="flicker" src="photos/qrCode.png" alt="QR code generator">
-              <div class="overlay-text">QR Code Generator</div>
-            </div>
-            </div>
-            <div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-            <a href="https://www.jakecushway.ca/media/qr/"><button data-micron="bounce" class="button">Demo</button></a>
-            <a><button data-micron="bounce" class="button">Info</button></a>
-            </div>
+          <div class="hero__labels" id="hero-labels" aria-hidden="true">
+            <span class="hero__label mono" data-slot="0">Victoria, BC</span>
+            <span class="hero__label mono" data-slot="2">48.43° N / 123.37° W</span>
+            <span class="hero__label mono" data-slot="5">UVic CS · Class of 2026</span>
+            <span class="hero__label mono" data-slot="7">Local <time id="hero-clock">0:00:00 AM PST</time></span>
           </div>
 
-          <div class="slide">
-            <div style="display:flex; flex-direction: column; justify-content: center;">
-            <div class="image-overlay-container">
-              <img class="side-photo" data-micron="flicker" src="photos/OOR-logo.avif" alt="Open Ocean Robotics">
-              <div class="overlay-text">USV tools</div>
-            </div>
-            </div>
-            <div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-            <a href="usv.html"><button data-micron="bounce" class="button">Link</button></a>
-            <a></a><button data-micron="bounce" class="button">Info</button></a>
-            </div>
-          </div>
+          <a class="hero__scroll mono" href="#work" aria-label="Scroll to selected work">Scroll <span class="hero__scroll-line"></span></a>
+        </div>
+      </section>
 
-          <div class="slide">
-            <div style="display:flex; flex-direction: column; justify-content: center;">
-            <div class="image-overlay-container">
-              <img class="side-photo" data-micron="flicker" src="photos/sudoku.png" alt="Sudoku">
-              <div class="overlay-text">Sudoku game</div>
-            </div>
-            </div>
-            <div style="display:flex; padding-top: 25px; flex-direction:row; justify-content: space-evenly">
-            <a href="media/other/pages/sudokuJs.html"><button data-micron="bounce" class="button">Demo</button></a>
-            <a><button data-micron="bounce" class="button">Info</button></a>
-            </div>
-          </div> 
-          
-          <a class="prev" onclick="prevSlide()">&#10094;</a>
-          <a class="next" onclick="nextSlide()">&#10095;</a>
+      <!-- ============ WORK ============ -->
+      <section class="section work" id="work" aria-labelledby="work-title">
+        <div class="wrap section__head">
+          <h2 class="display reveal" id="work-title">
+            <span class="display__line">Selected work <span class="display__dash" aria-hidden="true"></span></span>
+            <span class="display__line">from tools to platforms</span>
+          </h2>
+          <p class="mono label reveal" id="work-count" style="--i:2">2023 — 2026 · 0 Projects</p>
+        </div>
 
+        <ul class="wrap featured" id="featured-grid" aria-label="Featured projects"></ul>
+
+        <div class="wrap filters">
+          <span class="mono label filters__label" id="filters-label">Filter by:</span>
+          <div class="filters__group" id="filters" role="group" aria-labelledby="filters-label"></div>
+        </div>
+
+        <ul class="rows" id="work-list" aria-label="All projects"></ul>
+        <div class="row-preview" id="row-preview" aria-hidden="true"><img id="row-preview-img" alt="" width="320" height="200" decoding="async"></div>
+      </section>
+
+      <!-- ============ ABOUT ============ -->
+      <section class="section about" id="about" aria-labelledby="about-title">
+        <div class="wrap">
+          <h2 class="display about__statement reveal" id="about-title">
+            <span class="display__line">Built in <span class="chip"><img src="photos/web/about-chip-1-800.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></span> Victoria,</span>
+            <span class="display__line">shipped <span class="chip"><img src="photos/web/about-chip-2-800.webp" alt="" width="800" height="500" loading="lazy" decoding="async"></span> everywhere.</span>
+          </h2>
+
+          <div class="about__grid">
+            <div class="about__bio reveal">
+              <p>I'm a software developer in Victoria, BC, finishing a Computer Science degree at the University of Victoria (December 2026) after a full-stack diploma at Selkirk College. Right now I'm a USV software engineer intern at Open Ocean Robotics, building React features in DataXplorer — the platform used to pilot autonomous vessels — covering past-trip review, data tracking and the testing behind new features.</p>
+              <p>Before that I was at Selkirk Innovates, shipping features for State of the Basin and Basin Climate Source, and I spent two years designing, building and hosting client sites on my own Linux server. I co-founded UVic Hacks, which runs events for 300+ students. Off hours I build browser audio tools, render things in Three.js and make music.</p>
+            </div>
+            <dl class="facts reveal" style="--i:1">
+              <div class="facts__row"><dt class="mono label">Now</dt><dd>USV Software Engineer Intern, Open Ocean Robotics</dd></div>
+              <div class="facts__row"><dt class="mono label">Studying</dt><dd>BSc Computer Science, University of Victoria — Dec 2026</dd></div>
+              <div class="facts__row"><dt class="mono label">Based in</dt><dd>Victoria, BC · Pacific time</dd></div>
+              <div class="facts__row"><dt class="mono label">Stack</dt><dd>React, Vue, JavaScript, Python, C, Rust, SQL, Node, Three.js, Web Audio, Docker, Linux, Nginx</dd></div>
+              <div class="facts__row"><dt class="mono label">Open to</dt><dd>New-grad roles from 2027 · freelance builds</dd></div>
+            </dl>
           </div>
         </div>
-			</section> -->
 
-      <!-- Projects -->
-			<section id="projects" class="fade-up wrapper" style="background-color: #251c3b;">
-			<div class="inner">
-				<div class="carousel">
-				<span class="carousel-label">Projects</span>
-
-				<!-- Slides run most impressive first. Reorder these blocks to reorder the carousel. -->
-				<div class="cslide">
-					<a class="cslide-hit" href="https://bedroom-studio-three.vercel.app/" target="_blank" rel="noopener">
-						<img src="photos/bedroom-studio.jpg" alt="Bedroom Studio">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">Bedroom Studio</h3>
-						<p class="cslide-sub">A lofi 3D bedroom music studio &mdash; the JC-808 and chiptune tools, in the browser</p>
-						<div class="cslide-actions">
-							<a href="https://bedroom-studio-three.vercel.app/" target="_blank" rel="noopener" class="button">Demo</a>
-							<a href="https://github.com/jakecush1/bedroom-studio" target="_blank" rel="noopener" class="button">GitHub</a>
-							<button class="button" onclick="openInfo('bedroom-studio')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="https://sideproj.ca" target="_blank" rel="noopener">
-						<img src="photos/side-proj.jpg" alt="sideproj">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">sideproj</h3>
-						<p class="cslide-sub">A home for the experiments and one-off tools</p>
-						<div class="cslide-actions">
-							<a href="https://sideproj.ca" target="_blank" rel="noopener" class="button">Link</a>
-							<button class="button" onclick="openInfo('sideproj')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="https://obamafy.vercel.app" target="_blank" rel="noopener">
-						<img src="photos/obamafy.jpg" alt="Obamafy screenprint poster maker">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">Obamafy</h3>
-						<p class="cslide-sub">Turn any photo into a two-to-four ink screenprint poster</p>
-						<div class="cslide-actions">
-							<a href="https://obamafy.vercel.app" target="_blank" rel="noopener" class="button">Demo</a>
-							<a href="https://github.com/jakecush1/obamafy" target="_blank" rel="noopener" class="button">GitHub</a>
-							<button class="button" onclick="openInfo('obamafy')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="https://jc-808.vercel.app/" target="_blank" rel="noopener">
-						<img src="photos/jc808.png" alt="JC-808 drum machine">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">JC-808</h3>
-						<p class="cslide-sub">Drum machine &amp; synthesiser built from scratch with the Web Audio API</p>
-						<div class="cslide-actions">
-							<a href="https://jc-808.vercel.app/" target="_blank" rel="noopener" class="button">Demo</a>
-							<button class="button" onclick="openInfo('jc-808')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="https://mathine.uvic.ca" target="_blank" rel="noopener">
-						<img src="photos/mathine.png" alt="Mathine">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">Mathin&eacute;</h3>
-						<p class="cslide-sub">Student platform for the University of Victoria</p>
-						<div class="cslide-actions">
-							<a href="https://mathine.uvic.ca" target="_blank" rel="noopener" class="button">Link</a>
-							<button class="button" onclick="openInfo('mathine')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="https://basinclimatesource.ca/climate-projections" target="_blank" rel="noopener">
-						<img src="photos/basinclimatesource.png" alt="Basin Climate Source">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">Basin Climate Source</h3>
-						<p class="cslide-sub">Climate projections tool for the Columbia Basin-Boundary region</p>
-						<div class="cslide-actions">
-							<a href="https://basinclimatesource.ca/climate-projections" target="_blank" rel="noopener" class="button">Link</a>
-							<button class="button" onclick="openInfo('basin')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="https://sinixt.org/" target="_blank" rel="noopener">
-						<img src="photos/sinixthome.png" alt="Autonomous Sinixt">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">Custom Website</h3>
-						<p class="cslide-sub">Built for the Autonomous Sinixt Nation</p>
-						<div class="cslide-actions">
-							<a href="https://sinixt.org/" target="_blank" rel="noopener" class="button">Link</a>
-							<button class="button" onclick="openInfo('sinixt')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="usv/">
-						<img src="photos/usvTools.png" alt="USV tools">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">USV tools</h3>
-						<p class="cslide-sub">Open Ocean Robotics &mdash; mission planning &amp; trip analysis</p>
-						<div class="cslide-actions">
-							<a href="usv/" class="button">Link</a>
-							<button class="button" onclick="openInfo('usv')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="media/strudel/">
-						<img src="photos/strudel.png" alt="Strudel Live Studio">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">Strudel Live Studio</h3>
-						<p class="cslide-sub">A studio shell for live-coding algorithmic music in the browser</p>
-						<div class="cslide-actions">
-							<a href="media/strudel/" class="button">Demo</a>
-							<button class="button" onclick="openInfo('strudel')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="media/other/pages/sudokuJs.html">
-						<img src="photos/sudoku.png" alt="Sudoku">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">Sudoku game</h3>
-						<p class="cslide-sub">Generator and solver with guaranteed unique solutions</p>
-						<div class="cslide-actions">
-							<a href="media/other/pages/sudokuJs.html" class="button">Demo</a>
-							<button class="button" onclick="openInfo('sudoku')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<div class="cslide">
-					<a class="cslide-hit" href="https://www.jakecushway.ca/media/qr/">
-						<img src="photos/qrCode.png" alt="QR code generator">
-					</a>
-					<div class="cslide-meta">
-						<h3 class="cslide-title">QR Code Generator</h3>
-						<p class="cslide-sub">High error-correction codes generated entirely in the browser</p>
-						<div class="cslide-actions">
-							<a href="https://www.jakecushway.ca/media/qr/" class="button">Demo</a>
-							<button class="button" onclick="openInfo('qr')">Info</button>
-						</div>
-					</div>
-				</div>
-
-				<button class="carousel-arrow prev" type="button" aria-label="Previous project">&#10094;</button>
-				<button class="carousel-arrow next" type="button" aria-label="Next project">&#10095;</button>
-				<div class="carousel-dots"></div>
-				<div class="carousel-count"><span class="c-now">01</span> / <span class="c-total">11</span></div>
-
-				</div>
-			</div>
-			</section>
-
-			<!-- Contact -->
-			<section id="contact" style="display:flex; justify-content: center;" class="wrapper fullscreen fade-up style1">
-				<div class="inner">
-					<section>
-						<form action="https://formspree.io/f/mwprojze" method="post" nctype="text/plain">
-							<div class="fields">
-								<div class="field half">
-									<label for="name">Name</label>
-									<input type="text" name="name" id="name" />
-								</div>
-								<div class="field half">
-									<label for="email">Email</label>
-									<input type="email" name="email" id="email" />
-								</div>
-								<div class="field">
-									<label for="message">Message</label>
-									<textarea name="message" id="message" rows="5"></textarea>
-								</div>
-							</div>
-							<!-- Google reCAPTCHA widget -->
-							<div class="g-recaptcha" data-sitekey="6LekbdorAAAAAAS5s87qfeJjKmbr1MXUqF8wxn4F"></div>
-							<ul class="actions">
-								<input type="submit" name="submit" value="Submit">
-							</ul>
-						</form>
-					</section> 
-
-				</div>
-
-			</section> 
-
-			<!-- <style>
-				/* Container */
-				.slideshow-container {
-					position: relative;
-					max-width: 666px;
-					height:60vh;
-					margin: auto;
-					overflow: hidden;
-					border-radius: 12px;
-					box-shadow: none; /* ← no shadow */
-				}
-
-				.image-overlay-container {
-				position: relative;
-				display: inline-block; /* ensures it sizes to the image */
-				}
-
-				.image-overlay-container img {
-				display: block;        /* avoids bottom whitespace */
-				width: auto;
-				height: 35vh;
-				border-radius: 12px;
-				margin: 0 auto;        /* works with display:block to keep it centered if needed */
-				}
-
-				.overlay-text {
-				position: absolute;
-				bottom: 5px;             /* keep it a little above the bottom */
-				left: 50%;                /* move to the horizontal center */
-				transform: translateX(-50%); /* shift back by half its width */
-				background: rgba(0, 0, 0, 0.5);
-				color: white;
-				padding: 5px 10px;
-				font-size: 1rem;
-				border-radius: 5px;
-				pointer-events: none;
-				text-align: center;
-				white-space: nowrap;      /* keep text on one line */
-				}
-
-				/* Slides */
-				.slide {
-					display: none;
-				}
-
-				.slide img {
-					width: auto;        
-					height: 35vh;
-					border-radius: 12px;
-				}
-
-				/* Navigation buttons */
-				.prev, .next {
-					cursor: pointer;
-					position: absolute;
-					top: 50%;
-					width: auto;
-					padding: 12px;
-					margin-top: -22px;
-					color: white;
-					font-weight: bold;
-					font-size: 24px;
-					border-radius: 50%;
-					background-color: rgba(0,0,0,0.5);
-					user-select: none;
-					transition: background 0.3s;
-				}
-
-				.prev:hover, .next:hover {
-					background-color: rgba(0,0,0,0.8);
-				}
-
-				/* Positioning */
-				.prev {
-					left: 10px;
-				}
-
-				.next {
-					right: 10px;
-				}
-			</style> -->
-
-		</div>
-
-		<!-- <footer id="footer" class="wrapper style1">
-			<div class="inner">
-				<ul class="menu" style="margin-bottom: 0px;">
-					<li style="border-right:solid;padding-right: 20px;">Links  </li>
-					<li id="footer-links" style="border-left:none;"><a style="border-bottom:none"href="https://9teenten.com/en-ca">1910</a></li>
-					<li id="footer-links" style="border-left:none;"><a style="border-bottom:none"href="https://lookingforloot.bigcartel.com/contact">LOOT</a></li>
-					<li id="footer-links" style="border-left:none;"><a style="border-bottom:none"href="https://online-ceramics.com/">Online Ceramics</a></li>
-				</ul>	
-			</div>
-
-		</footer> -->
-		<!-- Info modal -->
-		<div id="info-modal-overlay" class="info-modal-overlay" onclick="if(event.target===this) closeInfo()">
-			<div class="info-modal">
-				<span class="info-modal-close" onclick="closeInfo()">&times;</span>
-				<h3 id="info-modal-title"></h3>
-				<span id="info-modal-badge" class="info-modal-badge"></span>
-				<div id="info-modal-text" class="info-modal-body"></div>
-				<div id="info-modal-tech" class="info-modal-tech"></div>
-			</div>
-		</div>
-
-		<!-- Scripts -->
-		<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/jquery.scrollex.min.js"></script>
-		<script src="assets/js/jquery.scrolly.min.js"></script>
-		<script src="assets/js/browser.min.js"></script>
-		<script src="assets/js/breakpoints.min.js"></script>
-		<script src="assets/js/util.js"></script>
-		<script src="assets/js/main.js"></script>
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const greetingElement = document.getElementById('greeting-header');
-				const greetings = [
-				"Hello!",     
-				"Hola!",      
-				"Bonjour!",   
-				"Ciao!",      
-				"Olá!",       
-				"Hallo!",     
-				"Здравствуйте!", 
-				"こんにちは！",
-				"안녕하세요!",
-				"你好！"
-				];
-				let index = 0;
-
-				// Ensure it has a transition
-				greetingElement.style.transition = "opacity 1s ease-in-out";
-
-				function cycleGreeting() {
-				// Fade out
-				greetingElement.style.opacity = 0;
-
-				setTimeout(() => {
-					// Change text while invisible
-					greetingElement.textContent = greetings[index];
-					index = (index + 1) % greetings.length;
-
-					// Fade back in
-					greetingElement.style.opacity = 1;
-				}, 1000); // matches transition duration
-				}
-
-				// Start immediately
-				greetingElement.textContent = greetings[index];
-				index = (index + 1) % greetings.length;
-
-				// Run every 3 seconds
-				setInterval(cycleGreeting, 5000);
-			});
-		</script>
-		<script>
-			/* Full-screen projects carousel. Slide order is the markup order. */
-			document.addEventListener('DOMContentLoaded', () => {
-				const carousel = document.querySelector('.carousel');
-				if (!carousel) return;
-
-				const slides = Array.from(carousel.querySelectorAll('.cslide'));
-				if (!slides.length) return;
-
-				const dotsWrap = carousel.querySelector('.carousel-dots');
-				const nowEl = carousel.querySelector('.c-now');
-				const totalEl = carousel.querySelector('.c-total');
-				const pad = n => String(n).padStart(2, '0');
-				let index = 0;
-
-				if (totalEl) totalEl.textContent = pad(slides.length);
-
-				const dots = slides.map((slide, i) => {
-					const dot = document.createElement('button');
-					dot.type = 'button';
-					dot.className = 'carousel-dot';
-					dot.setAttribute('aria-label', 'Go to project ' + (i + 1));
-					dot.addEventListener('click', () => show(i));
-					dotsWrap.appendChild(dot);
-					return dot;
-				});
-
-				function show(n) {
-					index = (n + slides.length) % slides.length;
-					slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
-					dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
-					if (nowEl) nowEl.textContent = pad(index + 1);
-				}
-
-				carousel.querySelector('.carousel-arrow.prev').addEventListener('click', () => show(index - 1));
-				carousel.querySelector('.carousel-arrow.next').addEventListener('click', () => show(index + 1));
-
-				/* Arrow keys drive the carousel, but only while it is actually on screen */
-				document.addEventListener('keydown', event => {
-					const modal = document.getElementById('info-modal-overlay');
-					if (modal && modal.classList.contains('open')) {
-						if (event.key === 'Escape') closeInfo();
-						return;
-					}
-					const box = carousel.getBoundingClientRect();
-					if (box.bottom < 0 || box.top > window.innerHeight) return;
-					if (event.key === 'ArrowLeft') show(index - 1);
-					if (event.key === 'ArrowRight') show(index + 1);
-				});
-
-				/* Horizontal swipe on touch devices */
-				let touchStartX = null;
-				carousel.addEventListener('touchstart', event => {
-					touchStartX = event.touches[0].clientX;
-				}, { passive: true });
-				carousel.addEventListener('touchend', event => {
-					if (touchStartX === null) return;
-					const delta = event.changedTouches[0].clientX - touchStartX;
-					if (Math.abs(delta) > 50) show(delta < 0 ? index + 1 : index - 1);
-					touchStartX = null;
-				}, { passive: true });
-
-				show(0);
-			});
-
-			/* Project info copy. Add or edit entries here — the modal reads from this. */
-			const PROJECT_INFO = {
-			'bedroom-studio': {
-				title: 'Bedroom Studio',
-				build: 'vibed',
-				body: [
-				'Room 808 — a rainy-night 3D bedroom studio rendered in Three.js. Every machine in the room is a working instrument or tool: click one and the camera walks up to it and opens its panel.',
-				'The JC-808 drum machine sits on the desk alongside a microphone guitar tuner, and the rack holds browser rebuilds of the ChipWorld chiptune tools — a four-channel CHIP-4 sound engine that renders MIDI carts with square, triangle and noise voices, and a real-time 8-bit crusher running as an AudioWorklet. Song analysis, audio-to-sheet-music and a chipify pipeline are in progress.',
-				'All the DSP runs client-side — FFT, beat tracking, pYIN pitch detection and Spotify\'s Basic Pitch model — so nothing is uploaded, and anything you make can be saved to the tape library or rendered out as WAV.'
-				],
-				tech: ['Three.js', 'Web Audio API', 'AudioWorklet', 'Basic Pitch', 'Vite', 'Vercel']
-			},
-
-			'sideproj': {
-				title: 'sideproj',
-				build: 'vibed',
-				body: [
-				'A home for the small things — experiments, one-off tools and half-ideas that do not warrant a repo of their own, collected in one place at sideproj.ca.',
-				'Each piece is self-contained and shipped as soon as it works, which keeps the barrier to starting something new about as low as it can get.'
-				],
-				tech: ['JavaScript', 'Vercel']
-			},
-
-			'obamafy': {
-				title: 'Obamafy',
-				build: 'vibed',
-				body: [
-				'A screenprint poster maker in the style of the 2008 Hope poster. Drop in a photo and it comes back as a bold poster in two, three or four flat inks — useful for actual screen printing or multi-colour 3D printing, where every colour has to be its own layer.',
-				'The pipeline runs on a canvas in plain JavaScript: the photo is converted to luminance, Gaussian-blurred with three box-blur passes, stretched between its 1st and 99th percentile tones, then split into ink bands. A line-hatching pass offsets the bands row by row so the edges between inks break into horizontal stripes, like the original print.',
-				'You can drag tone-split markers over a live histogram, swap palettes, set the message band and typeface, and export a 2400px PNG. The preview caches the framing and blur steps so palette and tone changes redraw instantly. One HTML file, and photos never leave the browser.'
-				],
-				tech: ['Vanilla JavaScript', 'Canvas', 'Vercel']
-			},
-
-			'usv': {
-				title: 'USV tools',
-				build: 'vibed',
-				body: [
-				'A suite of three browser tools built during an internship at Open Ocean Robotics to support uncrewed surface vessel (USV) operations — planning missions, reconciling trip data, and validating field tests.',
-				'Battery Forecast takes a pasted NOAA marine forecast, parses out wind speed and sea state for each period, and models battery level forward against motor draw and solar intake. It returns a recommended return time and a charted depletion curve across the forecast window. The consumption coefficients are not guesses: a Python script fits a linear regression over months of logged deployment data — battery voltage, hourly solar production, motor power and true wind speed — and emits the model constants the page runs on.',
-				'Dual-Sensor Route Analyzer computes official trip distance from two independent position logs, GPS and AIS. It runs a Haversine distance over each track, drops segments whose implied speed exceeds a configurable knot threshold as sensor error, then reconciles the two cleaned totals into a single figure and exports a markdown report.',
-				'Distance Between compares position logs from the USV and its support boat to produce vessel separation at every timestamp — a ground-truth record for energy-harvesting, radar and acoustic tests where range is the variable under test.',
-				'Everything runs client-side. CSV files are parsed in the browser and never leave the machine, which matters when the logs are operational vessel data.'
-				],
-				tech: ['Vanilla JavaScript', 'Chart.js', 'Bootstrap', 'Python', 'pandas', 'NumPy']
-			},
-
-			'jc-808': {
-				title: 'JC-808',
-				build: 'vibed',
-				body: [
-				'A drum machine and synthesiser built from scratch with the Web Audio API — no samples and no audio libraries. Every sound is synthesised live from oscillators, noise and filter envelopes, modelled on the analogue circuits of the original hardware.',
-				'Twelve percussion voices run under a 16-step sequencer with swing, per-step accent and four pattern banks. Alongside it sits a playable synth with an arpeggiator, and anything you make can be rendered out to WAV directly from the browser.'
-				],
-				tech: ['Web Audio API', 'Vanilla JavaScript', 'Canvas', 'Vercel']
-			},
-
-			'qr': {
-				title: 'QR Code Generator',
-				build: 'vibed',
-				body: [
-				'A single-purpose tool: paste a URL or any text, get a QR code back instantly. Codes are generated at the highest error-correction level, so they still scan reliably when printed small, stickered onto something curved, or partially obscured.',
-				'Output renders to a canvas and downloads as a PNG. There is no server and no upload step — the code is generated in the page, so whatever you encode stays on your machine.'
-				],
-				tech: ['Vanilla JavaScript', 'qrcode.js', 'Tailwind CSS', 'Canvas']
-			},
-
-			'sudoku': {
-				title: 'Sudoku game',
-				build: 'vibed',
-				body: [
-				'A playable Sudoku board with a generator and solver written from scratch — the interesting part is not the game, it is guaranteeing every puzzle is fair.',
-				'A randomised backtracking solver with a minimum-remaining-values heuristic fills a complete grid, then clues are removed one at a time. After each removal a solution counter re-solves the board and stops as soon as it finds a second answer; if the puzzle is no longer uniquely solvable, the clue goes back. Difficulty is the number of clues left standing.',
-				'The same solver drives the hint and solve buttons. One HTML file, no dependencies.'
-				],
-				tech: ['Vanilla JavaScript', 'Backtracking', 'Constraint propagation']
-			},
-
-			'strudel': {
-				title: 'Strudel Live Studio',
-				build: 'vibed',
-				body: [
-				'A focused studio shell around Strudel, the browser-based pattern language for algorithmic music. Write patterns as code and hear them play back instantly, with no install and nothing to configure.',
-				'The page embeds the Strudel environment in a sandboxed frame with audio permissions granted, wraps it in a full-height layout with loading and failure states, and gets out of the way — the point is a clean surface to live-code on.'
-				],
-				tech: ['Strudel', 'Tailwind CSS', 'JavaScript']
-			},
-
-			'mathine': {
-				title: 'Mathiné',
-				build: 'by hand',
-				body: [
-				'Mathiné, hosted at mathine.uvic.ca.'
-				],
-				tech: []
-			},
-
-			'sinixt': {
-				title: 'Custom Website',
-				build: 'by hand',
-				body: [
-				'A custom website built for the Autonomous Sinixt Nation, hosted at sinixt.org.'
-				],
-				tech: []
-			},
-
-			'basin': {
-				title: 'Basin Climate Source',
-				build: 'by hand',
-				body: [
-				'A climate projections tool, hosted at basinclimatesource.ca.'
-				],
-				tech: []
-			}
-			};
-
-			function openInfo(key) {
-			const info = PROJECT_INFO[key];
-			if (!info) return;
-
-			document.getElementById('info-modal-title').textContent = info.title;
-
-			const badgeEl = document.getElementById('info-modal-badge');
-			if (info.build) {
-				badgeEl.textContent = info.build;
-				badgeEl.className = 'info-modal-badge build-' + info.build.replace(/\s+/g, '-');
-				badgeEl.style.display = '';
-			} else {
-				badgeEl.style.display = 'none';
-			}
-
-			const bodyEl = document.getElementById('info-modal-text');
-			bodyEl.innerHTML = '';
-			info.body.forEach(paragraph => {
-				const p = document.createElement('p');
-				p.textContent = paragraph;
-				bodyEl.appendChild(p);
-			});
-
-			const techEl = document.getElementById('info-modal-tech');
-			techEl.innerHTML = '';
-			if (info.tech && info.tech.length) {
-				const label = document.createElement('span');
-				label.className = 'tech-label';
-				label.textContent = 'Built with';
-				techEl.appendChild(label);
-				info.tech.forEach(item => {
-					const tag = document.createElement('span');
-					tag.className = 'tech-tag';
-					tag.textContent = item;
-					techEl.appendChild(tag);
-				});
-				techEl.style.display = '';
-			} else {
-				techEl.style.display = 'none';
-			}
-
-			document.getElementById('info-modal-overlay').classList.add('open');
-			}
-
-			function closeInfo() {
-			document.getElementById('info-modal-overlay').classList.remove('open');
-			}
-		</script>
-	</body>
+        <div class="wrap about__exp-head">
+          <p class="mono label reveal">Experience</p>
+        </div>
+        <ul class="rows rows--exp" aria-label="Experience">
+          <li class="row row--static reveal" style="--i:0"><div class="row__inner"><span class="row__org">Open Ocean Robotics</span><span class="row__role">USV Software Engineer Intern</span><span class="row__dates mono">Jan 2026 — Present</span></div></li>
+          <li class="row row--static reveal" style="--i:1"><div class="row__inner"><span class="row__org">DataAnnotation</span><span class="row__role">AI Quality Assurance &amp; LLM Trainer</span><span class="row__dates mono">Sep 2026 — Present</span></div></li>
+          <li class="row row--static reveal" style="--i:2"><div class="row__inner"><span class="row__org">Selkirk Innovates</span><span class="row__role">Full Stack Developer Intern</span><span class="row__dates mono">May 2023 — May 2024</span></div></li>
+          <li class="row row--static reveal" style="--i:3"><div class="row__inner"><span class="row__org">Freelance</span><span class="row__role">Web developer — design, build, deploy and host</span><span class="row__dates mono">Sep 2023 — Sep 2025</span></div></li>
+          <li class="row row--static reveal" style="--i:4"><div class="row__inner"><span class="row__org">UVic Hacks</span><span class="row__role">Co-founder — hackathons and workshops for 300+ students</span><span class="row__dates mono">2026 — Present</span></div></li>
+        </ul>
+      </section>
+
+      <!-- ============ CONTACT ============ -->
+      <section class="section contact" id="contact" aria-labelledby="contact-title">
+        <div class="wrap contact__grid">
+          <div class="contact__intro">
+            <h2 class="display reveal" id="contact-title">Say hey.</h2>
+            <p class="reveal" style="--i:1">Have a project, a role, or just want to talk about browser audio? Tell me what you're working on and I'll get back within a day or two. Or email me directly at <a class="link" href="mailto:jakecushway96@gmail.com">jakecushway96@gmail.com</a>.</p>
+          </div>
+
+          <form class="form reveal" id="contact-form" action="https://formspree.io/f/mwprojze" method="post" novalidate style="--i:2">
+            <input type="hidden" name="_subject" value="New message from jakecushway.ca">
+            <div class="form__hp" aria-hidden="true"><label>Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+
+            <div class="form__grid">
+              <div class="field">
+                <label class="field__label" for="f-name">Name<span aria-hidden="true">*</span></label>
+                <input class="field__input" id="f-name" name="name" type="text" required autocomplete="name" placeholder="Your name" data-cursor="none">
+                <p class="field__error" id="f-name-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-email">Email<span aria-hidden="true">*</span></label>
+                <input class="field__input" id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" data-cursor="none">
+                <p class="field__error" id="f-email-error" aria-live="polite"></p>
+              </div>
+              <div class="field field--full">
+                <label class="field__label" for="f-message">Message<span aria-hidden="true">*</span></label>
+                <textarea class="field__input field__input--area" id="f-message" name="message" rows="5" required placeholder="What are you working on?" data-cursor="none"></textarea>
+                <p class="field__error" id="f-message-error" aria-live="polite"></p>
+              </div>
+            </div>
+
+            <div class="form__foot">
+              <div class="g-recaptcha" data-sitekey="6LekbdorAAAAAAS5s87qfeJjKmbr1MXUqF8wxn4F" data-theme="dark"></div>
+              <button class="pill pill--primary" type="submit" id="form-submit" data-cursor="open">Send message</button>
+            </div>
+            <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer" aria-label="Footer">
+      <div class="wrap">
+        <p class="mono label footer__kicker reveal">Next</p>
+        <ul class="footer__big">
+          <li class="reveal" style="--i:0"><a href="mailto:jakecushway96@gmail.com?subject=Let%27s%20work%20together" data-cursor="open">Work together <span class="arrow" aria-hidden="true">→</span></a></li>
+          <li class="reveal" style="--i:1"><a href="https://github.com/jakecush1" target="_blank" rel="noopener" data-cursor="open">See the code <span class="arrow" aria-hidden="true">→</span></a></li>
+          <li class="reveal" style="--i:2"><a href="files/JacobCushwaysResume.pdf" download data-cursor="open">Download résumé <span class="arrow" aria-hidden="true">↓</span></a></li>
+        </ul>
+
+        <div class="footer__cols">
+          <ul class="footer__col">
+            <li><a href="https://github.com/jakecush1" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://www.linkedin.com/in/jakecushway/" target="_blank" rel="noopener">LinkedIn</a></li>
+            <li><a href="https://sideproj.ca" target="_blank" rel="noopener">sideproj.ca</a></li>
+          </ul>
+          <ul class="footer__col">
+            <li><a href="files/JacobCushwaysResume.pdf">Résumé</a></li>
+            <li><a href="mailto:jakecushway96@gmail.com">Email</a></li>
+          </ul>
+          <ul class="footer__col">
+            <li><a href="usv/">USV tools</a></li>
+            <li><a href="media/">Experiments</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__bottom">
+          <span>© 2026 Jake Cushway</span>
+          <span class="mono label">Victoria, BC · <time id="footer-clock">0:00 AM</time></span>
+          <a class="footer__top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
+        </div>
+      </div>
+    </footer>
+  </div><!-- /#page -->
+
+  <!-- ============ MENU OVERLAY ============ -->
+  <div class="overlay menu" id="menu" role="dialog" aria-modal="true" aria-labelledby="menu-title" hidden>
+    <div class="menu__bar">
+      <span class="nav__wordmark" id="menu-title">Jake Cushway</span>
+      <button class="pill" type="button" id="menu-close" data-cursor="open">Close</button>
+    </div>
+    <div class="menu__body">
+      <nav class="menu__nav" aria-label="Site">
+        <ul>
+          <li style="--i:0"><a class="menu__link display" href="#work" data-menu-link>Work</a></li>
+          <li style="--i:1"><a class="menu__link display" href="#about" data-menu-link>About</a></li>
+          <li style="--i:2"><a class="menu__link display" href="#contact" data-menu-link>Contact</a></li>
+          <li style="--i:3"><a class="menu__link display" href="files/JacobCushwaysResume.pdf" download>Résumé <span class="menu__arrow" aria-hidden="true">↓</span></a></li>
+        </ul>
+      </nav>
+      <div class="menu__aside">
+        <ul class="ticker" id="city-clocks" aria-label="Current time in cities">
+          <li data-tz="America/Vancouver"><span class="mono">YYJ</span><time>—</time></li>
+          <li data-tz="America/Vancouver"><span class="mono">YVR</span><time>—</time></li>
+          <li data-tz="America/Toronto"><span class="mono">YYZ</span><time>—</time></li>
+          <li data-tz="America/New_York"><span class="mono">NYC</span><time>—</time></li>
+          <li data-tz="Europe/London"><span class="mono">LDN</span><time>—</time></li>
+          <li data-tz="local"><span class="mono">YOU</span><time>—</time></li>
+        </ul>
+        <ul class="menu__social">
+          <li><a href="https://github.com/jakecush1" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/jakecushway/" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="mailto:jakecushway96@gmail.com">Email</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CONTACT PANEL ============ -->
+  <div class="backdrop" id="panel-backdrop" hidden></div>
+  <aside class="panel" id="contact-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" hidden>
+    <div class="panel__bar">
+      <span class="mono label">Get in touch</span>
+      <button class="icon-btn" type="button" id="panel-close" aria-label="Close" data-cursor="open">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="panel__body">
+      <h2 class="display panel__title" id="panel-title">Say hey.</h2>
+      <p class="panel__text">I'm open to new-grad roles from 2027, freelance builds, and conversations about browser audio, data tools and 3D on the web.</p>
+      <div class="panel__email">
+        <a class="panel__email-link" href="mailto:jakecushway96@gmail.com">jakecushway96@gmail.com</a>
+        <button class="pill pill--sm" type="button" id="copy-email" data-copy="jakecushway96@gmail.com" data-cursor="open">Copy</button>
+      </div>
+      <ul class="panel__links">
+        <li><a class="panel__link" href="https://www.linkedin.com/in/jakecushway/" target="_blank" rel="noopener"><span>LinkedIn</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+        <li><a class="panel__link" href="https://github.com/jakecush1" target="_blank" rel="noopener"><span>GitHub</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+        <li><a class="panel__link" href="files/JacobCushwaysResume.pdf" download><span>Download résumé</span><span class="arrow" aria-hidden="true">↓</span></a></li>
+      </ul>
+      <button class="pill pill--primary panel__cta" type="button" id="panel-send" data-cursor="open">Send a message</button>
+    </div>
+  </aside>
+
+  <!-- ============ CASE-STUDY DRAWER ============ -->
+  <div class="drawer" id="case" role="dialog" aria-modal="true" aria-labelledby="case-title" hidden>
+    <div class="drawer__backdrop" id="case-backdrop"></div>
+    <article class="drawer__panel" id="case-panel" tabindex="-1">
+      <div class="drawer__bar">
+        <p class="mono label drawer__crumb" id="case-crumb"></p>
+        <button class="pill drawer__close" type="button" id="case-close" aria-label="Close case study" data-cursor="open"><span aria-hidden="true">×</span><span class="drawer__close-text">Close</span></button>
+      </div>
+      <div class="drawer__content" id="case-content"></div>
+    </article>
+  </div>
+
+  <script src="assets/js/projects-data.js" defer></script>
+  <script src="assets/js/site.js" defer></script>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</body>
 </html>
