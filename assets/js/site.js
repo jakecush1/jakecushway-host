@@ -1,5 +1,5 @@
 /* jakecushway.ca — site behaviour
-   Nav, menu overlay, clocks, contact panel, theme, reveal-on-scroll,
+   Nav, menu overlay, clocks, contact panel, reveal-on-scroll,
    work list (from window.PROJECTS), case-study drawer, previews, cursor, form. */
 (function () {
   'use strict';
@@ -27,22 +27,6 @@
   Promise.race([fontsReady, new Promise(function (r) { setTimeout(r, 700); })]).then(function () {
     requestAnimationFrame(function () { requestAnimationFrame(function () { html.classList.add('is-loaded'); }); });
   });
-
-  /* ---------------- Theme ---------------- */
-  var themeBtns = Array.prototype.slice.call(document.querySelectorAll('[data-theme-toggle]'));
-  var themeMeta = $('meta[name="theme-color"]');
-  function currentTheme() { return html.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
-  function applyTheme(t, persist) {
-    html.setAttribute('data-theme', t);
-    if (themeMeta) themeMeta.setAttribute('content', t === 'light' ? '#ffffff' : '#000000');
-    themeBtns.forEach(function (b) { b.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme'); });
-    if (persist) {
-      try { localStorage.setItem('theme', t); } catch (e) {}
-      try { window.dispatchEvent(new CustomEvent('themechange', { detail: t })); } catch (e) {}
-    }
-  }
-  applyTheme(currentTheme(), false);
-  themeBtns.forEach(function (b) { b.addEventListener('click', function () { applyTheme(currentTheme() === 'light' ? 'dark' : 'light', true); }); });
 
   /* ---------------- Nav scroll state + hero parallax ---------------- */
   var nav = $('#nav');
@@ -235,7 +219,7 @@
   var PROJECTS = Array.isArray(window.PROJECTS) ? window.PROJECTS.slice() : [];
   if (!PROJECTS.length) console.warn('[site] window.PROJECTS is missing or empty.');
   var CATEGORY_ORDER = ['Audio', 'Tools', 'Client work', 'Product', 'Experiments'];
-  var HERO_ORDER = ['city-square', 'bedroom-studio', 'sideproj', 'ai-photobooth', 'obamafy', 'mathine', 'basin-climate-source', 'autonomous-sinixt'];
+  var HERO_ORDER = ['city-square', 'bedroom-studio', 'sideproj', 'ai-photobooth', 'obamafy', 'mathine', 'reprise', 'vantage-saunas'];
   var bySlug = {};
   PROJECTS.forEach(function (p) { bySlug[p.slug] = p; });
 
@@ -246,6 +230,17 @@
     var srcset = (sizes && p.image && p.imageSmall) ? ' srcset="' + esc(p.imageSmall) + ' 800w, ' + esc(p.image) + ' 1600w" sizes="' + esc(sizes) + '"' : '';
     return '<img src="' + esc(imgSrc(p, small)) + '"' + srcset + ' alt="' + esc(p.imageAlt || p.title) + '" width="' + (p.imageW || 1600) + '" height="' + (p.imageH || 1000) + '"' +
       (lazy ? ' loading="lazy"' : '') + ' decoding="async" data-ph="' + esc(p.title) + '">';
+  }
+  // Extra images shown in the case drawer: p.gallery = [{ image, imageSmall, alt, caption }]
+  function galleryHTML(p) {
+    var g = p.gallery || [];
+    if (!g.length) return '';
+    return '<p class="mono label case__section-label">Gallery</p><div class="case__gallery">' + g.map(function (it) {
+      var full = it.image || it.imageSmall;
+      return '<figure><a href="' + esc(full) + '" target="_blank" rel="noopener" data-cursor="open">' +
+        '<img src="' + esc(it.imageSmall || full) + '" alt="' + esc(it.alt || it.caption || p.title) + '" width="800" height="500" loading="lazy" decoding="async"></a>' +
+        (it.caption ? '<figcaption>' + esc(it.caption) + '</figcaption>' : '') + '</figure>';
+    }).join('') + '</div>';
   }
   function buildLabel(p) { return p.build === 'hand-built' ? 'Hand-built' : p.build === 'ai-assisted' ? 'AI-assisted' : ''; }
   function yearRange() {
@@ -444,6 +439,7 @@
       '<div class="case__media">' + mediaHTML(p, false, false) + '</div>' +
       '<dl class="case__meta">' + meta.map(function (m) { return '<div><dt class="mono label">' + esc(m[0]) + '</dt><dd>' + esc(m[1]) + '</dd></div>'; }).join('') + '</dl>' +
       '<div class="case__body">' + (p.body || []).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' +
+      galleryHTML(p) +
       ((p.tech || []).length ? '<p class="mono label case__section-label">Built with</p><ul class="case__tech">' + p.tech.map(function (t) { return '<li class="pill">' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
       ((links.live || links.repo) ? '<div class="case__actions">' +
         (links.live ? '<a class="pill pill--primary" href="' + esc(links.live) + '" target="_blank" rel="noopener" data-cursor="open">Visit live <span aria-hidden="true">↗</span></a>' : '') +
@@ -625,23 +621,6 @@
           status.classList.add('is-error'); status.textContent = m;
           if (window.grecaptcha && grecaptcha.reset) { try { grecaptcha.reset(); } catch (e3) {} }
         });
-    });
-    // reCAPTCHA follows the current theme: set before first render, re-rendered on toggle
-    var rc = $('.g-recaptcha', form);
-    if (rc) rc.setAttribute('data-theme', currentTheme());
-    window.addEventListener('themechange', function () {
-      var cur = $('.g-recaptcha', form);
-      if (!cur) return;
-      cur.setAttribute('data-theme', currentTheme());
-      if (!(window.grecaptcha && typeof grecaptcha.render === 'function') || !cur.firstChild) return;
-      try {
-        var fresh = document.createElement('div');
-        fresh.className = 'g-recaptcha';
-        fresh.setAttribute('data-sitekey', cur.getAttribute('data-sitekey'));
-        fresh.setAttribute('data-theme', currentTheme());
-        cur.parentNode.replaceChild(fresh, cur);
-        grecaptcha.render(fresh, { sitekey: fresh.getAttribute('data-sitekey'), theme: currentTheme() });
-      } catch (e) {}
     });
   }
 

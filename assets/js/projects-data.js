@@ -81,24 +81,51 @@ window.PROJECTS = [
   {
     slug: 'ai-photobooth',
     title: 'AI Photobooth',
-    kicker: 'A physical photobooth on a Raspberry Pi that takes payment, prints your photo and offers an AI filter.',
+    kicker: 'POPFLASH, a party photobooth on a Raspberry Pi: tap to pay on an iPad, four shots, printed strips, and every photo on your phone with AI restyles.',
     category: 'Product',
     year: '2026',
     featured: false,
     heroPill: true,
-    role: 'Hardware, software, product',
-    tags: ['Raspberry Pi', 'React', 'Convex', 'Python'],
-    tech: ['Python', 'React', 'Convex', 'Raspberry Pi', 'Camera module'],
-    image: null,
-    imageSmall: null,
-    imageW: 0,
-    imageH: 0,
-    imageAlt: '',
-    links: {},
+    role: 'Co-creator with Isaak: Pi printing, deployment, enclosure',
+    tags: ['Raspberry Pi', 'Next.js', 'Convex', 'Python'],
+    tech: ['Raspberry Pi', 'Node.js', 'Python', 'Pillow', 'CUPS', 'systemd', 'Next.js', 'React', 'Convex', 'Square POS API', 'CadQuery', '3D printing'],
+    image: 'photos/web/ai-photobooth-1600.webp',
+    imageSmall: 'photos/web/ai-photobooth-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'POPFLASH product page in yellow, black and hot pink: the headline “Your party. But louder.” above four Polaroid-style photo cards.',
+    links: { live: 'https://photobooth-eight-self.vercel.app/popflash', repo: 'https://github.com/isaak1294/photobooth' },
+    gallery: [
+      {
+        image: 'photos/web/ai-photobooth-kiosk-1600.webp',
+        imageSmall: 'photos/web/ai-photobooth-kiosk-800.webp',
+        alt: 'The POPFLASH kiosk screen: a row of frame choices above a large black Take Photos button reading $5.00, tap to pay, four shots.',
+        caption: 'The iPad kiosk: pick a frame, tap to pay, then four shots with a 3-2-1 countdown each.'
+      },
+      {
+        image: 'photos/web/ai-photobooth-pricing-1600.webp',
+        imageSmall: 'photos/web/ai-photobooth-pricing-800.webp',
+        alt: 'POPFLASH pricing section on a pink background with three packages: House Party, Full Send and Absolute Chaos.',
+        caption: 'The POPFLASH product page, with packages and a booking form.'
+      },
+      {
+        image: 'photos/web/ai-photobooth-enclosure-1600.webp',
+        imageSmall: 'photos/web/ai-photobooth-enclosure-800.webp',
+        alt: 'Line drawings of a 3D-printed enclosure: a vented printer frame on its own, and assembled with an electronics tray on top.',
+        caption: 'The 3D-printed enclosure I modelled in CadQuery: a frame around the printer and an electronics tray for the Pi and camera.'
+      },
+      {
+        image: 'photos/web/ai-photobooth-concepts-1600.webp',
+        imageSmall: 'photos/web/ai-photobooth-concepts-800.webp',
+        alt: 'Two AI-generated concept renders: a walnut booth with a red velvet curtain, and an arcade-cabinet photobooth printing a photo strip.',
+        caption: 'Early AI-generated concept renders for the booth’s look. Not the built hardware.'
+      }
+    ],
     body: [
-      'A physical photobooth built around a Raspberry Pi and a camera module. You pay, it takes your picture, and it prints the photo on the spot. Optionally it runs the shot through an AI filter first.',
-      'The interface is a React app, the booth logic and hardware control are written in Python, and Convex is the backend. It is a small end-to-end product: hardware, backend, UI and a real transaction in one box.',
-      'This one lives in the physical world, so there is no link. Ask me about it.'
+      'POPFLASH is a photobooth for parties that Isaak and I built together. A guest picks a frame on an iPad kiosk, taps their card, and gets four shots with a 3-2-1 countdown each. The Raspberry Pi camera fires, the strips print on the spot, and a QR code puts every photo on the guest’s phone, where they can be restyled with AI.',
+      'The Pi never takes incoming connections. The kiosk writes a capture request to Convex, the Pi is subscribed and gets it pushed, shoots, and uploads the frame, and every screen updates from the same live session. That keeps the booth working behind venue Wi-Fi or a phone hotspot with no port forwarding. Payment goes through the Square Point of Sale app and a card reader, and a session only unlocks once Square’s Orders API confirms a completed order for the right amount. A prepaid mode skips payment for events that are paid up front.',
+      'My side was getting the booth to print and keep running unattended. I wrote the Pi’s print agent, a separate Python service that watches a local spool, composes each sheet with Pillow (two identical four-photo strips with one centre cut) and sends it to a Canon SELPHY through CUPS. Jobs are claimed by an atomic file rename, so a crash cannot double-print or lose a sheet, and printing keeps working if the venue Wi-Fi drops. Capture, printing and a retention job that clears old photos off the Pi each run as their own systemd service, so a jammed printer cannot take the camera down. A deploy script pushes everything to the Pi.',
+      'I also modelled the hardware enclosure in CadQuery: a support-free, two-part print with a vented frame around the printer and a tray on top that holds the Pi and the camera. Isaak led the web app, the Convex backend, the Square integration and the POPFLASH product page.'
     ]
   },
   {
@@ -156,7 +183,7 @@ window.PROJECTS = [
     category: 'Product',
     year: '2026',
     featured: false,
-    heroPill: false,
+    heroPill: true,
     role: 'Design, mobile and API development',
     tags: ['React Native', 'Full-stack', 'AI'],
     tech: ['React Native', 'Expo', 'TypeScript', 'Node.js', 'Express', 'Prisma', 'PostgreSQL', 'LLM APIs'],
@@ -205,7 +232,7 @@ window.PROJECTS = [
     category: 'Product',
     year: '2026',
     featured: false,
-    heroPill: false,
+    heroPill: true,
     role: 'Brand, web, 3D and business planning',
     tags: ['Startup', 'Three.js', 'Web'],
     tech: ['HTML', 'CSS', 'JavaScript', 'Three.js', 'Python', 'Markdown', 'Excel', 'Vercel'],
@@ -215,7 +242,7 @@ window.PROJECTS = [
     imageW: 1600,
     imageH: 1000,
     imageAlt: 'Vantage marketing site in navy and burnt orange: the headline “The amenity above everything” beside an illustration of a lit sauna suite on a city rooftop at night.',
-    links: { live: 'https://vantagesaunas.vercel.app/03-website/', repo: 'https://github.com/jakecush1/vantagesaunas' },
+    links: { live: 'https://vantagesaunas.vercel.app/04-design-plans/', repo: 'https://github.com/jakecush1/vantagesaunas' },
     body: [
       'Vantage is a company concept for shared rooftop sauna suites in hotels, rental towers and condo buildings in Vancouver, Victoria and Toronto. The suites are designed and built in a factory, craned onto the roof and installed in one to six days on site, then run on a service and booking subscription. It comes in three models, Perch, Lodge and Summit.',
       'I put together everything needed to pitch it: a marketing site, a 17-slide pitch deck with speaker notes, a written business plan, an Excel financial model with live formulas, a launch plan, and research on the Canadian market, building codes and sauna design, with each claim linked to its source.',
@@ -253,7 +280,7 @@ window.PROJECTS = [
     category: 'Client work',
     year: '2023–24',
     featured: false,
-    heroPill: true,
+    heroPill: false,
     role: 'Full-stack developer intern',
     tags: ['Data platform', 'Maps', 'Full-stack'],
     tech: ['JavaScript', 'Web mapping', 'GIS data', 'Selkirk Innovates'],
@@ -277,7 +304,7 @@ window.PROJECTS = [
     category: 'Client work',
     year: '2023–25',
     featured: false,
-    heroPill: true,
+    heroPill: false,
     role: 'Web development, hosting, maintenance',
     tags: ['WordPress', 'Self-hosting', 'Maintenance'],
     tech: ['WordPress', 'Linux', 'Apache', 'Self-hosted'],
