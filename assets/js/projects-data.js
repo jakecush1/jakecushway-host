@@ -24,11 +24,8 @@ window.PROJECTS = [
     imageAlt: 'Three RepRise phone screens with sample training data: the Today screen with the next workout and weekly ring, a bench press page with a muscle diagram and an estimated one-rep-max chart, and a logged leg day.',
     links: { repo: 'https://github.com/jakecush1/workout-react-native' },
     body: [
-      'RepRise is a workout planner and tracker for iPhone. There are three ways to get a plan: answer a short questionnaire and have one built for you, pick from 13 pre-made programmes (upper/lower, push/pull/legs, glute focus, Couch to 5K, a hybrid run and lift block and more) ranked by how well they fit your goal, schedule and equipment, or build your own from a library of 96 exercises.',
-      'The plan builder can use an LLM, but it is boxed in. The model returns structured JSON in which every exercise ID must come from the library and match the equipment you have, so it cannot invent movements, and the result is validated and shown as a draft to edit before saving. With no AI provider configured, or when a call fails, a rule-based generator picks a split by days per week and fills it by goal and experience. The same profile, plan and recent history feed a coach chat for questions about form, soreness or the programme.',
-      'Logging is built for the gym floor: last session’s numbers are pre-filled, a rest timer starts with haptics, and an in-progress workout survives the app being closed. Every exercise shows a front and back body diagram with the muscles it works. Around that sit calendar bookings with reminders, a weekly ring and streak, 12-week charts, per-exercise estimated one-rep max, body weight, and personal records flagged when you finish.',
-      'The app is Expo and expo-router in TypeScript. The API is Node, Express and Prisma on PostgreSQL, with JWT auth stored in the iOS Keychain and a 46-check end-to-end smoke test.',
-      'RepRise is in development and will be released on the Apple App Store for iPhone soon.'
+      'An iPhone workout planner and tracker. Get a plan from a short questionnaire, pick from 13 programmes ranked for your goal and equipment, or build your own from 96 exercises. Logging pre-fills last session’s numbers, runs a rest timer and tracks streaks, PRs and estimated one-rep max.',
+      'The AI plan builder can only return validated exercises that match your equipment, with a rule-based fallback when no model is available. Built with Expo and TypeScript on a Node, Express, Prisma and PostgreSQL API. In development and coming soon to the App Store.'
     ]
   },
 
@@ -50,9 +47,8 @@ window.PROJECTS = [
     imageAlt: 'City Square: a rainy cobbled street at night between The Garrison Tavern on the left and a neon-signed apartment block on the right.',
     links: { live: 'https://city-square.vercel.app/', repo: 'https://github.com/jakecush1/city-square' },
     body: [
-      'City Square is the front door to my 3D work. You arrive on a rainy cobbled street between two lit buildings and pick one: The Garrison Tavern on the left opens Side Proj, the band tavern, and the 音楽アパート apartment on the right opens Room 808, the bedroom studio. Hover a building and it lights up; click it and the camera walks to the door, fades out, and the destination opens inside the page with a bar to get back to the street. Browser back and Escape also bring you home, and #tavern and #studio deep-link straight inside.',
-      'Everything in the scene is procedural. The cobbles, plaster, concrete, signage and neon are painted onto canvases at startup, so there are no texture downloads. The illustrated look comes from toon-ramped materials and a custom post pass that inks edges wherever depth or surface normals jump, lays paper grain over the frame and flattens the palette. The wet-street reflections are additive light smears aimed at the camera rather than real reflections, which keeps the scene cheap enough to run on a laptop.',
-      'Each door points at its own deployed site, so the tavern and the studio stay separate projects with their own repos. If a destination is unreachable, the street says so instead of opening a blank frame.'
+      'The front door to my 3D work: a rainy street with two doors. The tavern opens Side Proj, the apartment opens Bedroom Studio, and each loads inside the page with a way back.',
+      'Everything is procedural, with textures painted to canvas at startup, so there are no image downloads. A custom post pass inks the edges and adds paper grain for the illustrated look.'
     ]
   },
 
@@ -74,10 +70,8 @@ window.PROJECTS = [
     imageAlt: 'Room 808: a dim 3D bedroom at night with a desk lamp, monitor, drum machine, keyboard and rain outside the window.',
     links: { live: 'https://bedroom-studio-three.vercel.app/', repo: 'https://github.com/jakecush1/bedroom-studio' },
     body: [
-      'Room 808 is a lofi bedroom studio rendered in Three.js: rain on the window, a desk lamp, a glowing rack of gear. Every machine in the room is a real tool. Click one and the camera walks up to it and opens its panel, so the room doubles as a launcher for the audio tools I have built for the browser.',
-      'The centrepiece is the JC-808, a drum machine and synthesiser I built from scratch on the Web Audio API with no samples and no audio libraries. Twelve analogue-modelled voices sit under a 16-step sequencer with swing, drive, per-step accent and four chainable pattern banks, and underneath is a two-lane synth with looping recorders, an arpeggiator, and delay and reverb on the mix. Patterns can be shared as a link or exported as a WAV. It also runs on its own at jc-808.vercel.app.',
-      'Around it are a guitar tuner, vocal autotune, automatic mastering, and ChipWorld: chiptune tools rebuilt for the web, including CHIP-4, a four-channel sound engine with square, triangle and noise voices, and Chipify, which turns a track into a four-channel chiptune.',
-      'All of the DSP runs client-side, from FFT and beat tracking to pYIN pitch detection and Spotify’s Basic Pitch model for turning audio into notes. Nothing is uploaded, and anything you make can be kept in the tape library or rendered out as a WAV.'
+      'A lofi 3D bedroom where every machine on the desk is a working audio tool. Click one and the camera walks up and opens it.',
+      'The centrepiece is the JC-808, a drum machine and synth built from scratch on the Web Audio API, with twelve modelled voices, a 16-step sequencer, share links and WAV export. Around it are a tuner, autotune, auto-mastering and chiptune tools, all running in the browser.'
     ]
   },
 
@@ -99,9 +93,8 @@ window.PROJECTS = [
     imageAlt: 'A 3D medieval tavern with a band seated around a round table, a fireplace, banners and a song list panel in the corner.',
     links: { live: 'https://sideproj.ca', repo: 'https://github.com/jakecush1/3js-interactive-tavern' },
     body: [
-      'sideproj.ca is a custom band page for Side Project, and instead of a landing page it is a tavern. Four musicians sit around a candlelit table in a full 3D room with timber beams, a fireplace, banners and a chandelier. The band, songs, shows and contact details all live inside the same scene.',
-      'Click a glowing object and the tavern plays one of the band’s actual songs; click the room and beer bottles rain from the ceiling. A small player in the corner keeps the current tune, play and skip, and the setlist, so the joke never gets in the way of listening.',
-      'It is built with React, TypeScript and React Three Fiber, with Zustand for state and Howler.js for playback. The characters come from a procedural Renaissance figure kit, and the wood, stone, plaster and cloth textures are generated at runtime, so the scene downloads no images. It is also the left-hand door in City Square.'
+      'A band page for Side Project built as a 3D medieval tavern. Click a glowing object to hear one of the band’s songs, with a small player in the corner for the setlist.',
+      'Built with React Three Fiber, Zustand and Howler.js. Textures are generated at runtime, so the scene downloads no images.'
     ]
   },
 
@@ -123,10 +116,8 @@ window.PROJECTS = [
     imageAlt: 'Vantage marketing site in navy and burnt orange: the headline “The amenity above everything” beside an illustration of a lit sauna suite on a city rooftop at night.',
     links: { live: 'https://vantagesaunas.vercel.app/04-design-plans/', repo: 'https://github.com/jakecush1/vantagesaunas' },
     body: [
-      'Vantage is a company concept for shared rooftop sauna suites in hotels, rental towers and condo buildings in Vancouver, Victoria and Toronto. The suites are designed and built in a factory, craned onto the roof and installed in one to six days on site, then run on a service and booking subscription. It comes in three models, Perch, Lodge and Summit.',
-      'I put together everything needed to pitch it: a marketing site, a 17-slide pitch deck with speaker notes, a written business plan, an Excel financial model with live formulas, a launch plan, and research on the Canadian market, building codes and sauna design, with each claim linked to its source.',
-      'The centrepiece is a set of interactive design plans. A Three.js model of each suite sits on a typical rooftop and can be viewed as exterior, interior, bench view, plan or section, exploded, at night or with dimensions shown, in metric or imperial. The scaled drawings and spec sheet are driven from the same set of dimensions.',
-      'All of the numbers live in one brief. A Python build script regenerates the HTML pages, the deck viewer and the PDFs from Markdown and slide source, so the plan, deck, site and drawings always quote the same figures.'
+      'A launch package for a rooftop sauna company: marketing site, 17-slide pitch deck, business plan, financial model and market research.',
+      'The highlight is the interactive design plans: a Three.js model of each suite on a rooftop, viewable as exterior, interior, plan, section or exploded. A Python build keeps the site, deck and drawings quoting the same numbers.'
     ]
   },
 
@@ -162,11 +153,8 @@ window.PROJECTS = [
       }
     ],
     body: [
-      'An AI photobooth that Isaak and I built together. A guest picks a frame on an iPad kiosk, pays by tapping their card, and gets four shots with a 3-2-1 countdown each. A Raspberry Pi with a camera takes the photos, the strips print on the spot, and a QR code sends every photo to the guest’s phone, where they can be restyled with AI.',
-      'Convex sits in the middle as a live backend. The kiosk writes a capture request, the Pi is subscribed and gets it pushed, takes the shot and uploads it, and every screen (the kiosk, an optional HDMI booth display and the guest’s phone) updates from the same live session, including per-step progress from countdown to upload. The Pi only makes outgoing connections, so the booth works on venue Wi-Fi or a phone hotspot with no port forwarding. The kiosk iPad runs iOS 12, which cannot load the main Next.js app, so its page is hand-written to that browser’s limits and talks to Convex through a small server-side proxy.',
-      'Payments go through the Square Point of Sale app and a card reader. A session unlocks only after Square’s Orders API confirms a completed order for the right amount at the right location, and the backend refuses to start a capture for an unpaid session no matter who asks. A prepaid mode skips payment for events that are paid up front.',
-      'My side was getting the booth to print and keep running unattended. I wrote the Pi’s print agent, a separate Python service that watches a local spool, composes each sheet with Pillow (two identical four-photo strips with one centre cut) and sends it to a Canon SELPHY through CUPS. Jobs are claimed by an atomic file rename, so a crash cannot double-print or lose a sheet, and printing keeps working if the Wi-Fi drops. Capture, printing and a cleanup job that clears old photos off the Pi each run as their own systemd service, so a jammed printer cannot take the camera down, and a deploy script pushes everything to the Pi.',
-      'I also modelled the hardware enclosure in CadQuery: a support-free, two-part print with a vented frame around the printer and a tray on top that holds the Pi and the camera. Isaak led the web app, the Convex backend and the Square integration.'
+      'A photobooth built with Isaak. Guests pick a frame on an iPad, tap to pay, and a Raspberry Pi takes four shots, prints the strips and sends the photos to their phone for AI restyles. Convex keeps the kiosk, booth and phone in sync live.',
+      'I built the printing side: a crash-safe Python print agent that lays out the strips and sends them to the printer, plus the services and deploy script that keep the booth running unattended. I also modelled the 3D-printed enclosure. Isaak led the web app, backend and payments.'
     ]
   },
 
@@ -188,9 +176,8 @@ window.PROJECTS = [
     imageAlt: 'Poster maker interface with ink controls on the left and a four-colour Hope-style poster of a cat on the right.',
     links: { live: 'https://obamafy.vercel.app', repo: 'https://github.com/jakecush1/obamafy' },
     body: [
-      'Obamafy, now published as Poster & Engrave, started as a screenprint poster maker in the style of the 2008 Hope poster. Drop in a photo and it comes back as a bold poster in two, three or four flat inks, which is what screen printing or multi-colour 3D printing needs, since every colour has to be its own layer.',
-      'The pipeline runs on a canvas in plain JavaScript. The photo is converted to luminance, Gaussian-blurred with three box-blur passes, stretched between its 1st and 99th percentile tones, then split into ink bands. A line-hatching pass offsets the bands row by row so the edges between inks break into horizontal stripes, like the original print. You can drag the tone-split markers, swap palettes, change the frame and zoom, and the preview caches the framing and blur steps so palette changes redraw instantly.',
-      'It has since grown a laser engraving mode: the same tone separation produces a laser-ready engraving. It outputs a two-tone PNG with one pixel per laser dot and a .lbrn2 file that opens in LightBurn with the image placed, sized and set to pass-through, plus options for keychain holes, outline cuts and material previews. Photos never leave the browser.'
+      'Turns a photo into a two-to-four-ink screenprint poster in the style of the 2008 Hope poster, with adjustable tone splits, palettes and hatched edges.',
+      'A laser mode turns the same image into an engraving and exports a PNG plus a ready-to-run LightBurn file. Everything runs in the browser.'
     ]
   },
 
@@ -213,9 +200,8 @@ window.PROJECTS = [
     imageAlt: 'Mathiné landing page on mathine.uvic.ca with UVic branding and a navigation bar for Kanban, Calendar, Brain Dump and Brightspace courses.',
     links: { live: 'https://mathine.uvic.ca' },
     body: [
-      'Mathiné is a workspace for University of Victoria students. The tagline is “All your coursework, organized”: Brightspace deadlines, task breakdowns, calendar events and brain-dump notes together in one place.',
-      'The app has a dashboard, a to-do view that breaks assignments into steps, a calendar, a Brain Dump space for loose notes, and a My Courses view that connects to Brightspace, UVic’s learning platform, for course and deadline information. Settings, feedback, an exam schedule and links to other online tools round it out.',
-      'Mathiné is an INSPIRE UVic project, built by students for students. I worked on it in Vue.js, it is served through Nginx at mathine.uvic.ca, and I fixed bugs and refined the UX based on feedback collected from students.'
+      'A workspace for UVic students that brings Brightspace deadlines, to-dos, a calendar and notes into one place.',
+      'An INSPIRE UVic project. I worked on it in Vue.js, fixing bugs and refining the UX from student feedback.'
     ]
   },
 
@@ -237,10 +223,8 @@ window.PROJECTS = [
     imageAlt: 'Drift model v2 results: predicted against actual east and north drift over the next 60 minutes, and a histogram of position error with a median of 256 m and a 90th percentile of 549 m.',
     links: { repo: 'https://github.com/jakecush1/autonomous-pilot-ML' },
     body: [
-      'Open Ocean Robotics runs the DataXplorer, an uncrewed surface vessel that reports marine weather for NOAA in place of a retired buoy. Its one hard rule is to stay within 10 nautical miles of the buoy’s old position. A remote pilot watches it around the clock, about 1,095 eight-hour shifts a year, even though a corrective command is only needed every two to three hours. This SENG 474 project at UVic asks whether that call can be predicted from telemetry, so the pilot is paged when needed instead of watching all the time. The model is advisory only: it decides whether a pilot is needed, never what they should do.',
-      'The plan has two stages. V1 is a baseline lookup grid built from the rules experienced pilots already use, splitting the operating area into distance rings and sectors and the wind into direction and speed bands. V2 replaces the hand labels with outcomes learned from logged telemetry and interventions, moving from per-cell frequencies to logistic regression and boosted trees if needed. Every version is scored against V1 on interventions caught, false alerts per shift and watch hours removed, with missed interventions weighted more heavily than false alarms.',
-      'The first modelling work studies how the boat drifts with the motor off, using minute-by-minute GPS, wind and motor telemetry. Wind speed alone explains only about 15% of drift speed; the fit puts windage at about 2.3% of wind speed, and the current matters at least as much as the wind. A second model that combines the last hour’s drift with the wind vector predicts the next hour’s position with R² = 0.83, a median error of 256 m and a 90th percentile of 549 m, which is a candidate safety radius for the alert.',
-      'Those numbers are on training data with overlapping windows, so they are a ceiling, not a result. The next step is a time-based train and validation split, a held-out deployment, and a “next hour equals last hour” baseline to beat.'
+      'A UVic SENG 474 project with Rowan Hall. Open Ocean Robotics’ DataXplorer boat has to stay near a retired buoy’s position, and a remote pilot watches it around the clock even though a correction is only needed every few hours. The goal is to predict from telemetry when a pilot is needed, so the watch can become an on-call alert.',
+      'So far, a drift model that combines the last hour’s drift with the wind predicts the next hour’s position with R² = 0.83 and a 256 m median error. Those are training-set numbers; held-out testing is next.'
     ]
   },
 
@@ -262,9 +246,8 @@ window.PROJECTS = [
     imageAlt: 'ArbourPros Trees homepage: an arborist climbing a tall poplar under the headline, with Book an estimate and Call buttons.',
     links: { live: 'https://arbourpros.vercel.app' },
     body: [
-      'ArbourPros Trees is Bergen and Emma, ISA Certified Arborists who have run their own tree care business since 2020. They needed a site that looks professional, loads quickly on a phone and gets people to call or ask for an estimate.',
-      'It has six pages: home, about, services, projects, resources and contact. The services page covers removals, pruning, climbing work in tight backyards, hazard assessments and storm cleanup, and flags Saskatchewan’s seasonal elm pruning ban. The projects page is a gallery of their own job photos with a lightbox viewer, and the resources page points to how to verify an arborist’s credentials.',
-      'It is plain HTML, CSS and a little JavaScript with no framework, hosted on Vercel. The estimate form opens the visitor’s email app with their details already filled in, so there is no form backend to maintain, and every page leads with a tap-to-call number.'
+      'A site for ArbourPros Trees, a two-person team of ISA Certified Arborists. It needed to look professional, load fast on a phone and get people to call.',
+      'Six pages of plain HTML, CSS and JavaScript on Vercel, with a job-photo gallery, tap-to-call on every page and an estimate form that needs no backend.'
     ]
   },
 
@@ -287,9 +270,8 @@ window.PROJECTS = [
     imageAlt: 'Columbia Basin Climate Source homepage with a green header, a map of British Columbia and tiles linking to climate projections and impacts.',
     links: { live: 'https://basinclimatesource.ca/climate-projections' },
     body: [
-      'Columbia Basin Climate Source is a Columbia Basin Trust initiative developed by Selkirk Innovates at Selkirk College. It is the one-stop site for climate information in the Columbia Basin-Boundary region: fine-scale projection data for local communities, regional impacts, a database of local climate action and plain-language guidance on reading climate science.',
-      'The Climate Projections explorer is the data-heavy part. Users pick from 40 indicators grouped as hot and cold weather, average temperature, growing season, and average and extreme precipitation; choose a low, medium or high emissions scenario (SSP1-2.6, SSP2-4.5, SSP5-8.5); and step through 30-year averages around each decade from the 1960s to the 2080s. The map shows the minimum, median or maximum across seven climate models, and both the spatial layers and the tabular data can be downloaded for GIS or spreadsheet work.',
-      'I joined Selkirk Innovates as a full-stack developer intern from May 2023 to May 2024 and built features for this platform and for its sister project, State of the Basin. The work was grant-funded and aimed at community members, which meant every change had to hold up for planners and residents who are not data specialists.'
+      'A climate projections platform for the Columbia Basin-Boundary region, built by Selkirk Innovates for the Columbia Basin Trust. Users map 40 indicators across three emissions scenarios out to the 2080s and download the data.',
+      'I built features as a full-stack developer intern from May 2023 to May 2024, keeping it usable for planners and residents who are not data specialists.'
     ]
   },
 
@@ -312,9 +294,8 @@ window.PROJECTS = [
     imageAlt: 'sinixt.org homepage: a mountain and forest photograph under the heading Our Land, with the site navigation above.',
     links: { live: 'https://sinixt.org/' },
     body: [
-      'sinixt.org is the public home of the Autonomous Sinixt and their traditional governance body, the Smum iem. The site carries their own words: who they are, their land north of the Grand Bend on the Columbia River, the history behind the “extinct” declaration and why it is not the Sinixt Peoples who went extinct, current projects such as the film Take It to the Water, year-in-review pages, media and resources, and ways to support the work.',
-      'My job is to keep that content easy to find and easy for the Nation to keep current: the site structure (About, Our Land, History, Smum Iem, Media & Resources, Projects, Year in Review, Support, Contact, FAQ), updates, and photography-led pages that stay out of the way of the writing.',
-      'I also host it. Since 2023 the site has run on a private Linux server I administer, so I handle the web server, updates and uptime, and the Nation has one person to call.'
+      'The public website of the Autonomous Sinixt and their governance body, the Smum iem: their land, history, projects and ways to support the work.',
+      'I maintain the site and have hosted it on my own Linux server since 2023.'
     ]
   },
 
@@ -336,9 +317,8 @@ window.PROJECTS = [
     imageAlt: 'USV Tools mark: an illustrated solar-panelled autonomous vessel on a dark navy background.',
     links: { live: 'usv/' },
     body: [
-      'A set of three tools I built during my internship at Open Ocean Robotics to support uncrewed surface vessel (USV) operations: planning how long a boat can stay out, recording official trip distance, and validating field tests. All three run client-side. CSV logs are parsed in the browser and never leave the machine, which matters when the files are operational vessel data.',
-      'Battery Forecast takes a pasted NOAA marine forecast, parses the wind speed for each forecast period, and models battery level forward against motor draw and solar intake, returning a recommended return time and a charted depletion curve. The coefficients come from data, not guesses: a Python script reads months of deployment logs from two vessels, converts battery voltage to kWh through a lookup table, resamples voltage, wind and per-panel solar to hourly, cuts the record into 12-hour day and night windows, and fits net consumption against average wind speed. The 25th and 75th percentile residuals become the optimistic and pessimistic bands the page draws.',
-      'Dual-Sensor Route Analyzer computes trip distance from two independent position logs, GPS and the NAV (AIS) feed. It runs a Haversine distance over each track, drops segments whose implied speed exceeds a configurable knot threshold as sensor error, reconciles the two cleaned totals into a single figure and exports a markdown report. Distance Between compares the USV log against the support boat’s to produce vessel separation at every timestamp, a ground-truth record for energy-harvesting, radar and acoustic tests where range is the variable under test.'
+      'Three browser tools from my Open Ocean Robotics internship. Battery Forecast reads a NOAA marine forecast and predicts when a boat should head home, using a model fitted to months of deployment logs. Route Analyzer measures trip distance from GPS and AIS logs, and Distance Between tracks the gap between two vessels during field tests.',
+      'Everything runs in the browser, so operational vessel data never leaves the machine.'
     ]
   },
 
@@ -361,8 +341,8 @@ window.PROJECTS = [
     imageAlt: 'State of the Basin website showing a Population page with census tables beside a sidebar of well-being indicators.',
     links: { live: 'https://stateofthebasin.ca/' },
     body: [
-      'State of the Basin is a Selkirk Innovates initiative that monitors and reports on indicators of social, economic, environmental and cultural well-being across the Columbia Basin-Boundary region. Dozens of indicators sit under Society, Economy, Environment and Culture, from population and housing affordability to snowpack, wildfire and park visitation, each backed by sourced data such as the Census of Population and BC Stats and presented as downloadable tables.',
-      'Alongside the regional indicators the site publishes community indicators and per-community profiles, feature articles, annual Snapshot reports and subjective well-being reports. During my Selkirk Innovates internship I built features for this platform in parallel with Basin Climate Source. Most of the work was making dense tabular data readable and keeping the structure consistent across a very large number of indicator pages.'
+      'A platform tracking social, economic, environmental and cultural well-being across the Columbia Basin, with dozens of indicators and per-community profiles.',
+      'I built features during my Selkirk Innovates internship, mostly making dense data tables readable and consistent across a large number of indicator pages.'
     ]
   },
 
@@ -384,8 +364,7 @@ window.PROJECTS = [
     imageAlt: 'Strudel Live Studio icon: a purple rounded square with concentric rings and neon shapes, on a near-black background.',
     links: { live: 'media/strudel/' },
     body: [
-      'Strudel is a browser-based pattern language for algorithmic music: you write patterns as code and hear them immediately, with nothing to install. This page is a studio shell around it, a clean full-height surface to live-code on.',
-      'The Strudel environment is embedded in a sandboxed frame with audio permissions granted, wrapped in a layout with proper loading and failure states, and otherwise left alone. The point is to get from opening a tab to making sound in one step.'
+      'A clean full-screen shell around Strudel, the browser language for live-coding music. Open the tab and start making sound.'
     ]
   },
 
@@ -407,9 +386,7 @@ window.PROJECTS = [
     imageAlt: 'A nine-by-nine Sudoku board with a partially filled puzzle on a light background.',
     links: { live: 'media/other/pages/sudokuJs.html' },
     body: [
-      'A Sudoku board with its own generator and solver. The interesting part is not the game, it is guaranteeing that every puzzle is fair.',
-      'A randomised backtracking solver with a minimum-remaining-values heuristic fills a complete grid, then clues are removed one at a time. After each removal a solution counter re-solves the board and stops as soon as it finds a second answer; if the puzzle is no longer uniquely solvable, the clue goes back. Difficulty is simply the number of clues left standing.',
-      'The same solver drives the hint and solve buttons. One HTML file, no dependencies.'
+      'A Sudoku game with a generator and solver written from scratch. Clues are removed one at a time and the board is re-solved after each, so every puzzle has exactly one solution. One HTML file, no dependencies.'
     ]
   },
 
@@ -431,8 +408,7 @@ window.PROJECTS = [
     imageAlt: 'A black QR code above the words QR Code Generator on a white background.',
     links: { live: 'media/qr/' },
     body: [
-      'A single-purpose tool: paste a URL or any text, get a QR code. Codes are generated at the highest error-correction level, so they still scan when printed small, stuck onto something curved or partly obscured.',
-      'Output renders to a canvas and downloads as a PNG. There is no server and no upload step. The code is generated in the page, so whatever you encode stays on your machine.'
+      'Paste a URL or text and download a QR code as a PNG. It uses the highest error correction, so codes scan even when printed small, and nothing leaves the page.'
     ]
   }
 ];
