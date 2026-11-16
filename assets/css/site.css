@@ -545,10 +545,7 @@ html.has-cursor, html.has-cursor a, html.has-cursor button, html.has-cursor labe
   .hero__title { position: static; white-space: normal; font-size: clamp(56px, 13vw, 120px); }
   .hero__line--indent { padding-left: 0; }
   .hero__intro { position: static; max-width: 36ch; }
-  .hero__pills { position: static; transform: none; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .hero__pills::-webkit-scrollbar { display: none; }
-  .hero__pill-list { flex-direction: row; gap: 8px; padding-right: var(--gutter); }
-  .hero__pill-list li { flex: none; }
+  .hero__pills { position: static; transform: none; }
   .hero__scroll { right: auto; left: var(--gutter); bottom: 28px; }
   .row__inner, .row__btn { grid-template-columns: 1fr; gap: 10px; padding-block: 28px; }
   .row__title { flex-direction: row; align-items: baseline; justify-content: space-between; gap: 12px; }

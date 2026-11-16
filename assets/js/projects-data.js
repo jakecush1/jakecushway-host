@@ -7,6 +7,33 @@
    build: 'ai-assisted' | 'hand-built' (omit when unknown). image may be null. */
 window.PROJECTS = [
   {
+    slug: 'reprise',
+    title: 'RepRise',
+    kicker: 'An iPhone workout app, in development and coming soon to the App Store: build a plan by hand, from a template or with an AI coach, then log every set and keep the streak alive.',
+    category: 'Product',
+    year: '2026',
+    featured: false,
+    heroPill: true,
+    role: 'Design, mobile and API development',
+    tags: ['React Native', 'Full-stack', 'AI'],
+    tech: ['React Native', 'Expo', 'TypeScript', 'Node.js', 'Express', 'Prisma', 'PostgreSQL', 'LLM APIs'],
+    build: 'ai-assisted',
+    image: 'photos/web/reprise-1600.webp',
+    imageSmall: 'photos/web/reprise-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'Three RepRise phone screens with sample training data: the Today screen with the next workout and weekly ring, a bench press page with a muscle diagram and an estimated one-rep-max chart, and a logged leg day.',
+    links: { repo: 'https://github.com/jakecush1/workout-react-native' },
+    body: [
+      'RepRise is a workout planner and tracker for iPhone. There are three ways to get a plan: answer a short questionnaire and have one built for you, pick from 13 pre-made programmes (upper/lower, push/pull/legs, glute focus, Couch to 5K, a hybrid run and lift block and more) ranked by how well they fit your goal, schedule and equipment, or build your own from a library of 96 exercises.',
+      'The plan builder can use an LLM, but it is boxed in. The model returns structured JSON in which every exercise ID must come from the library and match the equipment you have, so it cannot invent movements, and the result is validated and shown as a draft to edit before saving. With no AI provider configured, or when a call fails, a rule-based generator picks a split by days per week and fills it by goal and experience. The same profile, plan and recent history feed a coach chat for questions about form, soreness or the programme.',
+      'Logging is built for the gym floor: last session’s numbers are pre-filled, a rest timer starts with haptics, and an in-progress workout survives the app being closed. Every exercise shows a front and back body diagram with the muscles it works. Around that sit calendar bookings with reminders, a weekly ring and streak, 12-week charts, per-exercise estimated one-rep max, body weight, and personal records flagged when you finish.',
+      'The app is Expo and expo-router in TypeScript. The API is Node, Express and Prisma on PostgreSQL, with JWT auth stored in the iOS Keychain and a 46-check end-to-end smoke test.',
+      'RepRise is in development and will be released on the Apple App Store for iPhone soon.'
+    ]
+  },
+
+  {
     slug: 'city-square',
     title: 'City Square',
     kicker: 'A rainy-night street in Three.js with two doors: one into the Side Proj tavern, one up to Bedroom Studio.',
@@ -29,6 +56,7 @@ window.PROJECTS = [
       'Each door points at its own deployed site, so the tavern and the studio stay separate projects with their own repos. If a destination is unreachable, the street says so instead of opening a blank frame.'
     ]
   },
+
   {
     slug: 'bedroom-studio',
     title: 'Bedroom Studio',
@@ -54,6 +82,7 @@ window.PROJECTS = [
       'All of the DSP runs client-side, from FFT and beat tracking to pYIN pitch detection and Spotify’s Basic Pitch model for turning audio into notes. Nothing is uploaded, and anything you make can be kept in the tape library or rendered out as a WAV.'
     ]
   },
+
   {
     slug: 'sideproj',
     title: 'Side Proj',
@@ -78,153 +107,7 @@ window.PROJECTS = [
       'It is built with React, TypeScript and React Three Fiber, with Zustand for state and Howler.js for playback. The characters come from a procedural Renaissance figure kit, and the wood, stone, plaster and cloth textures are generated at runtime, so the scene downloads no images. It is also the left-hand door in City Square.'
     ]
   },
-  {
-    slug: 'ai-photobooth',
-    title: 'AI Photobooth',
-    kicker: 'POPFLASH, a party photobooth on a Raspberry Pi: tap to pay on an iPad, four shots, printed strips, and every photo on your phone with AI restyles.',
-    category: 'Product',
-    year: '2026',
-    featured: false,
-    heroPill: true,
-    role: 'Co-creator with Isaak: Pi printing, deployment, enclosure',
-    tags: ['Raspberry Pi', 'Next.js', 'Convex', 'Python'],
-    tech: ['Raspberry Pi', 'Node.js', 'Python', 'Pillow', 'CUPS', 'systemd', 'Next.js', 'React', 'Convex', 'Square POS API', 'CadQuery', '3D printing'],
-    image: 'photos/web/ai-photobooth-1600.webp',
-    imageSmall: 'photos/web/ai-photobooth-800.webp',
-    imageW: 1600,
-    imageH: 1000,
-    imageAlt: 'POPFLASH product page in yellow, black and hot pink: the headline “Your party. But louder.” above four Polaroid-style photo cards.',
-    links: { live: 'https://photobooth-eight-self.vercel.app/popflash', repo: 'https://github.com/isaak1294/photobooth' },
-    gallery: [
-      {
-        image: 'photos/web/ai-photobooth-kiosk-1600.webp',
-        imageSmall: 'photos/web/ai-photobooth-kiosk-800.webp',
-        alt: 'The POPFLASH kiosk screen: a row of frame choices above a large black Take Photos button reading $5.00, tap to pay, four shots.',
-        caption: 'The iPad kiosk: pick a frame, tap to pay, then four shots with a 3-2-1 countdown each.'
-      },
-      {
-        image: 'photos/web/ai-photobooth-pricing-1600.webp',
-        imageSmall: 'photos/web/ai-photobooth-pricing-800.webp',
-        alt: 'POPFLASH pricing section on a pink background with three packages: House Party, Full Send and Absolute Chaos.',
-        caption: 'The POPFLASH product page, with packages and a booking form.'
-      },
-      {
-        image: 'photos/web/ai-photobooth-enclosure-1600.webp',
-        imageSmall: 'photos/web/ai-photobooth-enclosure-800.webp',
-        alt: 'Line drawings of a 3D-printed enclosure: a vented printer frame on its own, and assembled with an electronics tray on top.',
-        caption: 'The 3D-printed enclosure I modelled in CadQuery: a frame around the printer and an electronics tray for the Pi and camera.'
-      },
-      {
-        image: 'photos/web/ai-photobooth-concepts-1600.webp',
-        imageSmall: 'photos/web/ai-photobooth-concepts-800.webp',
-        alt: 'Two AI-generated concept renders: a walnut booth with a red velvet curtain, and an arcade-cabinet photobooth printing a photo strip.',
-        caption: 'Early AI-generated concept renders for the booth’s look. Not the built hardware.'
-      }
-    ],
-    body: [
-      'POPFLASH is a photobooth for parties that Isaak and I built together. A guest picks a frame on an iPad kiosk, taps their card, and gets four shots with a 3-2-1 countdown each. The Raspberry Pi camera fires, the strips print on the spot, and a QR code puts every photo on the guest’s phone, where they can be restyled with AI.',
-      'The Pi never takes incoming connections. The kiosk writes a capture request to Convex, the Pi is subscribed and gets it pushed, shoots, and uploads the frame, and every screen updates from the same live session. That keeps the booth working behind venue Wi-Fi or a phone hotspot with no port forwarding. Payment goes through the Square Point of Sale app and a card reader, and a session only unlocks once Square’s Orders API confirms a completed order for the right amount. A prepaid mode skips payment for events that are paid up front.',
-      'My side was getting the booth to print and keep running unattended. I wrote the Pi’s print agent, a separate Python service that watches a local spool, composes each sheet with Pillow (two identical four-photo strips with one centre cut) and sends it to a Canon SELPHY through CUPS. Jobs are claimed by an atomic file rename, so a crash cannot double-print or lose a sheet, and printing keeps working if the venue Wi-Fi drops. Capture, printing and a retention job that clears old photos off the Pi each run as their own systemd service, so a jammed printer cannot take the camera down. A deploy script pushes everything to the Pi.',
-      'I also modelled the hardware enclosure in CadQuery: a support-free, two-part print with a vented frame around the printer and a tray on top that holds the Pi and the camera. Isaak led the web app, the Convex backend, the Square integration and the POPFLASH product page.'
-    ]
-  },
-  {
-    slug: 'obamafy',
-    title: 'Obamafy',
-    kicker: 'Turn a photo into a flat-ink screenprint poster or a laser-ready engraving, entirely in the browser.',
-    category: 'Tools',
-    year: '2026',
-    featured: false,
-    heroPill: true,
-    role: 'Design, image processing',
-    tags: ['Canvas', 'Image processing', 'Fabrication'],
-    tech: ['Vanilla JavaScript', 'Canvas', 'LightBurn export', 'Vercel'],
-    build: 'ai-assisted',
-    image: 'photos/web/obamafy-1600.webp',
-    imageSmall: 'photos/web/obamafy-800.webp',
-    imageW: 1600,
-    imageH: 1000,
-    imageAlt: 'Poster maker interface with ink controls on the left and a four-colour Hope-style poster of a cat on the right.',
-    links: { live: 'https://obamafy.vercel.app', repo: 'https://github.com/jakecush1/obamafy' },
-    body: [
-      'Obamafy, now published as Poster & Engrave, started as a screenprint poster maker in the style of the 2008 Hope poster. Drop in a photo and it comes back as a bold poster in two, three or four flat inks, which is what screen printing or multi-colour 3D printing needs, since every colour has to be its own layer.',
-      'The pipeline runs on a canvas in plain JavaScript. The photo is converted to luminance, Gaussian-blurred with three box-blur passes, stretched between its 1st and 99th percentile tones, then split into ink bands. A line-hatching pass offsets the bands row by row so the edges between inks break into horizontal stripes, like the original print. You can drag the tone-split markers, swap palettes, change the frame and zoom, and the preview caches the framing and blur steps so palette changes redraw instantly.',
-      'It has since grown a laser engraving mode: the same tone separation produces a laser-ready engraving. It outputs a two-tone PNG with one pixel per laser dot and a .lbrn2 file that opens in LightBurn with the image placed, sized and set to pass-through, plus options for keychain holes, outline cuts and material previews. Photos never leave the browser.'
-    ]
-  },
-  {
-    slug: 'mathine',
-    title: 'Mathiné',
-    kicker: 'A UVic student workspace that pulls Brightspace deadlines into one dashboard, to-do list and calendar.',
-    category: 'Product',
-    year: '2025',
-    featured: false,
-    heroPill: true,
-    role: 'Full-stack development',
-    tags: ['Vue.js', 'Nginx', 'Product'],
-    tech: ['Vue.js', 'JavaScript', 'Nginx', 'Linux', 'Brightspace'],
-    build: 'hand-built',
-    image: 'photos/web/mathine-1600.webp',
-    imageSmall: 'photos/web/mathine-800.webp',
-    imageW: 1600,
-    imageH: 1000,
-    imageAlt: 'Mathiné landing page on mathine.uvic.ca with UVic branding and a navigation bar for Kanban, Calendar, Brain Dump and Brightspace courses.',
-    links: { live: 'https://mathine.uvic.ca' },
-    body: [
-      'Mathiné is a workspace for University of Victoria students. The tagline is “All your coursework, organized”: Brightspace deadlines, task breakdowns, calendar events and brain-dump notes together in one place.',
-      'The app has a dashboard, a to-do view that breaks assignments into steps, a calendar, a Brain Dump space for loose notes, and a My Courses view that connects to Brightspace, UVic’s learning platform, for course and deadline information. Settings, feedback, an exam schedule and links to other online tools round it out.',
-      'Mathiné is an INSPIRE UVic project, built by students for students. I worked on it in Vue.js, it is served through Nginx at mathine.uvic.ca, and I fixed bugs and refined the UX based on feedback collected from students.'
-    ]
-  },
-  {
-    slug: 'reprise',
-    title: 'RepRise',
-    kicker: 'An iPhone workout app: build a plan by hand, from a template or with an AI coach, then log every set and keep the streak alive.',
-    category: 'Product',
-    year: '2026',
-    featured: false,
-    heroPill: true,
-    role: 'Design, mobile and API development',
-    tags: ['React Native', 'Full-stack', 'AI'],
-    tech: ['React Native', 'Expo', 'TypeScript', 'Node.js', 'Express', 'Prisma', 'PostgreSQL', 'LLM APIs'],
-    build: 'ai-assisted',
-    image: 'photos/web/reprise-1600.webp',
-    imageSmall: 'photos/web/reprise-800.webp',
-    imageW: 1600,
-    imageH: 1000,
-    imageAlt: 'Three RepRise phone screens with sample training data: the Today screen with the next workout and weekly ring, a bench press page with a muscle diagram and an estimated one-rep-max chart, and a logged leg day.',
-    links: { repo: 'https://github.com/jakecush1/workout-react-native' },
-    body: [
-      'RepRise is a workout planner and tracker for iPhone. There are three ways to get a plan: answer a short questionnaire and have one built for you, pick from 13 pre-made programmes (upper/lower, push/pull/legs, glute focus, Couch to 5K, a hybrid run and lift block and more) ranked by how well they fit your goal, schedule and equipment, or build your own from a library of 96 exercises.',
-      'The plan builder can use an LLM, but it is boxed in. The model returns structured JSON in which every exercise ID must come from the library and match the equipment you have, so it cannot invent movements, and the result is validated and shown as a draft to edit before saving. With no AI provider configured, or when a call fails, a rule-based generator picks a split by days per week and fills it by goal and experience. The same profile, plan and recent history feed a coach chat for questions about form, soreness or the programme.',
-      'Logging is built for the gym floor: last session’s numbers are pre-filled, a rest timer starts with haptics, and an in-progress workout survives the app being closed. Every exercise shows a front and back body diagram with the muscles it works. Around that sit calendar bookings with reminders, a weekly ring and streak, 12-week charts, per-exercise estimated one-rep max, body weight, and personal records flagged when you finish.',
-      'The app is Expo and expo-router in TypeScript. The API is Node, Express and Prisma on PostgreSQL, with JWT auth stored in the iOS Keychain and a 46-check end-to-end smoke test.'
-    ]
-  },
-  {
-    slug: 'usv-autopilot-ml',
-    title: 'USV Autopilot ML',
-    kicker: 'Predicting from live telemetry when a remote pilot needs to step in on a station-keeping uncrewed boat, so a 24/7 watch can become an on-call alert.',
-    category: 'Experiments',
-    year: '2026',
-    featured: false,
-    heroPill: false,
-    role: 'Data analysis and modelling, with Rowan Hall (SENG 474)',
-    tags: ['Machine learning', 'Python', 'Marine robotics'],
-    tech: ['Python', 'pandas', 'scikit-learn', 'Matplotlib', 'LaTeX'],
-    image: 'photos/web/usv-autopilot-ml-1600.webp',
-    imageSmall: 'photos/web/usv-autopilot-ml-800.webp',
-    imageW: 1600,
-    imageH: 1000,
-    imageAlt: 'Drift model v2 results: predicted against actual east and north drift over the next 60 minutes, and a histogram of position error with a median of 256 m and a 90th percentile of 549 m.',
-    links: { repo: 'https://github.com/jakecush1/autonomous-pilot-ML' },
-    body: [
-      'Open Ocean Robotics runs the DataXplorer, an uncrewed surface vessel that reports marine weather for NOAA in place of a retired buoy. Its one hard rule is to stay within 10 nautical miles of the buoy’s old position. A remote pilot watches it around the clock, about 1,095 eight-hour shifts a year, even though a corrective command is only needed every two to three hours. This SENG 474 project at UVic asks whether that call can be predicted from telemetry, so the pilot is paged when needed instead of watching all the time. The model is advisory only: it decides whether a pilot is needed, never what they should do.',
-      'The plan has two stages. V1 is a baseline lookup grid built from the rules experienced pilots already use, splitting the operating area into distance rings and sectors and the wind into direction and speed bands. V2 replaces the hand labels with outcomes learned from logged telemetry and interventions, moving from per-cell frequencies to logistic regression and boosted trees if needed. Every version is scored against V1 on interventions caught, false alerts per shift and watch hours removed, with missed interventions weighted more heavily than false alarms.',
-      'The first modelling work studies how the boat drifts with the motor off, using minute-by-minute GPS, wind and motor telemetry. Wind speed alone explains only about 15% of drift speed; the fit puts windage at about 2.3% of wind speed, and the current matters at least as much as the wind. A second model that combines the last hour’s drift with the wind vector predicts the next hour’s position with R² = 0.83, a median error of 256 m and a 90th percentile of 549 m, which is a candidate safety radius for the alert.',
-      'Those numbers are on training data with overlapping windows, so they are a ceiling, not a result. The next step is a time-based train and validation split, a held-out deployment, and a “next hour equals last hour” baseline to beat.'
-    ]
-  },
+
   {
     slug: 'vantage-saunas',
     title: 'Vantage Saunas',
@@ -250,6 +133,122 @@ window.PROJECTS = [
       'All of the numbers live in one brief. A Python build script regenerates the HTML pages, the deck viewer and the PDFs from Markdown and slide source, so the plan, deck, site and drawings always quote the same figures.'
     ]
   },
+
+  {
+    slug: 'ai-photobooth',
+    title: 'AI Photobooth',
+    kicker: 'A Raspberry Pi photobooth with an iPad kiosk, card payments, on-the-spot prints and AI restyles delivered to your phone.',
+    category: 'Product',
+    year: '2026',
+    featured: false,
+    heroPill: true,
+    role: 'Co-creator with Isaak: Pi printing, deployment, enclosure',
+    tags: ['Raspberry Pi', 'Next.js', 'Convex', 'Python'],
+    tech: ['Raspberry Pi', 'Node.js', 'Python', 'Pillow', 'CUPS', 'systemd', 'Next.js', 'React', 'Convex', 'Square POS API', 'CadQuery', '3D printing'],
+    image: 'photos/web/ai-photobooth-kiosk-1600.webp',
+    imageSmall: 'photos/web/ai-photobooth-kiosk-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'The photobooth kiosk screen: a row of frame choices above a large Take Photos button reading $5.00, tap to pay, four shots, 3-2-1 each time.',
+    links: { live: 'https://photobooth-eight-self.vercel.app/', repo: 'https://github.com/isaak1294/photobooth' },
+    gallery: [
+      {
+        image: 'photos/web/ai-photobooth-enclosure-1600.webp',
+        imageSmall: 'photos/web/ai-photobooth-enclosure-800.webp',
+        alt: 'Line drawings of a 3D-printed enclosure: a vented printer frame on its own, and assembled with an electronics tray on top.',
+        caption: 'The 3D-printed enclosure I modelled in CadQuery: a frame around the printer and an electronics tray for the Pi and camera.'
+      },
+      {
+        image: 'photos/web/ai-photobooth-concepts-1600.webp',
+        imageSmall: 'photos/web/ai-photobooth-concepts-800.webp',
+        alt: 'Two AI-generated concept renders: a walnut booth with a red velvet curtain, and an arcade-cabinet photobooth printing a photo strip.',
+        caption: 'Early AI-generated concept renders for the booth’s look. Not the built hardware.'
+      }
+    ],
+    body: [
+      'An AI photobooth that Isaak and I built together. A guest picks a frame on an iPad kiosk, pays by tapping their card, and gets four shots with a 3-2-1 countdown each. A Raspberry Pi with a camera takes the photos, the strips print on the spot, and a QR code sends every photo to the guest’s phone, where they can be restyled with AI.',
+      'Convex sits in the middle as a live backend. The kiosk writes a capture request, the Pi is subscribed and gets it pushed, takes the shot and uploads it, and every screen (the kiosk, an optional HDMI booth display and the guest’s phone) updates from the same live session, including per-step progress from countdown to upload. The Pi only makes outgoing connections, so the booth works on venue Wi-Fi or a phone hotspot with no port forwarding. The kiosk iPad runs iOS 12, which cannot load the main Next.js app, so its page is hand-written to that browser’s limits and talks to Convex through a small server-side proxy.',
+      'Payments go through the Square Point of Sale app and a card reader. A session unlocks only after Square’s Orders API confirms a completed order for the right amount at the right location, and the backend refuses to start a capture for an unpaid session no matter who asks. A prepaid mode skips payment for events that are paid up front.',
+      'My side was getting the booth to print and keep running unattended. I wrote the Pi’s print agent, a separate Python service that watches a local spool, composes each sheet with Pillow (two identical four-photo strips with one centre cut) and sends it to a Canon SELPHY through CUPS. Jobs are claimed by an atomic file rename, so a crash cannot double-print or lose a sheet, and printing keeps working if the Wi-Fi drops. Capture, printing and a cleanup job that clears old photos off the Pi each run as their own systemd service, so a jammed printer cannot take the camera down, and a deploy script pushes everything to the Pi.',
+      'I also modelled the hardware enclosure in CadQuery: a support-free, two-part print with a vented frame around the printer and a tray on top that holds the Pi and the camera. Isaak led the web app, the Convex backend and the Square integration.'
+    ]
+  },
+
+  {
+    slug: 'obamafy',
+    title: 'Obamafy',
+    kicker: 'Turn a photo into a flat-ink screenprint poster or a laser-ready engraving, entirely in the browser.',
+    category: 'Tools',
+    year: '2026',
+    featured: false,
+    heroPill: true,
+    role: 'Design, image processing',
+    tags: ['Canvas', 'Image processing', 'Fabrication'],
+    tech: ['Vanilla JavaScript', 'Canvas', 'LightBurn export', 'Vercel'],
+    build: 'ai-assisted',
+    image: 'photos/web/obamafy-1600.webp',
+    imageSmall: 'photos/web/obamafy-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'Poster maker interface with ink controls on the left and a four-colour Hope-style poster of a cat on the right.',
+    links: { live: 'https://obamafy.vercel.app', repo: 'https://github.com/jakecush1/obamafy' },
+    body: [
+      'Obamafy, now published as Poster & Engrave, started as a screenprint poster maker in the style of the 2008 Hope poster. Drop in a photo and it comes back as a bold poster in two, three or four flat inks, which is what screen printing or multi-colour 3D printing needs, since every colour has to be its own layer.',
+      'The pipeline runs on a canvas in plain JavaScript. The photo is converted to luminance, Gaussian-blurred with three box-blur passes, stretched between its 1st and 99th percentile tones, then split into ink bands. A line-hatching pass offsets the bands row by row so the edges between inks break into horizontal stripes, like the original print. You can drag the tone-split markers, swap palettes, change the frame and zoom, and the preview caches the framing and blur steps so palette changes redraw instantly.',
+      'It has since grown a laser engraving mode: the same tone separation produces a laser-ready engraving. It outputs a two-tone PNG with one pixel per laser dot and a .lbrn2 file that opens in LightBurn with the image placed, sized and set to pass-through, plus options for keychain holes, outline cuts and material previews. Photos never leave the browser.'
+    ]
+  },
+
+  {
+    slug: 'mathine',
+    title: 'Mathiné',
+    kicker: 'A UVic student workspace that pulls Brightspace deadlines into one dashboard, to-do list and calendar.',
+    category: 'Product',
+    year: '2025',
+    featured: false,
+    heroPill: true,
+    role: 'Full-stack development',
+    tags: ['Vue.js', 'Nginx', 'Product'],
+    tech: ['Vue.js', 'JavaScript', 'Nginx', 'Linux', 'Brightspace'],
+    build: 'hand-built',
+    image: 'photos/web/mathine-1600.webp',
+    imageSmall: 'photos/web/mathine-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'Mathiné landing page on mathine.uvic.ca with UVic branding and a navigation bar for Kanban, Calendar, Brain Dump and Brightspace courses.',
+    links: { live: 'https://mathine.uvic.ca' },
+    body: [
+      'Mathiné is a workspace for University of Victoria students. The tagline is “All your coursework, organized”: Brightspace deadlines, task breakdowns, calendar events and brain-dump notes together in one place.',
+      'The app has a dashboard, a to-do view that breaks assignments into steps, a calendar, a Brain Dump space for loose notes, and a My Courses view that connects to Brightspace, UVic’s learning platform, for course and deadline information. Settings, feedback, an exam schedule and links to other online tools round it out.',
+      'Mathiné is an INSPIRE UVic project, built by students for students. I worked on it in Vue.js, it is served through Nginx at mathine.uvic.ca, and I fixed bugs and refined the UX based on feedback collected from students.'
+    ]
+  },
+
+  {
+    slug: 'usv-autopilot-ml',
+    title: 'USV Autopilot ML',
+    kicker: 'Predicting from live telemetry when a remote pilot needs to step in on a station-keeping uncrewed boat, so a 24/7 watch can become an on-call alert.',
+    category: 'Experiments',
+    year: '2026',
+    featured: false,
+    heroPill: false,
+    role: 'Data analysis and modelling, with Rowan Hall (SENG 474)',
+    tags: ['Machine learning', 'Python', 'Marine robotics'],
+    tech: ['Python', 'pandas', 'scikit-learn', 'Matplotlib', 'LaTeX'],
+    image: 'photos/web/usv-autopilot-ml-1600.webp',
+    imageSmall: 'photos/web/usv-autopilot-ml-800.webp',
+    imageW: 1600,
+    imageH: 1000,
+    imageAlt: 'Drift model v2 results: predicted against actual east and north drift over the next 60 minutes, and a histogram of position error with a median of 256 m and a 90th percentile of 549 m.',
+    links: { repo: 'https://github.com/jakecush1/autonomous-pilot-ML' },
+    body: [
+      'Open Ocean Robotics runs the DataXplorer, an uncrewed surface vessel that reports marine weather for NOAA in place of a retired buoy. Its one hard rule is to stay within 10 nautical miles of the buoy’s old position. A remote pilot watches it around the clock, about 1,095 eight-hour shifts a year, even though a corrective command is only needed every two to three hours. This SENG 474 project at UVic asks whether that call can be predicted from telemetry, so the pilot is paged when needed instead of watching all the time. The model is advisory only: it decides whether a pilot is needed, never what they should do.',
+      'The plan has two stages. V1 is a baseline lookup grid built from the rules experienced pilots already use, splitting the operating area into distance rings and sectors and the wind into direction and speed bands. V2 replaces the hand labels with outcomes learned from logged telemetry and interventions, moving from per-cell frequencies to logistic regression and boosted trees if needed. Every version is scored against V1 on interventions caught, false alerts per shift and watch hours removed, with missed interventions weighted more heavily than false alarms.',
+      'The first modelling work studies how the boat drifts with the motor off, using minute-by-minute GPS, wind and motor telemetry. Wind speed alone explains only about 15% of drift speed; the fit puts windage at about 2.3% of wind speed, and the current matters at least as much as the wind. A second model that combines the last hour’s drift with the wind vector predicts the next hour’s position with R² = 0.83, a median error of 256 m and a 90th percentile of 549 m, which is a candidate safety radius for the alert.',
+      'Those numbers are on training data with overlapping windows, so they are a ceiling, not a result. The next step is a time-based train and validation split, a held-out deployment, and a “next hour equals last hour” baseline to beat.'
+    ]
+  },
+
   {
     slug: 'arbourpros',
     title: 'ArbourPros Trees',
@@ -273,6 +272,7 @@ window.PROJECTS = [
       'It is plain HTML, CSS and a little JavaScript with no framework, hosted on Vercel. The estimate form opens the visitor’s email app with their details already filled in, so there is no form backend to maintain, and every page leads with a tap-to-call number.'
     ]
   },
+
   {
     slug: 'basin-climate-source',
     title: 'Basin Climate Source',
@@ -297,6 +297,7 @@ window.PROJECTS = [
       'I joined Selkirk Innovates as a full-stack developer intern from May 2023 to May 2024 and built features for this platform and for its sister project, State of the Basin. The work was grant-funded and aimed at community members, which meant every change had to hold up for planners and residents who are not data specialists.'
     ]
   },
+
   {
     slug: 'autonomous-sinixt',
     title: 'Autonomous Sinixt',
@@ -321,6 +322,7 @@ window.PROJECTS = [
       'I also host it. Since 2023 the site has run on a private Linux server I administer, so I handle the web server, updates and uptime, and the Nation has one person to call.'
     ]
   },
+
   {
     slug: 'usv-tools',
     title: 'USV Tools',
@@ -345,6 +347,7 @@ window.PROJECTS = [
       'Dual-Sensor Route Analyzer computes trip distance from two independent position logs, GPS and the NAV (AIS) feed. It runs a Haversine distance over each track, drops segments whose implied speed exceeds a configurable knot threshold as sensor error, reconciles the two cleaned totals into a single figure and exports a markdown report. Distance Between compares the USV log against the support boat’s to produce vessel separation at every timestamp, a ground-truth record for energy-harvesting, radar and acoustic tests where range is the variable under test.'
     ]
   },
+
   {
     slug: 'state-of-the-basin',
     title: 'State of the Basin',
@@ -368,6 +371,7 @@ window.PROJECTS = [
       'Alongside the regional indicators the site publishes community indicators and per-community profiles, feature articles, annual Snapshot reports and subjective well-being reports. During my Selkirk Innovates internship I built features for this platform in parallel with Basin Climate Source. Most of the work was making dense tabular data readable and keeping the structure consistent across a very large number of indicator pages.'
     ]
   },
+
   {
     slug: 'strudel',
     title: 'Strudel Live Studio',
@@ -391,6 +395,7 @@ window.PROJECTS = [
       'The Strudel environment is embedded in a sandboxed frame with audio permissions granted, wrapped in a layout with proper loading and failure states, and otherwise left alone. The point is to get from opening a tab to making sound in one step.'
     ]
   },
+
   {
     slug: 'sudoku',
     title: 'Sudoku',
@@ -415,6 +420,7 @@ window.PROJECTS = [
       'The same solver drives the hint and solve buttons. One HTML file, no dependencies.'
     ]
   },
+
   {
     slug: 'qr',
     title: 'QR Code Generator',

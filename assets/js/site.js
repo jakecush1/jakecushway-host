@@ -219,7 +219,7 @@
   var PROJECTS = Array.isArray(window.PROJECTS) ? window.PROJECTS.slice() : [];
   if (!PROJECTS.length) console.warn('[site] window.PROJECTS is missing or empty.');
   var CATEGORY_ORDER = ['Audio', 'Tools', 'Client work', 'Product', 'Experiments'];
-  var HERO_ORDER = ['city-square', 'bedroom-studio', 'sideproj', 'ai-photobooth', 'obamafy', 'mathine', 'reprise', 'vantage-saunas'];
+  var HERO_ORDER = ['reprise', 'city-square', 'bedroom-studio', 'sideproj', 'vantage-saunas', 'ai-photobooth', 'obamafy', 'mathine'];
   var bySlug = {};
   PROJECTS.forEach(function (p) { bySlug[p.slug] = p; });
 
