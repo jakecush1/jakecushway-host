@@ -4,7 +4,7 @@
    featured: true  -> large card in the Selected work grid (keep exactly 3).
    heroPill: true  -> pill in the hero stack; pill order follows this array.
    Categories used: Audio · Tools · Client work · Product · Experiments
-   build: 'ai-assisted' | 'hand-built' (omit when unknown). image may be null. */
+   build: 'hand-built' (optional). image may be null. */
 window.PROJECTS = [
   {
     slug: 'reprise',
@@ -17,7 +17,6 @@ window.PROJECTS = [
     role: 'Design, mobile and API development',
     tags: ['React Native', 'Full-stack', 'AI'],
     tech: ['React Native', 'Expo', 'TypeScript', 'Node.js', 'Express', 'Prisma', 'PostgreSQL', 'LLM APIs'],
-    build: 'ai-assisted',
     image: 'photos/web/reprise-1600.webp',
     imageSmall: 'photos/web/reprise-800.webp',
     imageW: 1600,
@@ -68,7 +67,6 @@ window.PROJECTS = [
     role: 'Design, 3D, audio engineering',
     tags: ['Three.js', 'Web Audio', 'DSP'],
     tech: ['Three.js', 'Web Audio API', 'AudioWorklet', 'Basic Pitch', 'Vite', 'Vercel'],
-    build: 'ai-assisted',
     image: 'photos/web/bedroom-studio-1600.webp',
     imageSmall: 'photos/web/bedroom-studio-800.webp',
     imageW: 1600,
@@ -94,7 +92,6 @@ window.PROJECTS = [
     role: 'Design, 3D, development',
     tags: ['React Three Fiber', '3D', 'Audio'],
     tech: ['React', 'TypeScript', 'React Three Fiber', 'Zustand', 'Howler.js', 'Tailwind CSS', 'Vite'],
-    build: 'ai-assisted',
     image: 'photos/web/sideproj-1600.webp',
     imageSmall: 'photos/web/sideproj-800.webp',
     imageW: 1600,
@@ -119,7 +116,6 @@ window.PROJECTS = [
     role: 'Brand, web, 3D and business planning',
     tags: ['Startup', 'Three.js', 'Web'],
     tech: ['HTML', 'CSS', 'JavaScript', 'Three.js', 'Python', 'Markdown', 'Excel', 'Vercel'],
-    build: 'ai-assisted',
     image: 'photos/web/vantage-saunas-1600.webp',
     imageSmall: 'photos/web/vantage-saunas-800.webp',
     imageW: 1600,
@@ -185,7 +181,6 @@ window.PROJECTS = [
     role: 'Design, image processing',
     tags: ['Canvas', 'Image processing', 'Fabrication'],
     tech: ['Vanilla JavaScript', 'Canvas', 'LightBurn export', 'Vercel'],
-    build: 'ai-assisted',
     image: 'photos/web/obamafy-1600.webp',
     imageSmall: 'photos/web/obamafy-800.webp',
     imageW: 1600,
@@ -334,7 +329,6 @@ window.PROJECTS = [
     role: 'Engineering, data analysis',
     tags: ['Data tools', 'Python', 'Charts'],
     tech: ['Vanilla JavaScript', 'Chart.js', 'Bootstrap', 'Python', 'pandas', 'NumPy'],
-    build: 'ai-assisted',
     image: 'photos/web/usv-tools-1600.webp',
     imageSmall: 'photos/web/usv-tools-800.webp',
     imageW: 1600,
@@ -383,7 +377,6 @@ window.PROJECTS = [
     role: 'Engineering',
     tags: ['Live coding', 'Audio', 'UI'],
     tech: ['Strudel', 'Tailwind CSS', 'JavaScript'],
-    build: 'ai-assisted',
     image: 'photos/web/strudel-1600.webp',
     imageSmall: 'photos/web/strudel-800.webp',
     imageW: 1600,
@@ -407,7 +400,6 @@ window.PROJECTS = [
     role: 'Engineering',
     tags: ['Algorithms', 'Vanilla JS'],
     tech: ['Vanilla JavaScript', 'Backtracking', 'Constraint propagation'],
-    build: 'ai-assisted',
     image: 'photos/web/sudoku-1600.webp',
     imageSmall: 'photos/web/sudoku-800.webp',
     imageW: 1600,
@@ -432,7 +424,6 @@ window.PROJECTS = [
     role: 'Engineering',
     tags: ['Utility', 'Canvas'],
     tech: ['Vanilla JavaScript', 'qrcode.js', 'Tailwind CSS', 'Canvas'],
-    build: 'ai-assisted',
     image: 'photos/web/qr-1600.webp',
     imageSmall: 'photos/web/qr-800.webp',
     imageW: 1600,

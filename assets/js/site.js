@@ -242,7 +242,7 @@
         (it.caption ? '<figcaption>' + esc(it.caption) + '</figcaption>' : '') + '</figure>';
     }).join('') + '</div>';
   }
-  function buildLabel(p) { return p.build === 'hand-built' ? 'Hand-built' : p.build === 'ai-assisted' ? 'AI-assisted' : ''; }
+  function buildLabel(p) { return p.build === 'hand-built' ? 'Hand-built' : ''; }
   function yearRange() {
     var min = Infinity, max = -Infinity;
     PROJECTS.forEach(function (p) {
